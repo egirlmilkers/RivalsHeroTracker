@@ -307,6 +307,19 @@ input:hover {
 	border-color: #555;
 }
 
+.point-container {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.point-suffix {
+	font-size: 0.85em;
+	color: #999;
+	white-space: nowrap;
+	font-weight: 600;
+}
+
 .header-row {
 	font-weight: 700;
 	text-transform: uppercase;

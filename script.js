@@ -46,12 +46,20 @@ const heroDefinitions = [
 	{ name: "Wolverine", role: "Duelist", color: "#c49c3e" },
 ];
 
+const rankMaxPoints = {
+	Agent: 500,
+	Knight: 1200,
+	Captain: 2000,
+	Centurion: 2400,
+	Lord: null,
+};
+
 const rankBaselines = {
 	Agent: 0,
-	Knight: 500,
-	Captain: 1700,
-	Centurion: 3700,
-	Lord: 6100,
+	Knight: rankMaxPoints.Agent,
+	Captain: rankMaxPoints.Agent + rankMaxPoints.Knight,
+	Centurion: rankMaxPoints.Agent + rankMaxPoints.Knight + rankMaxPoints.Captain,
+	Lord: rankMaxPoints.Agent + rankMaxPoints.Knight + rankMaxPoints.Captain + rankMaxPoints.Centurion,
 };
 
 const ranks = ["Agent", "Knight", "Captain", "Centurion", "Lord"];
@@ -189,6 +197,10 @@ function renderList() {
 					`;
 		}
 
+		const maxPoints = rankMaxPoints[hero.rank];
+		const suffix = maxPoints ? `/ ${maxPoints}` : "";
+		const maxAttr = maxPoints ? `max="${maxPoints}"` : "";
+
 		// Added background-color style to img
 		row.innerHTML = `
 					<div class="portrait-container">
@@ -217,8 +229,9 @@ function renderList() {
 					</div>
 
 					<div class="point-container">
-						<input type="number" value="${hero.points}" min="0" 
+						<input type="number" value="${hero.points}" min="0" ${maxAttr}
 								onchange="updateHero(${index}, 'points', this.value)" placeholder="0">
+						<span class="point-suffix">${suffix}</span>
 					</div>
 				`;
 		container.appendChild(row);
@@ -226,7 +239,25 @@ function renderList() {
 }
 
 function updateHero(index, field, value) {
-	heroData[index][field] = value;
+	let hero = heroData[index];
+
+	if (field === "rank") {
+		hero.rank = value;
+		// Check if current points exceed new rank's max
+		const max = rankMaxPoints[value];
+		if (max !== null && max !== undefined && parseInt(hero.points) > max) {
+			hero.points = max;
+		}
+	} else if (field === "points") {
+		const max = rankMaxPoints[hero.rank];
+		if (max !== null && max !== undefined) {
+			if (parseInt(value) > max) {
+				value = max;
+			}
+		}
+		hero.points = value;
+	}
+
 	saveData();
 	// Re-render to update bars/layout
 	renderList();
