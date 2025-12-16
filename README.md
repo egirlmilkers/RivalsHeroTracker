@@ -5,3 +5,4 @@
 - Filters
 - Search
 - Number limits
+- Image Generation

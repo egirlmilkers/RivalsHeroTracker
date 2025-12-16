@@ -194,7 +194,7 @@ function renderList() {
 					<div class="portrait-container">
 						<img src="${heroImgPath}" 
 							class="hero-portrait rank-${hero.rank}" 
-							style="background-color: ${hero.color || "#000"}"
+							style="background: linear-gradient(180deg,rgba(0, 0, 0, 0) 10%, ${hero.color || "#000"} 100%)"
 							onerror="this.src='img/char/${getHeroFileName(hero.name)}'" alt="${hero.name}">
 						<img src="${roleIconPath}" class="role-icon-mini" title="${hero.role}" 
 							onerror="this.style.display='none'">
@@ -216,7 +216,7 @@ function renderList() {
 						</select>
 					</div>
 
-					<div>
+					<div class="point-container">
 						<input type="number" value="${hero.points}" min="0" 
 								onchange="updateHero(${index}, 'points', this.value)" placeholder="0">
 					</div>
