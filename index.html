@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marvel Rivals Proficiency Tracker v3 (Visual)</title>
+    <style>
+        :root {
+            --bg-color: #0a0a0a;
+            --card-bg: #141414;
+            --text-color: #e0e0e0;
+            --input-bg: #262626;
+            --border-color: #333;
+
+            /* Rank Colors */
+            --color-agent: #aaaaaa;
+            --color-knight: #00d2ff;
+            --glow-knight: rgba(0, 210, 255, 0.6);
+            --color-captain: #9d00ff;
+            --glow-captain: rgba(157, 0, 255, 0.7);
+            --color-centurion: #ff8c00;
+            --glow-centurion: rgba(255, 140, 0, 0.8);
+            --color-lord: #ff0000;
+            --glow-lord: rgba(255, 0, 0, 0.9);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            color: var(--text-color);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 300;
+            text-align: center;
+        }
+
+        .controls {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s, transform 0.1s;
+            font-family: inherit;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .btn-sort {
+            background-color: var(--color-knight);
+            color: #000;
+            box-shadow: 0 0 10px var(--glow-knight);
+        }
+
+        .btn-sort:hover {
+            background-color: #66e0ff;
+        }
+
+        .btn-reset {
+            background-color: #333;
+            color: #888;
+        }
+        
+        .btn-reset:hover {
+             background-color: var(--color-lord);
+             color: white;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+            padding: 25px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 30px;
+        }
+
+        .hero-row {
+            display: grid;
+            /* Added column for portrait and badge */
+            grid-template-columns: 60px 2fr 1.2fr 1fr; 
+            gap: 15px;
+            align-items: center;
+            padding: 12px 5px;
+            border-bottom: 1px solid var(--border-color);
+            transition: background 0.2s;
+        }
+
+        .hero-row:hover {
+            background-color: rgba(255,255,255,0.02);
+        }
+
+        .hero-row:last-child {
+            border-bottom: none;
+        }
+
+        /* Image Styles */
+        .portrait-container {
+            position: relative;
+            width: 60px;
+            height: 60px;
+        }
+
+        .hero-portrait {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 2px solid var(--border-color);
+            background-color: #000;
+            transition: border-color 0.3s;
+        }
+
+        .role-icon-mini {
+            position: absolute;
+            bottom: -5px;
+            right: -5px;
+            width: 24px;
+            height: 24px;
+            background-color: var(--card-bg);
+            border-radius: 50%;
+            padding: 2px;
+            border: 1px solid var(--border-color);
+            z-index: 2;
+        }
+
+        .rank-badge-img {
+            height: 35px;
+            width: auto;
+            margin-right: 10px;
+            vertical-align: middle;
+            filter: drop-shadow(0 0 5px rgba(0,0,0,0.5));
+        }
+
+        .hero-details {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .hero-name {
+            font-size: 1.2em;
+            font-weight: 600;
+            transition: all 0.4s ease-out; 
+            padding-bottom: 4px;
+            display: flex;
+            align-items: center;
+        }
+
+        .rank-select-container {
+            display: flex;
+            align-items: center;
+        }
+
+        /* Rank Styles */
+        .rank-Agent { color: var(--color-agent); border-color: var(--color-agent); }
+        .rank-Knight { color: var(--color-knight); text-shadow: 0 0 10px var(--glow-knight); border-color: var(--color-knight); }
+        .rank-Captain { color: var(--color-captain); text-shadow: 0 0 12px var(--glow-captain); border-color: var(--color-captain); }
+        .rank-Centurion { color: var(--color-centurion); font-size: 1.25em; text-shadow: 0 0 15px var(--glow-centurion); border-color: var(--color-centurion); }
+        .rank-Lord { color: var(--color-lord); font-weight: 800; font-size: 1.3em; text-shadow: 0 0 20px var(--glow-lord); border-color: var(--color-lord); }
+
+        select, input {
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background-color: var(--input-bg);
+            color: white;
+            font-family: inherit;
+            font-size: 0.95em;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        select { cursor: pointer; }
+        select:hover, input:hover { border-color: #555; }
+
+        .header-row {
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 1px;
+            color: #666;
+            margin-bottom: 10px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 15px;
+            grid-template-columns: 60px 2fr 1.2fr 1fr; /* Match body columns */
+        }
+
+        .total-score {
+            font-size: 0.8em;
+            color: #888;
+            margin-top: 4px;
+        }
+
+        /* BACKUP SECTION STYLES */
+        .backup-section {
+            width: 100%;
+            max-width: 900px;
+            background-color: #1a1a1a;
+            border: 1px dashed #444;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            color: #888;
+            margin-bottom: 50px;
+        }
+        
+        .backup-title {
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            color: #555;
+        }
+
+        .backup-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .btn-backup {
+            background-color: #2c2c2c;
+            color: #ccc;
+            font-size: 0.9em;
+        }
+        .btn-backup:hover {
+            background-color: #444;
+            color: white;
+        }
+
+        @media (max-width: 600px) {
+            .hero-row {
+                grid-template-columns: 50px 1fr; /* Stack on mobile */
+                grid-template-rows: auto auto auto;
+                gap: 10px;
+                padding: 15px;
+                border: 1px solid #333;
+                margin-bottom: 10px;
+                border-radius: 8px;
+                background: #1a1a1a;
+            }
+            .header-row { display: none; }
+            .rank-select-container { grid-column: span 2; }
+            .hero-details { grid-column: 2; }
+            .portrait-container { grid-row: 1; }
+            input { grid-column: span 2; }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Marvel Rivals Proficiency Tracker</h1>
+
+    <div class="controls">
+        <button class="btn-sort" onclick="sortHeroes()">Sort by Highest Proficiency</button>
+        <button class="btn-reset" onclick="clearData()">Reset All Data</button>
+    </div>
+
+    <div class="container" id="hero-list">
+        </div>
+
+    <div class="backup-section">
+        <div class="backup-title">Data Backup & Restore</div>
+        <div class="backup-controls">
+            <button class="btn-backup" onclick="exportData()">Export Backup (Copy)</button>
+            <button class="btn-backup" onclick="importData()">Import Backup (Paste)</button>
+        </div>
+    </div>
+
+    <script>
+        // Hero Data with Roles for Icon Mapping
+        const heroDefinitions = [
+            { name: "Adam Warlock", role: "Strategist" },
+            { name: "Angela", role: "Vanguard" },
+            { name: "Black Panther", role: "Duelist" },
+            { name: "Black Widow", role: "Duelist" },
+            { name: "Blade", role: "Duelist" },
+            { name: "Hulk", role: "Vanguard" },
+            { name: "Captain America", role: "Vanguard" },
+            { name: "Cloak and Dagger", role: "Strategist" },
+            { name: "Daredevil", role: "Duelist" },
+            { name: "Doctor Strange", role: "Vanguard" },
+            { name: "Emma Frost", role: "Vanguard" }, 
+            { name: "Gambit", role: "Strategist" },
+            { name: "Groot", role: "Vanguard" },
+            { name: "Hawkeye", role: "Duelist" },
+            { name: "Hela", role: "Duelist" },
+            { name: "Human Torch", role: "Duelist" },
+            { name: "Invisible Woman", role: "Strategist" },
+            { name: "Iron Fist", role: "Duelist" },
+            { name: "Iron Man", role: "Duelist" },
+            { name: "Jeff The Land Shark", role: "Strategist" },
+            { name: "Loki", role: "Strategist" },
+            { name: "Luna Snow", role: "Strategist" },
+            { name: "Magik", role: "Duelist" },
+            { name: "Magneto", role: "Vanguard" },
+            { name: "Mantis", role: "Strategist" },
+            { name: "Mister Fantastic", role: "Duelist" },
+            { name: "Moon Knight", role: "Duelist" },
+            { name: "Namor", role: "Duelist" },
+            { name: "Peni Parker", role: "Vanguard" },
+            { name: "Phoenix", role: "Duelist" },
+            { name: "Psylocke", role: "Duelist" },
+            { name: "Rocket Raccoon", role: "Strategist" },
+            { name: "Rogue", role: "Vanguard" },
+            { name: "Scarlet Witch", role: "Duelist" },
+            { name: "Spider Man", role: "Duelist" },
+            { name: "Squirrel Girl", role: "Duelist" },
+            { name: "Star Lord", role: "Duelist" },
+            { name: "Storm", role: "Duelist" },
+            { name: "The Punisher", role: "Duelist" },
+            { name: "The Thing", role: "Vanguard" },
+            { name: "Thor", role: "Vanguard" },
+            { name: "Ultron", role: "Strategist" },
+            { name: "Venom", role: "Vanguard" },
+            { name: "Winter Soldier", role: "Duelist" },
+            { name: "Wolverine", role: "Duelist" }
+        ];
+
+        const rankBaselines = {
+            "Agent": 0,
+            "Knight": 500,
+            "Captain": 1700,
+            "Centurion": 3700,
+            "Lord": 6100
+        };
+
+        const ranks = ["Agent", "Knight", "Captain", "Centurion", "Lord"];
+        let heroData = [];
+
+        // Helper to get filename from hero name
+        function getHeroFileName(name) {
+            if (name === "Cloak and Dagger") return "Cloak&Dagger.webp";
+            if (name === "Jeff The Land Shark") return "JefftheLandShark.webp"; 
+            if (name === "Spider Man") return "Spider-Man.webp";
+            if (name === "Star Lord") return "Star-Lord.webp";
+            return name.replace(/\s+/g, '') + ".webp";
+        }
+
+        function init() {
+            // Using V3 key as established in your brother's code
+            const savedData = localStorage.getItem('marvelRivalsDataV3');
+            
+            if (savedData) {
+                const parsedData = JSON.parse(savedData);
+                heroData = heroDefinitions.map(def => {
+                    const saved = parsedData.find(p => p.name === def.name);
+                    return saved ? { ...def, ...saved } : { ...def, rank: "Agent", points: 0 };
+                });
+            } else {
+                heroData = heroDefinitions.map(def => ({
+                    ...def,
+                    rank: "Agent",
+                    points: 0
+                }));
+            }
+            renderList();
+        }
+
+        function calculateTotalScore(hero) {
+            const baseline = rankBaselines[hero.rank] || 0;
+            const points = parseInt(hero.points) || 0;
+            return baseline + points;
+        }
+
+        function renderList() {
+            const container = document.getElementById('hero-list');
+            container.innerHTML = `
+                <div class="hero-row header-row">
+                    <div></div>
+                    <div>Hero & Score</div>
+                    <div>Rank</div>
+                    <div>Points</div>
+                </div>
+            `;
+
+            heroData.forEach((hero, index) => {
+                const row = document.createElement('div');
+                row.className = 'hero-row';
+                
+                let options = ranks.map(r => 
+                    `<option value="${r}" ${hero.rank === r ? 'selected' : ''}>${r}</option>`
+                ).join('');
+
+                const subFolder = hero.rank === 'Lord' ? 'lord/' : '';
+                const heroImgPath = `img/char/${subFolder}${getHeroFileName(hero.name)}`;
+                const roleIconPath = `img/${hero.role}_Icon.webp`;
+                const rankBadgePath = `img/icons/${hero.rank}_Badge.webp`;
+
+                row.innerHTML = `
+                    <div class="portrait-container">
+                        <img src="${heroImgPath}" class="hero-portrait rank-${hero.rank}" 
+                             onerror="this.src='img/char/${getHeroFileName(hero.name)}'" alt="${hero.name}">
+                        <img src="${roleIconPath}" class="role-icon-mini" title="${hero.role}" 
+                             onerror="this.style.display='none'">
+                    </div>
+
+                    <div class="hero-details">
+                        <span class="hero-name ${'rank-' + hero.rank}">${hero.name}</span>
+                        <div class="total-score">Lifetime: ${calculateTotalScore(hero)}</div>
+                    </div>
+
+                    <div class="rank-select-container">
+                        <img src="${rankBadgePath}" class="rank-badge-img" onerror="this.style.display='none'">
+                        <select onchange="updateHero(${index}, 'rank', this.value)">
+                            ${options}
+                        </select>
+                    </div>
+
+                    <div>
+                        <input type="number" value="${hero.points}" min="0" 
+                               onchange="updateHero(${index}, 'points', this.value)" placeholder="0">
+                    </div>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        function updateHero(index, field, value) {
+            heroData[index][field] = value;
+            saveData();
+            if(field === 'rank') {
+                renderList(); 
+            } else {
+                const row = document.querySelectorAll('.hero-row')[index + 1];
+                const scoreDisplay = row.querySelector('.total-score');
+                scoreDisplay.innerText = `Lifetime: ${calculateTotalScore(heroData[index])}`;
+            }
+        }
+
+        function sortHeroes() {
+            heroData.sort((a, b) => calculateTotalScore(b) - calculateTotalScore(a));
+            renderList();
+            saveData();
+        }
+
+        function saveData() {
+            localStorage.setItem('marvelRivalsDataV3', JSON.stringify(heroData));
+        }
+
+        function clearData() {
+            if(confirm("Are you sure you want to clear all your inputs?")) {
+                localStorage.removeItem('marvelRivalsDataV3');
+                location.reload();
+            }
+        }
+
+        // ========================
+        // BACKUP FUNCTIONS
+        // ========================
+        function exportData() {
+            const dataStr = JSON.stringify(heroData);
+            navigator.clipboard.writeText(dataStr).then(() => {
+                alert("Data copied to clipboard! Paste it into a text file or email to save it.");
+            }).catch(err => {
+                prompt("Could not auto-copy. Please copy this text manually:", dataStr);
+            });
+        }
+
+        function importData() {
+            const inputData = prompt("Paste your backup code here:");
+            if (inputData) {
+                try {
+                    const parsed = JSON.parse(inputData);
+                    if(Array.isArray(parsed)) {
+                        // FIXED: Ensuring this uses the V3 key so the data actually loads
+                        localStorage.setItem('marvelRivalsDataV3', inputData);
+                        alert("Data loaded successfully! The page will now reload.");
+                        location.reload();
+                    } else {
+                        alert("Invalid data format.");
+                    }
+                } catch (e) {
+                    alert("Error reading data. Make sure you pasted the entire code.");
+                }
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>
