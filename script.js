@@ -90,6 +90,18 @@ function init() {
 	renderList();
 }
 
+function toggleFilters() {
+	const content = document.getElementById("filter-content");
+	const arrow = document.getElementById("filter-arrow");
+	content.classList.toggle("expanded");
+
+	if (content.classList.contains("expanded")) {
+		arrow.style.transform = "rotate(90deg)";
+	} else {
+		arrow.style.transform = "rotate(0deg)";
+	}
+}
+
 function calculateTotalScore(hero) {
 	const baseline = rankBaselines[hero.rank] || 0;
 	const points = parseInt(hero.points) || 0;
@@ -132,16 +144,33 @@ function getProgressInfo(hero) {
 
 function renderList() {
 	const container = document.getElementById("hero-list");
-	container.innerHTML = `
-                <div class="hero-row header-row">
-                    <div></div>
-                    <div>Hero & Progress</div>
-                    <div>Rank</div>
-                    <div>Points</div>
-                </div>
-            `;
 
-	heroData.forEach((hero, index) => {
+	// Get Filter Values
+	const searchText = document.getElementById("searchInput").value.toLowerCase();
+	const checkedRoles = Array.from(document.querySelectorAll(".role-filters input:checked")).map((cb) => cb.value);
+
+	// Filter Data
+	const visibleHeroes = heroData.filter((hero) => {
+		const matchesName = hero.name.toLowerCase().includes(searchText);
+		const matchesRole = checkedRoles.includes(hero.role);
+		return matchesName && matchesRole;
+	});
+
+	container.innerHTML = `
+				<div class="hero-row header-row">
+					<div></div>
+					<div>Hero & Progress</div>
+					<div>Rank</div>
+					<div>Points</div>
+				</div>
+			`;
+
+	if (visibleHeroes.length === 0) {
+		container.innerHTML += `<div style="text-align:center; padding:20px; color:#666;">No heroes found matching your filters.</div>`;
+		return;
+	}
+
+	visibleHeroes.forEach((hero, index) => {
 		const row = document.createElement("div");
 		row.className = "hero-row";
 
@@ -155,7 +184,7 @@ function renderList() {
 		const progress = getProgressInfo(hero);
 		const totalScore = calculateTotalScore(hero);
 
-		// === LOGIC FOR LORD OVERFILL ===
+		// >> Lord Overfill <<
 		let progressHTML = "";
 
 		if (hero.rank === "Lord") {
@@ -202,6 +231,7 @@ function renderList() {
 		const maxAttr = maxPoints ? `max="${maxPoints}"` : "";
 
 		// Added background-color style to img
+		// Important: pass hero.name now instead of index, because index changes with filtering
 		row.innerHTML = `
 					<div class="portrait-container">
 						<img src="${heroImgPath}" 
@@ -223,14 +253,14 @@ function renderList() {
 
 					<div class="rank-select-container">
 						<img src="${rankBadgePath}" class="rank-badge-img" onerror="this.style.display='none'">
-						<select onchange="updateHero(${index}, 'rank', this.value)">
+						<select onchange="updateHero('${hero.name}', 'rank', this.value)">
 							${options}
 						</select>
 					</div>
 
 					<div class="point-container">
 						<input type="number" value="${hero.points}" min="0" ${maxAttr}
-								onchange="updateHero(${index}, 'points', this.value)" placeholder="0">
+								onchange="updateHero('${hero.name}', 'points', this.value)" placeholder="0">
 						<span class="point-suffix">${suffix}</span>
 					</div>
 				`;
@@ -238,7 +268,11 @@ function renderList() {
 	});
 }
 
-function updateHero(index, field, value) {
+function updateHero(name, field, value) {
+	// Find index in the MASTER list
+	const index = heroData.findIndex((h) => h.name === name);
+	if (index === -1) return;
+
 	let hero = heroData[index];
 
 	if (field === "rank") {

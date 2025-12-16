@@ -338,7 +338,8 @@ input:hover {
 	margin-bottom: 5px;
 }
 
-/* BACKUP SECTION STYLES */
+
+/* Backup Section Styles */
 .backup-section {
 	width: 100%;
 	max-width: 900px;
@@ -385,6 +386,109 @@ input:hover {
 	display: none;
 }
 
+
+/* >> Filter Styles << */
+.filter-container {
+    width: 100%;
+    max-width: 950px;
+    margin-bottom: 20px;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: border-color 0.3s;
+}
+
+.filter-container:hover {
+    border-color: #555;
+}
+
+.btn-filter-toggle {
+	font-weight: 500;
+    width: 100%;
+    background: transparent;
+    color: #888;
+    text-align: left;
+    /* padding: 12px 20px; */
+    font-size: 0.9em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-filter-toggle:hover {
+    background-color: rgba(255,255,255,0.02);
+    color: #fff;
+}
+
+#filter-arrow {
+    font-size: 0.8em;
+    transition: transform 0.3s ease;
+}
+
+.filter-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+    opacity: 0;
+    background-color: rgba(0,0,0,0.2);
+}
+
+.filter-content.expanded {
+    max-height: 150px; /* Adjust if content grows */
+    opacity: 1;
+}
+
+.filter-inner {
+    padding: 15px 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: center;
+    border-top: 1px solid var(--border-color);
+}
+
+#searchInput {
+    flex: 1;
+    min-width: 200px;
+    background-color: #000;
+    border: 1px solid #333;
+}
+
+#searchInput:focus {
+    border-color: var(--color-knight);
+    outline: none;
+}
+
+.role-filters {
+    display: flex;
+    gap: 15px;
+}
+
+.role-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    color: #bbb;
+    user-select: none;
+}
+
+.role-checkbox:hover {
+    color: #fff;
+}
+
+.role-checkbox input {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: var(--color-knight);
+}
+
+
+/* >> Mobile Styles << */
 @media (max-width: 600px) {
 	.hero-row {
 		grid-template-columns: 60px 1fr;

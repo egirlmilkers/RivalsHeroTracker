@@ -4,7 +4,7 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-		<title>Marvel Rivals Proficiency Tracker v4.2</title>
+		<title>Marvel Rivals Proficiency Tracker</title>
 
 		<link rel="stylesheet" href="styles.css">
 	</head>
@@ -17,6 +17,32 @@
 			<button class="btn-sort" onclick="sortHeroes()">Sort by Highest Proficiency</button>
 			<button class="btn-reset" onclick="clearData()">Reset All Data</button>
 		</div>
+
+		<div class="filter-container">
+            <button class="btn-filter-toggle" onclick="toggleFilters()">
+                <span id="filter-arrow">▶</span> Filter & Search
+            </button>
+            <div id="filter-content" class="filter-content">
+                <div class="filter-inner">
+                    <input type="text" id="searchInput" placeholder="Search heroes..." oninput="renderList()">
+                    
+                    <div class="role-filters">
+                        <label class="role-checkbox">
+                            <input type="checkbox" value="Vanguard" checked onchange="renderList()"> 
+                            <span class="role-text">Vanguard</span>
+                        </label>
+                        <label class="role-checkbox">
+                            <input type="checkbox" value="Duelist" checked onchange="renderList()"> 
+                            <span class="role-text">Duelist</span>
+                        </label>
+                        <label class="role-checkbox">
+                            <input type="checkbox" value="Strategist" checked onchange="renderList()"> 
+                            <span class="role-text">Strategist</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
 
 		<div class="container" id="hero-list">
 			<!-- JS Injects content here -->
