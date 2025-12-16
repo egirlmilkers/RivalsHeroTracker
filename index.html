@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Marvel Rivals Proficiency Tracker v3 (Visual)</title>
+    <title>Marvel Rivals Proficiency Tracker v4</title>
     <style>
         :root {
             --bg-color: #0a0a0a;
@@ -88,7 +88,7 @@
 
         .container {
             width: 100%;
-            max-width: 900px;
+            max-width: 950px;
             background-color: var(--card-bg);
             border-radius: 12px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.7);
@@ -99,11 +99,10 @@
 
         .hero-row {
             display: grid;
-            /* Added column for portrait and badge */
-            grid-template-columns: 60px 2fr 1.2fr 1fr; 
+            grid-template-columns: 70px 2.5fr 1.2fr 1fr; 
             gap: 15px;
             align-items: center;
-            padding: 12px 5px;
+            padding: 15px 5px;
             border-bottom: 1px solid var(--border-color);
             transition: background 0.2s;
         }
@@ -119,8 +118,8 @@
         /* Image Styles */
         .portrait-container {
             position: relative;
-            width: 60px;
-            height: 60px;
+            width: 65px;
+            height: 65px;
         }
 
         .hero-portrait {
@@ -158,16 +157,58 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
+            min-width: 0; /* Prevents flex overflow */
         }
 
         .hero-name {
             font-size: 1.2em;
             font-weight: 600;
             transition: all 0.4s ease-out; 
-            padding-bottom: 4px;
+            margin-bottom: 4px;
             display: flex;
             align-items: center;
         }
+
+        /* Progress Bar Styles */
+        .progress-section {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-top: 4px;
+        }
+
+        .progress-label {
+            font-size: 0.7em;
+            color: #888;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2px;
+        }
+
+        .progress-bg {
+            width: 100%;
+            height: 6px;
+            background-color: #333;
+            border-radius: 3px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.5s ease-in-out;
+        }
+
+        /* Dynamic Progress Colors */
+        .fill-next-Knight { background-color: var(--color-knight); box-shadow: 0 0 5px var(--glow-knight); }
+        .fill-next-Captain { background-color: var(--color-captain); box-shadow: 0 0 5px var(--glow-captain); }
+        .fill-next-Centurion { background-color: var(--color-centurion); box-shadow: 0 0 5px var(--glow-centurion); }
+        .fill-next-Lord { background-color: var(--color-lord); box-shadow: 0 0 5px var(--glow-lord); }
+        .fill-max { background-color: gold; box-shadow: 0 0 8px gold; }
+
+        .fill-total { background: linear-gradient(90deg, #444, var(--color-lord)); }
+
 
         .rank-select-container {
             display: flex;
@@ -205,13 +246,13 @@
             margin-bottom: 10px;
             border-bottom: 2px solid var(--border-color);
             padding-bottom: 15px;
-            grid-template-columns: 60px 2fr 1.2fr 1fr; /* Match body columns */
+            grid-template-columns: 70px 2.5fr 1.2fr 1fr; 
         }
 
-        .total-score {
+        .total-score-text {
             font-size: 0.8em;
-            color: #888;
-            margin-top: 4px;
+            color: #bbb;
+            margin-bottom: 5px;
         }
 
         /* BACKUP SECTION STYLES */
@@ -219,12 +260,13 @@
             width: 100%;
             max-width: 900px;
             background-color: #1a1a1a;
-            border: 1px dashed #444;
+            border: 1px solid #333;
             border-radius: 8px;
             padding: 20px;
             text-align: center;
             color: #888;
             margin-bottom: 50px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
         }
         
         .backup-title {
@@ -232,28 +274,36 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             margin-bottom: 15px;
-            color: #555;
+            color: #fff;
+            font-weight: bold;
         }
 
         .backup-controls {
             display: flex;
-            gap: 10px;
+            gap: 15px;
             justify-content: center;
+            align-items: center;
         }
 
         .btn-backup {
-            background-color: #2c2c2c;
+            background-color: #333;
             color: #ccc;
             font-size: 0.9em;
+            border: 1px solid #444;
         }
         .btn-backup:hover {
-            background-color: #444;
-            color: white;
+            background-color: var(--color-knight);
+            color: #000;
+            border-color: var(--color-knight);
+        }
+
+        #fileInput {
+            display: none;
         }
 
         @media (max-width: 600px) {
             .hero-row {
-                grid-template-columns: 50px 1fr; /* Stack on mobile */
+                grid-template-columns: 60px 1fr; /* Stack on mobile */
                 grid-template-rows: auto auto auto;
                 gap: 10px;
                 padding: 15px;
@@ -280,13 +330,18 @@
     </div>
 
     <div class="container" id="hero-list">
-        </div>
+        <!-- JS Injects content here -->
+    </div>
 
     <div class="backup-section">
-        <div class="backup-title">Data Backup & Restore</div>
+        <div class="backup-title">Data Management (JSON)</div>
         <div class="backup-controls">
-            <button class="btn-backup" onclick="exportData()">Export Backup (Copy)</button>
-            <button class="btn-backup" onclick="importData()">Import Backup (Paste)</button>
+            <button class="btn-backup" onclick="downloadBackup()">Download Backup (.json)</button>
+            <button class="btn-backup" onclick="document.getElementById('fileInput').click()">Upload Backup</button>
+            <input type="file" id="fileInput" accept=".json" onchange="handleFileUpload(this)">
+        </div>
+        <div style="margin-top:10px; font-size: 0.8em; color: #555;">
+            Save the .json file to your PC. Upload it later to restore your progress.
         </div>
     </div>
 
@@ -294,20 +349,20 @@
         // Hero Data with Roles for Icon Mapping
         const heroDefinitions = [
             { name: "Adam Warlock", role: "Strategist" },
-            { name: "Angela", role: "Vanguard" },
+            { name: "Angela", role: "Duelist" },
             { name: "Black Panther", role: "Duelist" },
             { name: "Black Widow", role: "Duelist" },
             { name: "Blade", role: "Duelist" },
-            { name: "Hulk", role: "Vanguard" },
             { name: "Captain America", role: "Vanguard" },
             { name: "Cloak and Dagger", role: "Strategist" },
             { name: "Daredevil", role: "Duelist" },
             { name: "Doctor Strange", role: "Vanguard" },
             { name: "Emma Frost", role: "Vanguard" }, 
-            { name: "Gambit", role: "Strategist" },
+            { name: "Gambit", role: "Duelist" },
             { name: "Groot", role: "Vanguard" },
             { name: "Hawkeye", role: "Duelist" },
             { name: "Hela", role: "Duelist" },
+            { name: "Hulk", role: "Vanguard" },
             { name: "Human Torch", role: "Duelist" },
             { name: "Invisible Woman", role: "Strategist" },
             { name: "Iron Fist", role: "Duelist" },
@@ -325,7 +380,7 @@
             { name: "Phoenix", role: "Duelist" },
             { name: "Psylocke", role: "Duelist" },
             { name: "Rocket Raccoon", role: "Strategist" },
-            { name: "Rogue", role: "Vanguard" },
+            { name: "Rogue", role: "Duelist" },
             { name: "Scarlet Witch", role: "Duelist" },
             { name: "Spider Man", role: "Duelist" },
             { name: "Squirrel Girl", role: "Duelist" },
@@ -334,7 +389,7 @@
             { name: "The Punisher", role: "Duelist" },
             { name: "The Thing", role: "Vanguard" },
             { name: "Thor", role: "Vanguard" },
-            { name: "Ultron", role: "Strategist" },
+            { name: "Ultron", role: "Duelist" },
             { name: "Venom", role: "Vanguard" },
             { name: "Winter Soldier", role: "Duelist" },
             { name: "Wolverine", role: "Duelist" }
@@ -349,6 +404,7 @@
         };
 
         const ranks = ["Agent", "Knight", "Captain", "Centurion", "Lord"];
+        
         let heroData = [];
 
         // Helper to get filename from hero name
@@ -361,7 +417,6 @@
         }
 
         function init() {
-            // Using V3 key as established in your brother's code
             const savedData = localStorage.getItem('marvelRivalsDataV3');
             
             if (savedData) {
@@ -386,12 +441,45 @@
             return baseline + points;
         }
 
+        function getProgressInfo(hero) {
+            const total = calculateTotalScore(hero);
+            const currentRankIndex = ranks.indexOf(hero.rank);
+            
+            // Stats for Next Badge
+            let nextRankName = "Max Rank";
+            let nextRankPct = 100;
+            let nextRankClass = "fill-max";
+
+            if (currentRankIndex < ranks.length - 1) {
+                nextRankName = ranks[currentRankIndex + 1];
+                
+                const currentBase = rankBaselines[hero.rank];
+                const nextBase = rankBaselines[nextRankName];
+                const pointsInTier = total - currentBase;
+                const tierSpan = nextBase - currentBase;
+                
+                nextRankPct = Math.min(100, Math.max(0, (pointsInTier / tierSpan) * 100));
+                nextRankClass = `fill-next-${nextRankName}`;
+            }
+
+            // Stats for Lord (Total)
+            const lordBase = rankBaselines["Lord"];
+            const lordPct = Math.min(100, (total / lordBase) * 100);
+
+            return {
+                nextRankName,
+                nextRankPct: nextRankPct.toFixed(1),
+                nextRankClass,
+                lordPct: lordPct.toFixed(1)
+            };
+        }
+
         function renderList() {
             const container = document.getElementById('hero-list');
             container.innerHTML = `
                 <div class="hero-row header-row">
                     <div></div>
-                    <div>Hero & Score</div>
+                    <div>Hero & Progress</div>
                     <div>Rank</div>
                     <div>Points</div>
                 </div>
@@ -410,6 +498,13 @@
                 const roleIconPath = `img/${hero.role}_Icon.webp`;
                 const rankBadgePath = `img/icons/${hero.rank}_Badge.webp`;
 
+                const progress = getProgressInfo(hero);
+                const totalScore = calculateTotalScore(hero);
+
+                // Logic to hide next bar if max rank
+                const nextBarVisibility = hero.rank === 'Lord' ? 'visibility:hidden;' : '';
+                const nextText = hero.rank === 'Lord' ? 'Max Rank Achieved' : `To ${progress.nextRankName}`;
+
                 row.innerHTML = `
                     <div class="portrait-container">
                         <img src="${heroImgPath}" class="hero-portrait rank-${hero.rank}" 
@@ -419,8 +514,28 @@
                     </div>
 
                     <div class="hero-details">
-                        <span class="hero-name ${'rank-' + hero.rank}">${hero.name}</span>
-                        <div class="total-score">Lifetime: ${calculateTotalScore(hero)}</div>
+                        <span class="hero-name ${'rank-' + hero.rank}">
+                            ${hero.name} 
+                            <span style="font-size:0.7em; margin-left:10px; color:#666; font-weight:normal;">(${totalScore})</span>
+                        </span>
+                        
+                        <div class="progress-section">
+                            <div class="progress-label">
+                                <span>${nextText}</span>
+                                <span>${progress.nextRankPct}%</span>
+                            </div>
+                            <div class="progress-bg" style="${nextBarVisibility}">
+                                <div class="progress-fill ${progress.nextRankClass}" style="width: ${progress.nextRankPct}%"></div>
+                            </div>
+
+                            <div class="progress-label" style="margin-top:2px;">
+                                <span>To Lord</span>
+                                <span>${progress.lordPct}%</span>
+                            </div>
+                            <div class="progress-bg">
+                                <div class="progress-fill fill-total" style="width: ${progress.lordPct}%"></div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="rank-select-container">
@@ -442,13 +557,8 @@
         function updateHero(index, field, value) {
             heroData[index][field] = value;
             saveData();
-            if(field === 'rank') {
-                renderList(); 
-            } else {
-                const row = document.querySelectorAll('.hero-row')[index + 1];
-                const scoreDisplay = row.querySelector('.total-score');
-                scoreDisplay.innerText = `Lifetime: ${calculateTotalScore(heroData[index])}`;
-            }
+            // Re-render completely to update progress bars and totals accurately
+            renderList(); 
         }
 
         function sortHeroes() {
@@ -469,34 +579,52 @@
         }
 
         // ========================
-        // BACKUP FUNCTIONS
+        // FILE BACKUP FUNCTIONS
         // ========================
-        function exportData() {
-            const dataStr = JSON.stringify(heroData);
-            navigator.clipboard.writeText(dataStr).then(() => {
-                alert("Data copied to clipboard! Paste it into a text file or email to save it.");
-            }).catch(err => {
-                prompt("Could not auto-copy. Please copy this text manually:", dataStr);
-            });
+        
+        // 1. Download JSON File
+        function downloadBackup() {
+            const dataStr = JSON.stringify(heroData, null, 2); // Pretty print
+            const blob = new Blob([dataStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = "marvel_rivals_backup_" + new Date().toISOString().slice(0,10) + ".json";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
         }
 
-        function importData() {
-            const inputData = prompt("Paste your backup code here:");
-            if (inputData) {
+        // 2. Handle File Upload
+        function handleFileUpload(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
                 try {
-                    const parsed = JSON.parse(inputData);
-                    if(Array.isArray(parsed)) {
-                        // FIXED: Ensuring this uses the V3 key so the data actually loads
-                        localStorage.setItem('marvelRivalsDataV3', inputData);
-                        alert("Data loaded successfully! The page will now reload.");
-                        location.reload();
+                    const contents = e.target.result;
+                    const parsedData = JSON.parse(contents);
+
+                    // Basic validation
+                    if (Array.isArray(parsedData) && parsedData.length > 0 && parsedData[0].hasOwnProperty('name')) {
+                        if(confirm("This will overwrite your current data with the backup file. Continue?")) {
+                            localStorage.setItem('marvelRivalsDataV3', JSON.stringify(parsedData));
+                            alert("Backup restored successfully!");
+                            location.reload();
+                        }
                     } else {
-                        alert("Invalid data format.");
+                        alert("Invalid backup file format.");
                     }
-                } catch (e) {
-                    alert("Error reading data. Make sure you pasted the entire code.");
+                } catch (err) {
+                    alert("Error reading file: " + err);
                 }
-            }
+            };
+            reader.readAsText(file);
+            // Reset input so you can upload the same file again if needed
+            input.value = '';
         }
 
         init();
