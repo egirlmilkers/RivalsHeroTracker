@@ -477,7 +477,7 @@ async function generateRouletteJSON() {
 	const sEntries = await processEntries(strategists, sWeight);
 
 	// Combine them all into the final entries array and sort by name again
-	const entries = [...vEntries, ...dEntries, ...sEntries].sort((a, b) => a.imageName.localeCompare(b.imageName));
+	const entries = [...vEntries, ...dEntries, ...sEntries].sort((a, b) => b.imageName.localeCompare(a.imageName));
 
 	// 4. Construct the full JSON object using settings from the user's example
 	const rouletteData = {
