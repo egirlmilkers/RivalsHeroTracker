@@ -6,21 +6,39 @@
 	--border-color: #333;
 
 	/* Rank Colors */
-	--color-agent: #b8c4cc;
+	--color-agent: #8f7c5d;
 
-	--color-knight: #71b2da;
-	--glow-knight: #65749799;
+	--color-knight: #737890;
+	--glow-knight: #b4c1cb99;
 
-	--color-captain: #be68fa;
-	--glow-captain: #6152a4;
+	--color-captain: #5e8795;
+	--glow-captain: #94c2cc;
 
-	--color-centurion: #f5b149;
-	--glow-centurion: #816b55;
+	--color-centurion: #6c80a0;
+	--glow-centurion: #8bb2e7;
 
-	--color-lord: #f73e46;
-	--glow-lord: #ce000e;
+	--color-lord: #ffce76;
+	--glow-lord: #7f6b56;
 
-	--color-gold: #ffd700;
+	--color-count: #8fcdd8;
+	--glow-count: #c0f5ff;
+
+	--color-colonel: #74b4de;
+	--glow-colonel: #a8defc;
+
+	--color-warrior: #c982f3;
+	--glow-warrior: #e5b6fa;
+
+	--color-elite: #f87940;
+	--glow-elite: #f7925d;
+
+	--color-guardian: #eb79dd;
+	--glow-guardian: #ffb2f8;
+
+	--color-champion: #f62a42;
+	--glow-champion: #f7cd35;
+
+	--color-gold: #d5a246;
 }
 
 body {
@@ -142,7 +160,8 @@ button:active {
 	/* transition: border-color 0.3s; */
 }
 
-.role-icon-mini {
+.role-icon-container {
+	display: flex;
 	position: absolute;
 	bottom: -10px;
 	right: -10px;
@@ -153,6 +172,10 @@ button:active {
 	padding: 2px;
 	/* border: 1px solid var(--border-color); */
 	z-index: 2;
+	justify-content: end;
+}
+
+.role-icon-mini {
 	filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.8));
 }
 
@@ -232,9 +255,39 @@ button:active {
 	box-shadow: 0 0 5px var(--glow-lord);
 }
 
+.fill-next-Count {
+	background-color: var(--color-count);
+	box-shadow: 0 0 5px var(--glow-count);
+}
+
+.fill-next-Colonel {
+	background-color: var(--color-colonel);
+	box-shadow: 0 0 5px var(--glow-colonel);
+}
+
+.fill-next-Warrior {
+	background-color: var(--color-warrior);
+	box-shadow: 0 0 5px var(--glow-warrior);
+}
+
+.fill-next-Elite {
+	background-color: var(--color-elite);
+	box-shadow: 0 0 5px var(--glow-elite);
+}
+
+.fill-next-Guardian {
+	background-color: var(--color-guardian);
+	box-shadow: 0 0 5px var(--glow-guardian);
+}
+
+.fill-next-Champion {
+	background-color: var(--color-champion);
+	box-shadow: 0 0 5px var(--glow-champion);
+}
+
 .fill-max {
-	background-color: gold;
-	box-shadow: 0 0 8px gold;
+	background-color: var(--color-gold);
+	box-shadow: 0 0 8px var(--glow-gold);
 }
 
 .fill-total {
@@ -273,16 +326,64 @@ button:active {
 .rank-Centurion {
 	color: var(--color-centurion);
 	font-size: 1.25em;
-	text-shadow: 0 0 15px var(--glow-centurion);
+	text-shadow: 0 0 14px var(--glow-centurion);
 	border-color: var(--color-centurion);
 }
 
 .rank-Lord {
 	color: var(--color-lord);
+	font-weight: 500;
+	font-size: 1.3em;
+	text-shadow: 0 0 16px var(--glow-lord);
+	border-color: var(--color-lord);
+}
+
+.rank-Count {
+	color: var(--color-count);
+	font-weight: 600;
+	font-size: 1.3em;
+	text-shadow: 0 0 16px var(--glow-count);
+	border-color: var(--color-count);
+}
+
+.rank-Colonel {
+	color: var(--color-colonel);
+	font-weight: 600;
+	font-size: 1.3em;
+	text-shadow: 0 0 18px var(--glow-colonel);
+	border-color: var(--color-colonel);
+}
+
+.rank-Warrior {
+	color: var(--color-warrior);
+	font-weight: 700;
+	font-size: 1.3em;
+	text-shadow: 0 0 18px var(--glow-warrior);
+	border-color: var(--color-warrior);
+}
+
+.rank-Elite {
+	color: var(--color-elite);
+	font-weight: 700;
+	font-size: 1.3em;
+	text-shadow: 0 0 20px var(--glow-elite);
+	border-color: var(--color-elite);
+}
+
+.rank-Guardian {
+	color: var(--color-guardian);
 	font-weight: 800;
 	font-size: 1.3em;
-	text-shadow: 0 0 20px var(--glow-lord);
-	border-color: var(--color-lord);
+	text-shadow: 0 0 20px var(--glow-guardian);
+	border-color: var(--color-guardian);
+}
+
+.rank-Champion {
+	color: var(--color-champion);
+	font-weight: 900;
+	font-size: 1.3em;
+	text-shadow: 0 0 22px var(--glow-champion);
+	border-color: var(--color-champion);
 }
 
 select,

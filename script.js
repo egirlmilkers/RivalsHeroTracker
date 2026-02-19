@@ -4,11 +4,13 @@ const heroDefinitions = [
 	{ name: "Black Panther", role: "Duelist", color: "#a86ccf" },
 	{ name: "Black Widow", role: "Duelist", color: "#545a68" },
 	{ name: "Blade", role: "Duelist", color: "#ba4340" },
-	{ name: "Hulk", role: "Vanguard", color: "#448f56" },
+	{ name: "Bruce Banner", role: "Vanguard", color: "#448f56" },
 	{ name: "Captain America", role: "Vanguard", color: "#366bac" },
 	{ name: "Cloak and Dagger", role: "Strategist", color: "#899de1" },
 	{ name: "Daredevil", role: "Duelist", color: "#d44a69" },
+	{ name: "Deadpool", role: ["Vanguard", "Duelist", "Strategist"], color: "#d55959" },
 	{ name: "Doctor Strange", role: "Vanguard", color: "#ee7d5e" },
+	{ name: "Elsa Bloodstone", role: "Duelist", color: "#ee855f" },
 	{ name: "Emma Frost", role: "Vanguard", color: "#2599bf" },
 	{ name: "Gambit", role: "Strategist", color: "#bd5e98" },
 	{ name: "Groot", role: "Vanguard", color: "#7b9e63" },
@@ -46,23 +48,36 @@ const heroDefinitions = [
 	{ name: "Wolverine", role: "Duelist", color: "#c49c3e" },
 ];
 
-const rankMaxPoints = {
+const pointsToNextRank = {
 	Agent: 500,
-	Knight: 1200,
-	Captain: 2000,
-	Centurion: 2400,
-	Lord: null,
+	Knight: 1_200,
+	Captain: 2_000,
+	Centurion: 2_400,
+	Lord: 8_000,
+	Count: 8_000,
+	Colonel: 8_000,
+	Warrior: 8_000,
+	Elite: 8_000,
+	Guardian: 8_000,
+	Champion: 62_000,
 };
 
-const rankBaselines = {
+const pointBaselines = {
 	Agent: 0,
-	Knight: rankMaxPoints.Agent,
-	Captain: rankMaxPoints.Agent + rankMaxPoints.Knight,
-	Centurion: rankMaxPoints.Agent + rankMaxPoints.Knight + rankMaxPoints.Captain,
-	Lord: rankMaxPoints.Agent + rankMaxPoints.Knight + rankMaxPoints.Captain + rankMaxPoints.Centurion,
+	Knight: 500,
+	Captain: 1_700,
+	Centurion: 3_700,
+	Lord: 6_100,
+	Count: 14_100,
+	Colonel: 22_100,
+	Warrior: 30_100,
+	Elite: 38_100,
+	Guardian: 46_100,
+	Champion: 54_100,
+	MAX: 116_100
 };
 
-const ranks = ["Agent", "Knight", "Captain", "Centurion", "Lord"];
+const ranks = ["Agent", "Knight", "Captain", "Centurion", "Lord", "Count", "Colonel", "Warrior", "Elite", "Guardian", "Champion"];
 
 let heroData = [];
 
@@ -103,7 +118,7 @@ function toggleFilters() {
 }
 
 function calculateTotalScore(hero) {
-	const baseline = rankBaselines[hero.rank] || 0;
+	const baseline = pointBaselines[hero.rank] || 0;
 	const points = parseInt(hero.points) || 0;
 	return baseline + points;
 }
@@ -113,32 +128,24 @@ function getProgressInfo(hero) {
 	const currentRankIndex = ranks.indexOf(hero.rank);
 
 	// Stats for Next Badge
-	let nextRankName = "Max Rank";
-	let nextRankPct = 100;
-	let nextRankClass = "fill-max";
+	let nextRankName = ranks[currentRankIndex + 1] || 'MAX';
 
-	if (currentRankIndex < ranks.length - 1) {
-		nextRankName = ranks[currentRankIndex + 1];
+	const currentBase = pointBaselines[hero.rank];
+	const nextBase = pointBaselines[nextRankName];
+	const pointsInTier = total - currentBase;
+	const tierSpan = nextBase - currentBase;
 
-		const currentBase = rankBaselines[hero.rank];
-		const nextBase = rankBaselines[nextRankName];
-		const pointsInTier = total - currentBase;
-		const tierSpan = nextBase - currentBase;
+	let nextRankPct = Math.min(100, Math.max(0, (pointsInTier / tierSpan) * 100));
+	let nextRankClass = nextRankName != 'MAX' ? `fill-next-${nextRankName}` : "fill-max";
 
-		nextRankPct = Math.min(100, Math.max(0, (pointsInTier / tierSpan) * 100));
-		nextRankClass = `fill-next-${nextRankName}`;
-	}
-
-	// Stats for Lord (Total)
-	const lordBase = rankBaselines["Lord"];
 	// We allow this to go over 100 now for calculation, but visual clamp is handled in render
-	const rawLordPct = (total / lordBase) * 100;
+	const rawMaxRankPct = (total / pointBaselines.MAX) * 100;
 
 	return {
 		nextRankName,
 		nextRankPct: nextRankPct.toFixed(1),
 		nextRankClass,
-		rawLordPct: rawLordPct.toFixed(1), // Can be > 100
+		rawMaxRankPct: rawMaxRankPct.toFixed(1), // Can be > 100
 	};
 }
 
@@ -152,7 +159,12 @@ function renderList() {
 	// Filter Data
 	const visibleHeroes = heroData.filter((hero) => {
 		const matchesName = hero.name.toLowerCase().includes(searchText);
-		const matchesRole = checkedRoles.includes(hero.role);
+
+		const matchesRole = checkedRoles.length === 0 || (
+			Array.isArray(hero.role) 
+				? hero.role.some(r => checkedRoles.includes(r)) 
+				: checkedRoles.includes(hero.role)
+		);
 		return matchesName && matchesRole;
 	});
 
@@ -176,7 +188,7 @@ function renderList() {
 
 		let options = ranks.map((r) => `<option value="${r}" ${hero.rank === r ? "selected" : ""}>${r}</option>`).join("");
 
-		const subFolder = hero.rank === "Lord" ? "lord/" : "";
+		const subFolder = ranks.indexOf(hero.rank) >= ranks.indexOf("Lord") ? "lord/" : "";
 		const heroImgPath = `img/char/${subFolder}${getHeroFileName(hero.name)}`;
 		const roleIconPath = `img/${hero.role}_Icon.webp`;
 		const rankBadgePath = `img/icons/${hero.rank}_Badge.webp`;
@@ -187,13 +199,13 @@ function renderList() {
 		// >> Lord Overfill <<
 		let progressHTML = "";
 
-		if (hero.rank === "Lord") {
+		if (false) {
 			// Only display Lord Overfill bar
 			progressHTML = `
 						<div class="progress-section">
 							<div class="progress-label">
-								<span style="color:var(--color-gold); font-weight:bold;">Lord Mastery</span>
-								<span style="color:var(--color-gold); font-weight:bold;">${progress.rawLordPct}%</span>
+								<span style="color:var(--color-gold); font-weight:bold;">Beyond</span>
+								<span style="color:var(--color-gold); font-weight:bold;">${progress.rawMaxRankPct}%</span>
 							</div>
 							<div class="progress-bg">
 								<div class="progress-fill fill-overfill" style="width: 100%"></div>
@@ -203,7 +215,7 @@ function renderList() {
 		} else {
 			// Display Normal 2 bars
 			// Visual clamp for standard view
-			const visualLordPct = Math.min(100, progress.rawLordPct);
+			const visualMaxRankPct = Math.min(100, progress.rawMaxRankPct);
 
 			progressHTML = `
 						<div class="progress-section">
@@ -217,18 +229,19 @@ function renderList() {
 
 							<div class="progress-label" style="margin-top:2px;">
 								<span>Total Progress</span>
-								<span>${visualLordPct}%</span>
+								<span>${visualMaxRankPct}%</span>
 							</div>
 							<div class="progress-bg">
-								<div class="progress-fill fill-total" style="width: ${visualLordPct}%"></div>
+								<div class="progress-fill fill-total" style="width: ${visualMaxRankPct}%"></div>
 							</div>
 						</div>
 					`;
 		}
 
-		const maxPoints = rankMaxPoints[hero.rank];
+		const maxPoints = pointsToNextRank[hero.rank];
 		const suffix = maxPoints ? `/ ${maxPoints}` : "";
 		const maxAttr = maxPoints ? `max="${maxPoints}"` : "";
+		const displayRole = Array.isArray(hero.role) ? hero.role.join(" / ") : hero.role;
 
 		// Added background-color style to img
 		// Important: pass hero.name now instead of index, because index changes with filtering
@@ -238,8 +251,11 @@ function renderList() {
 							class="hero-portrait rank-${hero.rank}" 
 							style="background: linear-gradient(180deg,rgba(0, 0, 0, 0) 10%, ${hero.color || "#000"} 100%)"
 							onerror="this.src='img/char/${getHeroFileName(hero.name)}'" alt="${hero.name}">
-						<img src="${roleIconPath}" class="role-icon-mini" title="${hero.role}" 
-							onerror="this.style.display='none'">
+						<div class="role-icon-container">
+							<img src="img/Vanguard_Icon.webp" class="role-icon-mini" title="Vanguard" style="display:${displayRole.includes("Vanguard") ? "block" : "none"}">
+							<img src="img/Duelist_Icon.webp" class="role-icon-mini" title="Duelist" style="display:${displayRole.includes("Duelist") ? "block" : "none"}">
+							<img src="img/Strategist_Icon.webp" class="role-icon-mini" title="Strategist" style="display:${displayRole.includes("Strategist") ? "block" : "none"}">
+						</div>
 					</div>
 
 					<div class="hero-details">
@@ -278,12 +294,12 @@ function updateHero(name, field, value) {
 	if (field === "rank") {
 		hero.rank = value;
 		// Check if current points exceed new rank's max
-		const max = rankMaxPoints[value];
+		const max = pointsToNextRank[value];
 		if (max !== null && max !== undefined && parseInt(hero.points) > max) {
 			hero.points = max;
 		}
 	} else if (field === "points") {
-		const max = rankMaxPoints[hero.rank];
+		const max = pointsToNextRank[hero.rank];
 		if (max !== null && max !== undefined) {
 			if (parseInt(value) > max) {
 				value = max;
