@@ -86,7 +86,9 @@ button {
 	border-radius: 4px;
 	cursor: pointer;
 	font-weight: bold;
-	transition: background 0.2s, transform 0.1s;
+	transition:
+		background 0.2s,
+		transform 0.1s;
 	font-family: inherit;
 }
 
@@ -127,7 +129,7 @@ button:active {
 
 .hero-row {
 	display: grid;
-	grid-template-columns: 70px 2.5fr 1.2fr 1fr;
+	grid-template-columns: 70px 2.5fr 1.1fr 1fr;
 	gap: 15px;
 	align-items: center;
 	padding: 15px 5px;
@@ -146,8 +148,6 @@ button:active {
 /* Image Styles */
 .portrait-container {
 	position: relative;
-	/* width: auto; */
-	/* height: auto; */
 }
 
 .hero-portrait {
@@ -155,9 +155,6 @@ button:active {
 	height: 100%;
 	object-fit: cover;
 	border-radius: 12px;
-	/* border: 2px solid var(--border-color); */
-	/* background-color set inline via JS */
-	/* transition: border-color 0.3s; */
 }
 
 .role-icon-container {
@@ -167,10 +164,8 @@ button:active {
 	right: -10px;
 	width: 24px;
 	height: 24px;
-	/* background-color: var(--card-bg); */
 	border-radius: 50%;
 	padding: 2px;
-	/* border: 1px solid var(--border-color); */
 	z-index: 2;
 	justify-content: end;
 }
@@ -180,9 +175,9 @@ button:active {
 }
 
 .rank-badge-img {
-	height: 35px;
+	height: 40px;
 	width: auto;
-	margin-right: 10px;
+	margin-right: 15px;
 	vertical-align: middle;
 	filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.5));
 }
@@ -285,105 +280,73 @@ button:active {
 	box-shadow: 0 0 5px var(--glow-champion);
 }
 
-.fill-max {
-	background-color: var(--color-gold);
-	box-shadow: 0 0 8px var(--glow-gold);
+.fill-next-Agent {
+	background-color: var(--color-agent);
 }
 
 .fill-total {
 	background: linear-gradient(90deg, #444, var(--color-lord));
 }
 
-/* New Overfill Style */
-.fill-overfill {
-	background: linear-gradient(90deg, var(--color-lord), var(--color-gold));
-	box-shadow: 0 0 8px var(--glow-lord);
-}
-
 .rank-select-container {
 	display: flex;
 	align-items: center;
+	justify-content: center;
 }
 
-/* Rank Styles */
+/* Rank Text Colors */
 .rank-Agent {
 	color: var(--color-agent);
-	border-color: var(--color-agent);
 }
 
 .rank-Knight {
 	color: var(--color-knight);
 	text-shadow: 0 0 10px var(--glow-knight);
-	border-color: var(--color-knight);
 }
 
 .rank-Captain {
 	color: var(--color-captain);
 	text-shadow: 0 0 12px var(--glow-captain);
-	border-color: var(--color-captain);
 }
 
 .rank-Centurion {
 	color: var(--color-centurion);
-	font-size: 1.25em;
 	text-shadow: 0 0 14px var(--glow-centurion);
-	border-color: var(--color-centurion);
 }
 
 .rank-Lord {
 	color: var(--color-lord);
-	font-weight: 500;
-	font-size: 1.3em;
 	text-shadow: 0 0 16px var(--glow-lord);
-	border-color: var(--color-lord);
 }
 
 .rank-Count {
 	color: var(--color-count);
-	font-weight: 600;
-	font-size: 1.3em;
 	text-shadow: 0 0 16px var(--glow-count);
-	border-color: var(--color-count);
 }
 
 .rank-Colonel {
 	color: var(--color-colonel);
-	font-weight: 600;
-	font-size: 1.3em;
 	text-shadow: 0 0 18px var(--glow-colonel);
-	border-color: var(--color-colonel);
 }
 
 .rank-Warrior {
 	color: var(--color-warrior);
-	font-weight: 700;
-	font-size: 1.3em;
 	text-shadow: 0 0 18px var(--glow-warrior);
-	border-color: var(--color-warrior);
 }
 
 .rank-Elite {
 	color: var(--color-elite);
-	font-weight: 700;
-	font-size: 1.3em;
 	text-shadow: 0 0 20px var(--glow-elite);
-	border-color: var(--color-elite);
 }
 
 .rank-Guardian {
 	color: var(--color-guardian);
-	font-weight: 800;
-	font-size: 1.3em;
 	text-shadow: 0 0 20px var(--glow-guardian);
-	border-color: var(--color-guardian);
 }
 
 .rank-Champion {
 	color: var(--color-champion);
-	font-weight: 900;
-	font-size: 1.3em;
 	text-shadow: 0 0 22px var(--glow-champion);
-	border-color: var(--color-champion);
 }
 
 select,
@@ -397,6 +360,12 @@ input {
 	font-size: 0.95em;
 	width: 100%;
 	box-sizing: border-box;
+}
+
+/* Specific styling for the new Level Input */
+.level-input {
+	display: flex;
+	padding: 8px;
 }
 
 select {
@@ -432,13 +401,6 @@ input:hover {
 	padding-bottom: 15px;
 	grid-template-columns: 70px 2.5fr 1.2fr 1fr;
 }
-
-.total-score-text {
-	font-size: 0.8em;
-	color: #bbb;
-	margin-bottom: 5px;
-}
-
 
 /* Backup Section Styles */
 .backup-section {
@@ -487,107 +449,108 @@ input:hover {
 	display: none;
 }
 
-
 /* >> Filter Styles << */
 .filter-container {
-    width: 100%;
-    max-width: 950px;
-    margin-bottom: 20px;
-    background-color: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    overflow: hidden;
-    transition: border-color 0.3s;
+	width: 100%;
+	max-width: 950px;
+	margin-bottom: 20px;
+	background-color: var(--card-bg);
+	border: 1px solid var(--border-color);
+	border-radius: 8px;
+	overflow: hidden;
+	transition: border-color 0.3s;
 }
 
 .filter-container:hover {
-    border-color: #555;
+	border-color: #555;
 }
 
 .btn-filter-toggle {
 	font-weight: 500;
-    width: 100%;
-    background: transparent;
-    color: #888;
-    text-align: left;
-    /* padding: 12px 20px; */
-    font-size: 0.9em;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
+	width: 100%;
+	background: transparent;
+	color: #888;
+	text-align: left;
+	/* padding: 12px 20px; */
+	font-size: 0.9em;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	display: flex;
+	align-items: center;
+	gap: 10px;
 }
 
 .btn-filter-toggle:hover {
-    background-color: rgba(255,255,255,0.02);
-    color: #fff;
+	background-color: rgba(255, 255, 255, 0.02);
+	color: #fff;
 }
 
 #filter-arrow {
-    font-size: 0.8em;
-    transition: transform 0.3s ease;
+	font-size: 0.8em;
+	transition: transform 0.3s ease;
 }
 
 .filter-content {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
-    opacity: 0;
-    background-color: rgba(0,0,0,0.2);
+	max-height: 0;
+	overflow: hidden;
+	transition:
+		max-height 0.3s ease-out,
+		opacity 0.3s ease-out;
+	opacity: 0;
+	background-color: rgba(0, 0, 0, 0.2);
 }
 
 .filter-content.expanded {
-    max-height: 150px; /* Adjust if content grows */
-    opacity: 1;
+	max-height: 150px;
+	/* Adjust if content grows */
+	opacity: 1;
 }
 
 .filter-inner {
-    padding: 15px 20px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    align-items: center;
-    border-top: 1px solid var(--border-color);
+	padding: 15px 20px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 20px;
+	align-items: center;
+	border-top: 1px solid var(--border-color);
 }
 
 #searchInput {
-    flex: 1;
-    min-width: 200px;
-    background-color: #000;
-    border: 1px solid #333;
+	flex: 1;
+	min-width: 200px;
+	background-color: #000;
+	border: 1px solid #333;
 }
 
 #searchInput:focus {
-    border-color: var(--color-knight);
-    outline: none;
+	border-color: var(--color-knight);
+	outline: none;
 }
 
 .role-filters {
-    display: flex;
-    gap: 15px;
+	display: flex;
+	gap: 15px;
 }
 
 .role-checkbox {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-    color: #bbb;
-    user-select: none;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	cursor: pointer;
+	color: #bbb;
+	user-select: none;
 }
 
 .role-checkbox:hover {
-    color: #fff;
+	color: #fff;
 }
 
 .role-checkbox input {
-    width: 16px;
-    height: 16px;
-    cursor: pointer;
-    accent-color: var(--color-knight);
+	width: 16px;
+	height: 16px;
+	cursor: pointer;
+	accent-color: var(--color-knight);
 }
-
 
 /* >> Mobile Styles << */
 @media (max-width: 600px) {

@@ -48,20 +48,29 @@ const heroDefinitions = [
 	{ name: "Wolverine", role: "Duelist", color: "#c49c3e" },
 ];
 
-const pointsToNextRank = {
-	Agent: 500,
-	Knight: 1_200,
-	Captain: 2_000,
-	Centurion: 2_400,
-	Lord: 8_000,
-	Count: 8_000,
-	Colonel: 8_000,
-	Warrior: 8_000,
-	Elite: 8_000,
-	Guardian: 8_000,
-	Champion: 62_000,
-};
+// Configuration for Levels and XP
+const levelConfig = [
+	{ title: "Agent", startLvl: 1, endLvl: 4, totalRankXP: 500 },
+	{ title: "Knight", startLvl: 5, endLvl: 9, totalRankXP: 1200 },
+	{ title: "Captain", startLvl: 10, endLvl: 14, totalRankXP: 2000 },
+	{ title: "Centurion", startLvl: 15, endLvl: 19, totalRankXP: 2400 },
+	{ title: "Lord", startLvl: 20, endLvl: 24, totalRankXP: 8000 },
+	{ title: "Count", startLvl: 25, endLvl: 29, totalRankXP: 8000 },
+	{ title: "Colonel", startLvl: 30, endLvl: 34, totalRankXP: 8000 },
+	{ title: "Warrior", startLvl: 35, endLvl: 39, totalRankXP: 8000 },
+	{ title: "Elite", startLvl: 40, endLvl: 44, totalRankXP: 8000 },
+	{ title: "Guardian", startLvl: 45, endLvl: 49, totalRankXP: 8000 },
+	{ title: "Champion", startLvl: 50, endLvl: 70, totalRankXP: 62000 }, // Approx 3100 per level
+];
 
+// Pre-calculate per-level XP for each rank for easy lookup
+levelConfig.forEach((conf) => {
+	const levelCount = conf.endLvl - conf.startLvl + 1;
+	conf.xpPerLevel = conf.totalRankXP / levelCount;
+	// For Champion, ensure integer math if needed, but 62000/20 is clean 3100
+});
+
+// Legacy mapping for data storage compatibility
 const pointBaselines = {
 	Agent: 0,
 	Knight: 500,
@@ -74,10 +83,10 @@ const pointBaselines = {
 	Elite: 38_100,
 	Guardian: 46_100,
 	Champion: 54_100,
-	MAX: 116_100
+	MAX: 116_100,
 };
 
-const ranks = ["Agent", "Knight", "Captain", "Centurion", "Lord", "Count", "Colonel", "Warrior", "Elite", "Guardian", "Champion"];
+const ranks = levelConfig.map((c) => c.title);
 
 let heroData = [];
 
@@ -86,7 +95,7 @@ function getHeroFileName(name) {
 }
 
 function init() {
-	const savedData = localStorage.getItem("marvelRivalsDataV3");
+	const savedData = localStorage.getItem("marvelRivalsDataV3") ?? localStorage.getItem("marvelRivalsData");
 
 	if (savedData) {
 		const parsedData = JSON.parse(savedData);
@@ -105,48 +114,88 @@ function init() {
 	renderList();
 }
 
-function toggleFilters() {
-	const content = document.getElementById("filter-content");
-	const arrow = document.getElementById("filter-arrow");
-	content.classList.toggle("expanded");
-
-	if (content.classList.contains("expanded")) {
-		arrow.style.transform = "rotate(90deg)";
-	} else {
-		arrow.style.transform = "rotate(0deg)";
-	}
-}
-
+// convert between Stored Rank/Points and UI Levels
 function calculateTotalScore(hero) {
 	const baseline = pointBaselines[hero.rank] || 0;
 	const points = parseInt(hero.points) || 0;
 	return baseline + points;
 }
 
-function getProgressInfo(hero) {
-	const total = calculateTotalScore(hero);
-	const currentRankIndex = ranks.indexOf(hero.rank);
+function getLevelInfoFromTotal(totalPoints) {
+	let cumulativeXP = 0;
 
-	// Stats for Next Badge
-	let nextRankName = ranks[currentRankIndex + 1] || 'MAX';
+	for (let conf of levelConfig) {
+		// Calculate max points for this entire Tier
+		const tierTotal = conf.totalRankXP;
+		const tierEndXP = cumulativeXP + tierTotal;
 
-	const currentBase = pointBaselines[hero.rank];
-	const nextBase = pointBaselines[nextRankName];
-	const pointsInTier = total - currentBase;
-	const tierSpan = nextBase - currentBase;
+		// If total points fall in this tier (or it's the last tier)
+		if (totalPoints < tierEndXP || conf.title === "Champion") {
+			const pointsInTier = Math.max(0, totalPoints - cumulativeXP);
 
-	let nextRankPct = Math.min(100, Math.max(0, (pointsInTier / tierSpan) * 100));
-	let nextRankClass = nextRankName != 'MAX' ? `fill-next-${nextRankName}` : "fill-max";
+			// Calculate which level within the tier
+			// e.g., Agent (125 per lvl). 200 pts in -> 200/125 = 1.6 -> Level index 1 (Level 2)
+			// Use floor, but ensure we don't exceed max levels
+			const levelIndex = Math.floor(pointsInTier / conf.xpPerLevel);
+			const currentLevel = conf.startLvl + levelIndex;
 
-	// We allow this to go over 100 now for calculation, but visual clamp is handled in render
-	const rawMaxRankPct = (total / pointBaselines.MAX) * 100;
+			// Allow level to cap at max defined in config (70)
+			const clampedLevel = Math.min(currentLevel, conf.endLvl);
 
-	return {
-		nextRankName,
-		nextRankPct: nextRankPct.toFixed(1),
-		nextRankClass,
-		rawMaxRankPct: rawMaxRankPct.toFixed(1), // Can be > 100
-	};
+			// Calculate XP remaining in that specific level
+			// If we are capped at 70, we might be full
+			let xpInCurrentLevel = pointsInTier - (clampedLevel - conf.startLvl) * conf.xpPerLevel;
+			xpInCurrentLevel = Math.max(0, Math.round(xpInCurrentLevel));
+
+			return {
+				level: clampedLevel,
+				xp: xpInCurrentLevel,
+				maxXp: conf.xpPerLevel,
+				title: conf.title,
+			};
+		}
+
+		cumulativeXP += tierTotal;
+	}
+
+	// Fallback max
+	return { level: 70, xp: 3100, maxXp: 3100, title: "Champion" };
+}
+
+function getDataFromLevel(targetLevel, targetXP) {
+	let cumulativeXP = 0;
+
+	for (let conf of levelConfig) {
+		if (targetLevel >= conf.startLvl && targetLevel <= conf.endLvl) {
+			// Found the tier
+			const levelsCompletedInTier = targetLevel - conf.startLvl;
+			const pointsFromCompletedLevels = levelsCompletedInTier * conf.xpPerLevel;
+
+			// Calculate points relative to the Rank Baseline (Agent start, Knight start, etc)
+			// Stored data format is { rank: "Agent", points: 200 } where 200 is relative to Agent start
+			// But wait, the previous system stored points relative to the Rank Start.
+			// So we just need pointsInTier.
+
+			// Ensure XP doesn't exceed the level cap
+			const finalXP = Math.min(targetXP, conf.xpPerLevel);
+
+			const pointsInTier = pointsFromCompletedLevels + finalXP;
+
+			return {
+				rank: conf.title,
+				points: Math.round(pointsInTier),
+			};
+		}
+		cumulativeXP += conf.totalRankXP; // Not used for return, but for loop logic if needed
+	}
+	return { rank: "Champion", points: 62000 };
+}
+
+function toggleFilters() {
+	const content = document.getElementById("filter-content");
+	const arrow = document.getElementById("filter-arrow");
+	content.classList.toggle("expanded");
+	arrow.style.transform = content.classList.contains("expanded") ? "rotate(90deg)" : "rotate(0deg)";
 }
 
 function renderList() {
@@ -160,18 +209,14 @@ function renderList() {
 	const visibleHeroes = heroData.filter((hero) => {
 		const matchesName = hero.name.toLowerCase().includes(searchText);
 
-		const matchesRole = checkedRoles.length === 0 || (
-			Array.isArray(hero.role) 
-				? hero.role.some(r => checkedRoles.includes(r)) 
-				: checkedRoles.includes(hero.role)
-		);
+		const matchesRole = checkedRoles.length === 0 || (Array.isArray(hero.role) ? hero.role.some((r) => checkedRoles.includes(r)) : checkedRoles.includes(hero.role));
 		return matchesName && matchesRole;
 	});
 
 	container.innerHTML = `
 				<div class="hero-row header-row">
 					<div></div>
-					<div>Hero & Progress</div>
+					<div>Hero & Level</div>
 					<div>Rank</div>
 					<div>Points</div>
 				</div>
@@ -182,131 +227,110 @@ function renderList() {
 		return;
 	}
 
-	visibleHeroes.forEach((hero, index) => {
+	visibleHeroes.forEach((hero) => {
 		const row = document.createElement("div");
 		row.className = "hero-row";
 
-		let options = ranks.map((r) => `<option value="${r}" ${hero.rank === r ? "selected" : ""}>${r}</option>`).join("");
-
-		const subFolder = ranks.indexOf(hero.rank) >= ranks.indexOf("Lord") ? "lord/" : "";
-		const heroImgPath = `img/char/${subFolder}${getHeroFileName(hero.name)}`;
-		const roleIconPath = `img/${hero.role}_Icon.webp`;
-		const rankBadgePath = `img/icons/${hero.rank}_Badge.webp`;
-
-		const progress = getProgressInfo(hero);
+		// Calculate Level Info
 		const totalScore = calculateTotalScore(hero);
+		const levelInfo = getLevelInfoFromTotal(totalScore);
 
-		// >> Lord Overfill <<
-		let progressHTML = "";
+		const subFolder = ranks.indexOf(levelInfo.title) >= ranks.indexOf("Lord") ? "lord/" : "";
+		const heroImgPath = `img/char/${subFolder}${getHeroFileName(hero.name)}`;
+		const rankBadgePath = `img/icons/${levelInfo.title}_Badge.webp`;
 
-		if (false) {
-			// Only display Lord Overfill bar
-			progressHTML = `
-						<div class="progress-section">
-							<div class="progress-label">
-								<span style="color:var(--color-gold); font-weight:bold;">Beyond</span>
-								<span style="color:var(--color-gold); font-weight:bold;">${progress.rawMaxRankPct}%</span>
-							</div>
-							<div class="progress-bg">
-								<div class="progress-fill fill-overfill" style="width: 100%"></div>
-							</div>
-						</div>
-					`;
-		} else {
-			// Display Normal 2 bars
-			// Visual clamp for standard view
-			const visualMaxRankPct = Math.min(100, progress.rawMaxRankPct);
+		// Progress Bars
+		// Bar 1: Progress to Next Title
+		const currentConfig = levelConfig.find(c => c.title === levelInfo.title);
+		const pointsInTier = ((levelInfo.level - currentConfig.startLvl) * currentConfig.xpPerLevel) + levelInfo.xp;
+		const titlePct = Math.min(100, (pointsInTier / currentConfig.totalRankXP) * 100);
 
-			progressHTML = `
-						<div class="progress-section">
-							<div class="progress-label">
-								<span>To ${progress.nextRankName}</span>
-								<span>${progress.nextRankPct}%</span>
-							</div>
-							<div class="progress-bg">
-								<div class="progress-fill ${progress.nextRankClass}" style="width: ${progress.nextRankPct}%"></div>
-							</div>
+		// Bar 2: Total Progress (Max)
+		const totalPct = Math.min(100, (totalScore / pointBaselines.MAX) * 100);
 
-							<div class="progress-label" style="margin-top:2px;">
-								<span>Total Progress</span>
-								<span>${visualMaxRankPct}%</span>
-							</div>
-							<div class="progress-bg">
-								<div class="progress-fill fill-total" style="width: ${visualMaxRankPct}%"></div>
-							</div>
-						</div>
-					`;
-		}
-
-		const maxPoints = pointsToNextRank[hero.rank];
-		const suffix = maxPoints ? `/ ${maxPoints}` : "";
-		const maxAttr = maxPoints ? `max="${maxPoints}"` : "";
 		const displayRole = Array.isArray(hero.role) ? hero.role.join(" / ") : hero.role;
 
-		// Added background-color style to img
-		// Important: pass hero.name now instead of index, because index changes with filtering
 		row.innerHTML = `
-					<div class="portrait-container">
-						<img src="${heroImgPath}" 
-							class="hero-portrait rank-${hero.rank}" 
-							style="background: linear-gradient(180deg,rgba(0, 0, 0, 0) 10%, ${hero.color || "#000"} 100%)"
-							onerror="this.src='img/char/${getHeroFileName(hero.name)}'" alt="${hero.name}">
-						<div class="role-icon-container">
-							<img src="img/Vanguard_Icon.webp" class="role-icon-mini" title="Vanguard" style="display:${displayRole.includes("Vanguard") ? "block" : "none"}">
-							<img src="img/Duelist_Icon.webp" class="role-icon-mini" title="Duelist" style="display:${displayRole.includes("Duelist") ? "block" : "none"}">
-							<img src="img/Strategist_Icon.webp" class="role-icon-mini" title="Strategist" style="display:${displayRole.includes("Strategist") ? "block" : "none"}">
-						</div>
+			<div class="portrait-container">
+				<img src="${heroImgPath}" 
+					class="hero-portrait rank-${levelInfo.title}" 
+					style="background: linear-gradient(180deg,rgba(0, 0, 0, 0) 10%, ${hero.color || "#000"} 100%)"
+					onerror="this.src='img/char/${getHeroFileName(hero.name)}'" alt="${hero.name}">
+				<div class="role-icon-container">
+					<img src="img/Vanguard_Icon.webp" class="role-icon-mini" title="Vanguard" style="display:${displayRole.includes("Vanguard") ? "block" : "none"}">
+					<img src="img/Duelist_Icon.webp" class="role-icon-mini" title="Duelist" style="display:${displayRole.includes("Duelist") ? "block" : "none"}">
+					<img src="img/Strategist_Icon.webp" class="role-icon-mini" title="Strategist" style="display:${displayRole.includes("Strategist") ? "block" : "none"}">
+				</div>
+			</div>
+
+			<div class="hero-details">
+				<span class="hero-name ${"rank-" + levelInfo.title}">
+					${hero.name} 
+					<span style="font-size:0.7em; margin-left:10px; color:#666; font-weight:normal;">(${levelInfo.title})</span>
+				</span>
+				
+				<div class="progress-section">
+					<div class="progress-label">
+						<span>To ${ranks[ranks.indexOf(levelInfo.title) + 1] || "MAX"}</span>
+						<span>${titlePct.toFixed(1)}%</span>
+					</div>
+					<div class="progress-bg">
+						<div class="progress-fill fill-next-${levelInfo.title}" style="width: ${titlePct}%"></div>
 					</div>
 
-					<div class="hero-details">
-						<span class="hero-name ${"rank-" + hero.rank}">
-							${hero.name} 
-							<span style="font-size:0.7em; margin-left:10px; color:#666; font-weight:normal;">(${totalScore})</span>
-						</span>
-						
-						${progressHTML}
+					<div class="progress-label" style="margin-top:2px;">
+						<span>Total Progress</span>
+						<span>${totalPct.toFixed(1)}%</span>
 					</div>
+					<div class="progress-bg">
+						<div class="progress-fill fill-total" style="width: ${totalPct}%"></div>
+					</div>
+				</div>
+			</div>
 
-					<div class="rank-select-container">
-						<img src="${rankBadgePath}" class="rank-badge-img" onerror="this.style.display='none'">
-						<select onchange="updateHero('${hero.name}', 'rank', this.value)">
-							${options}
-						</select>
-					</div>
+			<!-- Rank Badge & Level Input -->
+			<div class="rank-select-container">
+				<img src="${rankBadgePath}" class="rank-badge-img" onerror="this.style.display='none'" title="${levelInfo.title}">
+				<div style="display:flex; flex-direction:column; width: 60px; position: relative;">
+					<span style="position: absolute; top: -17px; color: #999; font-size:0.7em;">Level</span>
+					<input type="number" class="level-input" min="1" max="70" value="${levelInfo.level}" 
+						onchange="updateHero('${hero.name}', 'level', this.value)">
+				</div>
+			</div>
 
-					<div class="point-container">
-						<input type="number" value="${hero.points}" min="0" ${maxAttr}
-								onchange="updateHero('${hero.name}', 'points', this.value)" placeholder="0">
-						<span class="point-suffix">${suffix}</span>
-					</div>
-				`;
+			<div class="point-container">
+				<input type="number" value="${levelInfo.xp}" min="0" max="${levelInfo.maxXp}"
+						onchange="updateHero('${hero.name}', 'points', this.value)" placeholder="0">
+				<span class="point-suffix">/ ${levelInfo.maxXp}</span>
+			</div>
+		`;
 		container.appendChild(row);
 	});
 }
 
 function updateHero(name, field, value) {
-	// Find index in the MASTER list
 	const index = heroData.findIndex((h) => h.name === name);
 	if (index === -1) return;
 
-	let hero = heroData[index];
+	// Get current state
+	let total = calculateTotalScore(heroData[index]);
+	let currentInfo = getLevelInfoFromTotal(total);
 
-	if (field === "rank") {
-		hero.rank = value;
-		// Check if current points exceed new rank's max
-		const max = pointsToNextRank[value];
-		if (max !== null && max !== undefined && parseInt(hero.points) > max) {
-			hero.points = max;
-		}
+	let newLevel = currentInfo.level;
+	let newXP = currentInfo.xp;
+
+	if (field === "level") {
+		newLevel = parseInt(value);
 	} else if (field === "points") {
-		const max = pointsToNextRank[hero.rank];
-		if (max !== null && max !== undefined) {
-			if (parseInt(value) > max) {
-				value = max;
-			}
-		}
-		hero.points = value;
+		newXP = parseInt(value);
 	}
+
+	// Convert back to Rank/Points storage format
+	const newData = getDataFromLevel(newLevel, newXP);
+
+	// Update Data
+	heroData[index].rank = newData.rank;
+	heroData[index].points = newData.points;
 
 	saveData();
 	// Re-render to update bars/layout
@@ -322,12 +346,12 @@ function sortHeroes() {
 function saveData() {
 	// We map only the dynamic data for saving to keep localStorage clean
 	const dataToSave = heroData.map((h) => ({ name: h.name, rank: h.rank, points: h.points }));
-	localStorage.setItem("marvelRivalsDataV3", JSON.stringify(dataToSave));
+	localStorage.setItem("marvelRivalsData", JSON.stringify(dataToSave));
 }
 
 function clearData() {
 	if (confirm("Are you sure you want to clear all your inputs?")) {
-		localStorage.removeItem("marvelRivalsDataV3");
+		localStorage.removeItem("marvelRivalsData");
 		location.reload();
 	}
 }
@@ -357,7 +381,7 @@ function handleFileUpload(input) {
 			const parsedData = JSON.parse(contents);
 			if (Array.isArray(parsedData) && parsedData.length > 0 && parsedData[0].hasOwnProperty("name")) {
 				if (confirm("This will overwrite your current data with the backup file. Continue?")) {
-					localStorage.setItem("marvelRivalsDataV3", JSON.stringify(parsedData));
+					localStorage.setItem("marvelRivalsData", JSON.stringify(parsedData));
 					alert("Backup restored successfully!");
 					location.reload();
 				}
@@ -380,7 +404,7 @@ async function fileUrlToDataUrl(url) {
 	if (!response.ok) {
 		throw new Error(`HTTP error! status: ${response.status}`);
 	}
-	
+
 	// 2. Get the response as a Blob
 	const blob = await response.blob();
 
@@ -399,7 +423,7 @@ async function fileUrlToDataUrl(url) {
 		reader.onerror = () => {
 			reject(reader.error);
 		};
-		
+
 		// Read the blob as a data URL
 		reader.readAsDataURL(blob);
 	});
@@ -415,32 +439,32 @@ async function generateRouletteJSON() {
 	// Base weight per role group (Total weight will be 300)
 	const ROLE_TOTAL_WEIGHT = 100;
 
-	heroDefinitions.forEach(hero => {
+	heroDefinitions.forEach((hero) => {
 		hero.imageName = getHeroFileName(hero.name);
 		if (Array.isArray(hero.role)) {
-			hero.role.forEach(r => {
-				const entry = { 
-					...hero, 
-					role: r
+			hero.role.forEach((r) => {
+				const entry = {
+					...hero,
+					role: r,
 				};
-				
-				if (r === 'Vanguard') {
+
+				if (r === "Vanguard") {
 					entry.name = hero.name === "Deadpool" ? "Tankpool" : `${hero.name} (${r})`;
 					vanguards.push(entry);
 				}
-				if (r === 'Duelist') {
+				if (r === "Duelist") {
 					entry.name = hero.name === "Deadpool" ? "DPSpool" : `${hero.name} (${r})`;
 					duelists.push(entry);
 				}
-				if (r === 'Strategist') {
+				if (r === "Strategist") {
 					entry.name = hero.name === "Deadpool" ? "Healpool" : `${hero.name} (${r})`;
 					strategists.push(entry);
 				}
 			});
 		} else {
-			if (hero.role === 'Vanguard') vanguards.push(hero);
-			if (hero.role === 'Duelist') duelists.push(hero);
-			if (hero.role === 'Strategist') strategists.push(hero);
+			if (hero.role === "Vanguard") vanguards.push(hero);
+			if (hero.role === "Duelist") duelists.push(hero);
+			if (hero.role === "Strategist") strategists.push(hero);
 		}
 	});
 
@@ -451,24 +475,26 @@ async function generateRouletteJSON() {
 
 	// 3. Helper function to process an array of heroes into entries asynchronously
 	const processEntries = async (heroList, weight) => {
-		return Promise.all(heroList.map(async (hero) => {
-			let base64Image = "";
-			try {
-				// Wait for the image to be fetched and converted
-				base64Image = await fileUrlToDataUrl(`img/char/${hero.imageName}`);
-			} catch (err) {
-				console.error(`Error converting image for ${hero.name} (${hero.imageName}):`, err);
-			}
-			
-			return {
-				text: hero.name,
-				weight: weight,
-				enabled: true,
-				color: hero.color,
-				image: base64Image,
-				imageName: hero.imageName
-			};
-		}));
+		return Promise.all(
+			heroList.map(async (hero) => {
+				let base64Image = "";
+				try {
+					// Wait for the image to be fetched and converted
+					base64Image = await fileUrlToDataUrl(`img/char/${hero.imageName}`);
+				} catch (err) {
+					console.error(`Error converting image for ${hero.name} (${hero.imageName}):`, err);
+				}
+
+				return {
+					text: hero.name,
+					weight: weight,
+					enabled: true,
+					color: hero.color,
+					image: base64Image,
+					imageName: hero.imageName,
+				};
+			}),
+		);
 	};
 
 	// Wait for all three groups to finish converting their images
@@ -481,81 +507,81 @@ async function generateRouletteJSON() {
 
 	// 4. Construct the full JSON object using settings from the user's example
 	const rouletteData = {
-		"wheels": [
+		wheels: [
 			{
-				"wheelConfig": {
-					"afterSpinSound": "cymbal-sound",
-					"afterSpinSoundVolume": 50,
-					"allowDuplicates": true,
-					"animateWinner": false,
-					"autoRemoveWinner": false,
-					"centerText": "",
-					"colorSettings": [
+				wheelConfig: {
+					afterSpinSound: "cymbal-sound",
+					afterSpinSoundVolume: 50,
+					allowDuplicates: true,
+					animateWinner: false,
+					autoRemoveWinner: false,
+					centerText: "",
+					colorSettings: [
 						{
-							"color": "#32334f",
-							"enabled": true
+							color: "#32334f",
+							enabled: true,
 						},
 						{
-							"color": "#fefefc",
-							"enabled": true
+							color: "#fefefc",
+							enabled: true,
 						},
 						{
-							"color": "#f3d22b",
-							"enabled": true
+							color: "#f3d22b",
+							enabled: true,
 						},
 						{
-							"color": "#009925",
-							"enabled": false
+							color: "#009925",
+							enabled: false,
 						},
 						{
-							"color": "#000000",
-							"enabled": false
+							color: "#000000",
+							enabled: false,
 						},
 						{
-							"color": "#000000",
-							"enabled": false
-						}
+							color: "#000000",
+							enabled: false,
+						},
 					],
-					"coverImageName": "",
-					"coverImageType": "",
-					"customCoverImageDataUri": "",
-					"customPictureDataUri": "data:image/jpeg;base64,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",
-					"customPictureName": "470470635_122096646698702486_2430148602589562945_n.jpg",
-					"description": "- All heroes up to Season 6.5\n- Adjusted weights for each class\n- Colored panels based on in-game colors\n- Hero portraits",
-					"displayHideButton": true,
-					"displayRemoveButton": true,
-					"displayWinnerDialog": true,
-					"drawOutlines": true,
-					"drawShadow": false,
-					"duringSpinSound": "ticking-sound",
-					"duringSpinSoundVolume": 50,
-					"entries": entries.map(h => {
+					coverImageName: "",
+					coverImageType: "",
+					customCoverImageDataUri: "",
+					customPictureDataUri: "data:image/jpeg;base64,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",
+					customPictureName: "470470635_122096646698702486_2430148602589562945_n.jpg",
+					description: "- All heroes up to Season 6.5\n- Adjusted weights for each class\n- Colored panels based on in-game colors\n- Hero portraits",
+					displayHideButton: true,
+					displayRemoveButton: true,
+					displayWinnerDialog: true,
+					drawOutlines: true,
+					drawShadow: false,
+					duringSpinSound: "ticking-sound",
+					duringSpinSoundVolume: 50,
+					entries: entries.map((h) => {
 						delete h.imageName; // Exclude the imageName from the final JSON (it was only for internal processing)
 						return h;
 					}),
-					"galleryPicture": "/images/none.png",
-					"hubSize": "M",
-					"isAdvanced": true,
-					"launchConfetti": true,
-					"maxNames": 1000,
-					"pageBackgroundColor": "#FFFFFF",
-					"pictureType": "uploaded",
-					"playClickWhenWinnerRemoved": false,
-					"showTitle": true,
-					"slowSpin": false,
-					"spinTime": 10,
-					"title": "Marvel Rivals Roulette",
-					"type": "color",
-					"winnerMessage": "You have landed on",
-					"pointerChangesColor": true,
-					"pageGradient": true
+					galleryPicture: "/images/none.png",
+					hubSize: "M",
+					isAdvanced: true,
+					launchConfetti: true,
+					maxNames: 1000,
+					pageBackgroundColor: "#FFFFFF",
+					pictureType: "uploaded",
+					playClickWhenWinnerRemoved: false,
+					showTitle: true,
+					slowSpin: false,
+					spinTime: 10,
+					title: "Marvel Rivals Roulette",
+					type: "color",
+					winnerMessage: "You have landed on",
+					pointerChangesColor: true,
+					pageGradient: true,
 				},
-				"path": "kg7-we2",
-				"shareMode": "copyable"
-			}
-		]
+				path: "kg7-we2",
+				shareMode: "copyable",
+			},
+		],
 	};
-	
+
 	// 5. Trigger Download
 	const dataStr = JSON.stringify(rouletteData, null, 2);
 	const blob = new Blob([dataStr], { type: "application/json" });
