@@ -95,13 +95,45 @@ function getHeroFileName(name) {
 }
 
 function init() {
-	const savedData = localStorage.getItem("marvelRivalsDataV3") ?? localStorage.getItem("marvelRivalsData");
+	let v3Data = localStorage.getItem("marvelRivalsDataV3");
+	let stdData = localStorage.getItem("marvelRivalsData");
 
+	// >>> Data Migration Conflict <<<
+	if (v3Data && stdData) {
+		openComparisonModal({
+			title: "Save File Conflict Detected!",
+			desc: "We found an older 'V3' save file alongside a newer save file. Please check your top heroes to decide which data you want to keep.",
+			opt1Title: "Older Save (V3)",
+			opt1Data: v3Data,
+			opt1BtnText: "Keep V3 Save",
+			opt1Action: () => resolveMigration("v3"),
+			opt2Title: "Newest Save",
+			opt2Data: stdData,
+			opt2BtnText: "Keep Newest Save",
+			opt2Action: () => resolveMigration("std"),
+			footerText: "Whichever you choose, the old V3 data will be removed to prevent this loop from happening again.",
+		});
+		return;
+	}
+
+	// >>> Seamless Migration or Normal Load <<<
+	let savedData = null;
+	if (v3Data && !stdData) {
+		savedData = v3Data;
+		localStorage.setItem("marvelRivalsData", v3Data);
+		localStorage.removeItem("marvelRivalsDataV3");
+	} else {
+		savedData = stdData;
+	}
+
+	processLoadedData(savedData);
+}
+
+function processLoadedData(savedData) {
 	if (savedData) {
 		const parsedData = JSON.parse(savedData);
 		heroData = heroDefinitions.map((def) => {
 			const saved = parsedData.find((p) => p.name === def.name);
-			// Ensure we keep the color/role from definition, but get rank/points from save
 			return saved ? { ...def, rank: saved.rank, points: saved.points } : { ...def, rank: "Agent", points: 0 };
 		});
 	} else {
@@ -112,6 +144,69 @@ function init() {
 		}));
 	}
 	renderList();
+}
+
+function getTopHeroesHTML(dataStr) {
+	if (!dataStr) return "<div style='text-align:center; color:#666; margin-top:20px;'>No progress</div>";
+	try {
+		const parsed = JSON.parse(dataStr);
+		// Sort by points to find the highest
+		parsed.sort((a, b) => calculateTotalScore(b) - calculateTotalScore(a));
+
+		// Filter out heroes that have 0 points (no progress) and get top 4
+		const top4 = parsed.filter((h) => calculateTotalScore(h) > 0).slice(0, 4);
+
+		if (top4.length === 0) return "<div style='text-align:center; color:#666; margin-top:20px;'>No progress</div>";
+
+		let html = "";
+		top4.forEach((h) => {
+			const totalPts = calculateTotalScore(h);
+			const levelInfo = getLevelInfoFromTotal(totalPts);
+			html += `
+				<div class="top-hero-item">
+					<span style="color: #ccc">${h.name}</span>
+					<span class="rank-${levelInfo.title}" style="font-weight:bold">${levelInfo.title} (Lv${levelInfo.level})</span>
+				</div>`;
+		});
+		return html;
+	} catch (e) {
+		return "<div style='text-align:center; color:red; margin-top:20px;'>Data Error</div>";
+	}
+}
+
+function openComparisonModal(config) {
+	document.getElementById("modal-title").innerText = config.title;
+	document.getElementById("modal-desc").innerText = config.desc;
+
+	document.getElementById("modal-opt1-title").innerText = config.opt1Title;
+	document.getElementById("modal-opt1-heroes").innerHTML = getTopHeroesHTML(config.opt1Data);
+	document.getElementById("modal-opt1-btn").innerText = config.opt1BtnText;
+	document.getElementById("modal-opt1-btn").onclick = config.opt1Action;
+
+	document.getElementById("modal-opt2-title").innerText = config.opt2Title;
+	document.getElementById("modal-opt2-heroes").innerHTML = getTopHeroesHTML(config.opt2Data);
+	document.getElementById("modal-opt2-btn").innerText = config.opt2BtnText;
+	document.getElementById("modal-opt2-btn").onclick = config.opt2Action;
+
+	document.getElementById("modal-footer").innerText = config.footerText;
+
+	document.getElementById("migration-modal").style.display = "flex";
+}
+
+function resolveMigration(choice) {
+	let v3Data = localStorage.getItem("marvelRivalsDataV3");
+	let stdData = localStorage.getItem("marvelRivalsData");
+
+	if (choice === "v3") {
+		processLoadedData(v3Data);
+		localStorage.setItem("marvelRivalsData", v3Data); // Overwrite newest with V3
+	} else {
+		processLoadedData(stdData); // Keep newest
+	}
+
+	// Clean up V3 so we don't ask again
+	localStorage.removeItem("marvelRivalsDataV3");
+	document.getElementById("migration-modal").style.display = "none";
 }
 
 // convert between Stored Rank/Points and UI Levels
@@ -241,8 +336,8 @@ function renderList() {
 
 		// Progress Bars
 		// Bar 1: Progress to Next Title
-		const currentConfig = levelConfig.find(c => c.title === levelInfo.title);
-		const pointsInTier = ((levelInfo.level - currentConfig.startLvl) * currentConfig.xpPerLevel) + levelInfo.xp;
+		const currentConfig = levelConfig.find((c) => c.title === levelInfo.title);
+		const pointsInTier = (levelInfo.level - currentConfig.startLvl) * currentConfig.xpPerLevel + levelInfo.xp;
 		const titlePct = Math.min(100, (pointsInTier / currentConfig.totalRankXP) * 100);
 
 		// Bar 2: Total Progress (Max)
@@ -352,6 +447,7 @@ function saveData() {
 function clearData() {
 	if (confirm("Are you sure you want to clear all your inputs?")) {
 		localStorage.removeItem("marvelRivalsData");
+		localStorage.removeItem("marvelRivalsDataV3"); // Also clear legacy just in case
 		location.reload();
 	}
 }
@@ -380,20 +476,38 @@ function handleFileUpload(input) {
 			const contents = e.target.result;
 			const parsedData = JSON.parse(contents);
 			if (Array.isArray(parsedData) && parsedData.length > 0 && parsedData[0].hasOwnProperty("name")) {
-				if (confirm("This will overwrite your current data with the backup file. Continue?")) {
-					localStorage.setItem("marvelRivalsData", JSON.stringify(parsedData));
-					alert("Backup restored successfully!");
-					location.reload();
-				}
+				// Grab current data directly from our active array to compare
+				const currentDataStr = JSON.stringify(heroData.map((h) => ({ name: h.name, rank: h.rank, points: h.points })));
+
+				openComparisonModal({
+					title: "Confirm Backup Import",
+					desc: "You are about to overwrite your current progress with a backup file. Please compare below to make sure this is what you want to do.",
+					opt1Title: "Current Progress",
+					opt1Data: currentDataStr,
+					opt1BtnText: "Keep Current (Cancel)",
+					opt1Action: () => {
+						document.getElementById("migration-modal").style.display = "none";
+						input.value = ""; // Reset input so they can upload the same file again if needed
+					},
+					opt2Title: "Backup File",
+					opt2Data: contents,
+					opt2BtnText: "Import Backup",
+					opt2Action: () => {
+						localStorage.setItem("marvelRivalsData", JSON.stringify(parsedData));
+						location.reload();
+					},
+					footerText: "Importing the backup cannot be undone.",
+				});
 			} else {
 				alert("Invalid backup file format.");
+				input.value = "";
 			}
 		} catch (err) {
 			alert("Error reading file: " + err);
+			input.value = "";
 		}
 	};
 	reader.readAsText(file);
-	input.value = "";
 }
 
 init();
