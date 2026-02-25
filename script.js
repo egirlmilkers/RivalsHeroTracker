@@ -60,7 +60,7 @@ const levelConfig = [
 	{ title: "Warrior", startLvl: 35, endLvl: 39, totalRankXP: 8000 },
 	{ title: "Elite", startLvl: 40, endLvl: 44, totalRankXP: 8000 },
 	{ title: "Guardian", startLvl: 45, endLvl: 49, totalRankXP: 8000 },
-	{ title: "Champion", startLvl: 50, endLvl: 70, totalRankXP: 62000 }, // Approx 3100 per level
+	{ title: "Champion", startLvl: 50, endLvl: 69, totalRankXP: 62000 }, // Approx 3100 per level
 ];
 
 // Pre-calculate per-level XP for each rank for easy lookup
@@ -235,7 +235,7 @@ function getLevelInfoFromTotal(totalPoints) {
 			const currentLevel = conf.startLvl + levelIndex;
 
 			// Allow level to cap at max defined in config (70)
-			const clampedLevel = Math.min(currentLevel, conf.endLvl);
+			const clampedLevel = Math.min(currentLevel, conf.endLvl + 1);
 
 			// Calculate XP remaining in that specific level
 			// If we are capped at 70, we might be full
@@ -258,6 +258,7 @@ function getLevelInfoFromTotal(totalPoints) {
 }
 
 function getDataFromLevel(targetLevel, targetXP) {
+	console.log("Calculating data from Level:", targetLevel, "XP:", targetXP);
 	let cumulativeXP = 0;
 
 	for (let conf of levelConfig) {
@@ -267,19 +268,25 @@ function getDataFromLevel(targetLevel, targetXP) {
 			const pointsFromCompletedLevels = levelsCompletedInTier * conf.xpPerLevel;
 
 			// Calculate points relative to the Rank Baseline (Agent start, Knight start, etc)
-			// Stored data format is { rank: "Agent", points: 200 } where 200 is relative to Agent start
-			// But wait, the previous system stored points relative to the Rank Start.
-			// So we just need pointsInTier.
 
 			// Ensure XP doesn't exceed the level cap
 			const finalXP = Math.min(targetXP, conf.xpPerLevel);
 
 			const pointsInTier = pointsFromCompletedLevels + finalXP;
 
+			console.log(`> Rank: ${conf.title}, Points: ${pointsInTier} (Levels Completed: ${levelsCompletedInTier}, XP in Current Level: ${finalXP})`);
+
 			return {
 				rank: conf.title,
 				points: Math.round(pointsInTier),
 			};
+		}
+		else if (targetLevel == conf.endLvl + 1) {
+			// If char has max level, xp input is uncapped
+			return {
+				rank: conf.title,
+				points: Math.round((conf.endLvl - conf.startLvl + 1) * conf.xpPerLevel + targetXP),
+			}
 		}
 		cumulativeXP += conf.totalRankXP; // Not used for return, but for loop logic if needed
 	}
@@ -394,9 +401,9 @@ function renderList() {
 			</div>
 
 			<div class="point-container">
-				<input type="number" value="${levelInfo.xp}" min="0" max="${levelInfo.maxXp}"
+				<input type="number" value="${levelInfo.xp}" min="0" ${levelInfo.level > currentConfig.endLvl ? '' : `max="${levelInfo.maxXp}"`}
 						onchange="updateHero('${hero.name}', 'points', this.value)" placeholder="0">
-				<span class="point-suffix">/ ${levelInfo.maxXp}</span>
+				<span class="point-suffix">/ ${levelInfo.level > currentConfig.endLvl ? '&infin;' : levelInfo.maxXp}</span>
 			</div>
 		`;
 		container.appendChild(row);
@@ -404,6 +411,7 @@ function renderList() {
 }
 
 function updateHero(name, field, value) {
+	console.log(`Updating ${name} - Field: ${field}, Value: ${value}`);
 	const index = heroData.findIndex((h) => h.name === name);
 	if (index === -1) return;
 
@@ -416,6 +424,7 @@ function updateHero(name, field, value) {
 
 	if (field === "level") {
 		newLevel = parseInt(value);
+		newXP = 0; // Reset XP when level changes to avoid a rare bug where it will level you back up if your points are max
 	} else if (field === "points") {
 		newXP = parseInt(value);
 	}
@@ -460,7 +469,7 @@ function downloadBackup() {
 	const url = URL.createObjectURL(blob);
 	const a = document.createElement("a");
 	a.href = url;
-	a.download = "marvel_rivals_backup_" + new Date().toISOString().slice(0, 10) + ".json";
+	a.download = "rivals_data_backup_" + new Date().toISOString().slice(0, 10) + ".json";
 	document.body.appendChild(a);
 	a.click();
 	document.body.removeChild(a);
