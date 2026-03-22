@@ -44,6 +44,7 @@ const heroDefinitions = [
 	{ name: "Thor", role: "Vanguard", color: "#666aae" },
 	{ name: "Ultron", role: "Strategist", color: "#8391b8" },
 	{ name: "Venom", role: "Vanguard", color: "#576788" },
+	{ name: "White Fox", role: "Strategist", color: "#2db0b9" },
 	{ name: "Winter Soldier", role: "Duelist", color: "#667b48" },
 	{ name: "Wolverine", role: "Duelist", color: "#c49c3e" },
 ];
