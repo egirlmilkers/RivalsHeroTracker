@@ -629,10 +629,11 @@ input:hover {
 /* >> Mobile Styles << */
 @media (max-width: 600px) {
 	.hero-row {
-		grid-template-columns: 60px 1fr;
-		/* Stack on mobile */
-		grid-template-rows: auto auto auto;
-		gap: 10px;
+		/* Define a 2-column, 2-row grid */
+		display: grid;
+		grid-template-columns: 80px 1fr; 
+		grid-template-rows: auto auto;
+		gap: 20px 15px; /* Added more vertical gap to account for the "Level" label */
 		padding: 15px;
 		border: 1px solid #333;
 		margin-bottom: 10px;
@@ -640,27 +641,49 @@ input:hover {
 		background: #1a1a1a;
 	}
 
-	.header-row {
-		display: none;
-	}
-
-	.rank-select-container {
-		grid-column: span 2;
+	/* Row 1: Portrait and Name/Bars */
+	.portrait-container {
+		grid-column: 1;
+		grid-row: 1;
 	}
 
 	.hero-details {
 		grid-column: 2;
-	}
-
-	.portrait-container {
 		grid-row: 1;
-	}
-
-	input {
-		grid-column: span 2;
-	}
-
-	.comparison-container {
+		display: flex;
 		flex-direction: column;
+		justify-content: center;
+	}
+
+	/* Row 2: Level Input and XP Input */
+	.rank-select-container {
+		grid-column: 1;
+		grid-row: 2;
+		justify-content: flex-start; /* Align to the left under the portrait */
+	}
+
+	.point-container {
+		grid-column: 2;
+		grid-row: 2;
+		align-items: center;
+	}
+
+	/* UI Adjustments for small screens */
+	.header-row {
+		display: none; /* Keep headers hidden on mobile */
+	}
+
+	.rank-badge-img {
+		height: 30px; /* Shrink badge slightly to fit the column width */
+		margin-right: 8px;
+	}
+
+	.hero-name {
+		font-size: 1.1em;
+	}
+
+	/* Ensure inputs take up appropriate space */
+	.point-container input {
+		flex: 1;
 	}
 }
