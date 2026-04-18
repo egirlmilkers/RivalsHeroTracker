@@ -1,6 +1,7 @@
 const heroDefinitions = [
 	{ name: "Adam Warlock", role: "Strategist", color: "#cba25c" },
 	{ name: "Angela", role: "Vanguard", color: "#dd965c" },
+	{ name: "Black Cat", role: "Duelist", color: "#725EC2" },
 	{ name: "Black Panther", role: "Duelist", color: "#a86ccf" },
 	{ name: "Black Widow", role: "Duelist", color: "#545a68" },
 	{ name: "Blade", role: "Duelist", color: "#ba4340" },
