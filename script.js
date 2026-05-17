@@ -303,6 +303,20 @@ function toggleFilters() {
 	arrow.style.transform = content.classList.contains("expanded") ? "rotate(90deg)" : "rotate(0deg)";
 }
 
+function handleImageFallback(img, heroName) {
+	const baseSrc = `img/char/${getHeroFileName(heroName)}`;
+	const lordSrc = `img/char/lord/${getHeroFileName(heroName)}`;
+
+	if (img.src.includes('/dyna/')) {
+		img.src = lordSrc;
+	} else if (img.src.includes('/lord/')) {
+		img.src = baseSrc;
+	} else {
+		img.onerror = null; // Kills the infinite loop if the base image is also gone
+		alert("The base image for " + heroName + " is missing.")
+	}
+}
+
 function renderList() {
 	const container = document.getElementById("hero-list");
 
@@ -339,7 +353,7 @@ function renderList() {
 		// Calculate Level Info
 		const totalScore = calculateTotalScore(hero);
 		const levelInfo = getLevelInfoFromTotal(totalScore);
-		
+
 		let subFolder;
 		let style = `background: linear-gradient(180deg,rgba(0, 0, 0, 0) 10%, ${hero.color || "#000"} 100%);`
 		if (levelInfo.level >= 50) {
@@ -371,7 +385,7 @@ function renderList() {
 				<img src="${heroImgPath}" 
 					class="hero-portrait rank-${levelInfo.title}" 
 					style="${style}"
-					onerror="this.src='img/char/${getHeroFileName(hero.name)}'" alt="${hero.name}">
+					onerror="handleImageFallback(this, '${hero.name}')" alt="${hero.name}">
 				<div class="role-icon-container">
 					<img src="img/Vanguard_Icon.webp" class="role-icon-mini" title="Vanguard" style="display:${displayRole.includes("Vanguard") ? "block" : "none"}">
 					<img src="img/Duelist_Icon.webp" class="role-icon-mini" title="Duelist" style="display:${displayRole.includes("Duelist") ? "block" : "none"}">
@@ -536,39 +550,55 @@ function handleFileUpload(input) {
 init();
 
 async function fileUrlToDataUrl(url) {
-	// 1. Fetch the resource
-	const response = await fetch(url);
-	if (!response.ok) {
-		throw new Error(`HTTP error! status: ${response.status}`);
+	try {
+		const response = await fetch(url);
+		if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+		const blob = await response.blob();
+		const blobUrl = URL.createObjectURL(blob);
+
+		return new Promise((resolve, reject) => {
+			const img = new Image();
+			img.onload = () => {
+				const canvas = document.createElement("canvas");
+				const ctx = canvas.getContext("2d");
+
+				// Shrink it down
+				const MAX_SIZE = 150;
+				let width = img.width;
+				let height = img.height;
+
+				if (width > height && width > MAX_SIZE) {
+					height *= MAX_SIZE / width;
+					width = MAX_SIZE;
+				} else if (height > MAX_SIZE) {
+					width *= MAX_SIZE / height;
+					height = MAX_SIZE;
+				}
+
+				canvas.width = width;
+				canvas.height = height;
+				ctx.drawImage(img, 0, 0, width, height);
+
+				// Crush it into a compressed JPEG
+				const dataUrl = canvas.toDataURL("image/jpeg", 0.7);
+				URL.revokeObjectURL(blobUrl);
+				resolve(dataUrl);
+			};
+			img.onerror = () => {
+				URL.revokeObjectURL(blobUrl);
+				reject(new Error("Canvas image conversion failed."));
+			};
+			img.src = blobUrl;
+		});
+	} catch (error) {
+		throw error;
 	}
-
-	// 2. Get the response as a Blob
-	const blob = await response.blob();
-
-	// 3. Convert the Blob to a Data URL using FileReader
-	return new Promise((resolve, reject) => {
-		const reader = new FileReader();
-		// Set up the onload event listener
-		reader.onloadend = () => {
-			if (reader.result) {
-				resolve(reader.result);
-			} else {
-				reject(new Error("FileReader could not convert the blob to a data URL."));
-			}
-		};
-		// Set up the error handler
-		reader.onerror = () => {
-			reject(reader.error);
-		};
-
-		// Read the blob as a data URL
-		reader.readAsDataURL(blob);
-	});
 }
 
 // Make this function async so we can await the image conversions
 async function generateRouletteJSON() {
-	// 1. Separate heroes by role
+	// Separate heroes by role
 	const vanguards = [];
 	const duelists = [];
 	const strategists = [];
@@ -605,12 +635,12 @@ async function generateRouletteJSON() {
 		}
 	});
 
-	// 2. Calculate weight per hero within their role and use Math.round() for whole numbers
+	// Calculate weight per hero within their role and use Math.round() for whole numbers
 	const vWeight = vanguards.length > 0 ? Math.round(ROLE_TOTAL_WEIGHT / vanguards.length) : 0;
 	const dWeight = duelists.length > 0 ? Math.round(ROLE_TOTAL_WEIGHT / duelists.length) : 0;
 	const sWeight = strategists.length > 0 ? Math.round(ROLE_TOTAL_WEIGHT / strategists.length) : 0;
 
-	// 3. Helper function to process an array of heroes into entries asynchronously
+	// Helper function to process an array of heroes into entries asynchronously
 	const processEntries = async (heroList, weight) => {
 		return Promise.all(
 			heroList.map(async (hero) => {
@@ -642,7 +672,7 @@ async function generateRouletteJSON() {
 	// Combine them all into the final entries array and sort by name again
 	const entries = [...vEntries, ...dEntries, ...sEntries].sort((a, b) => b.imageName.localeCompare(a.imageName));
 
-	// 4. Construct the full JSON object using settings from the user's example
+	// Construct the full JSON object using settings from the user's example
 	const rouletteData = {
 		wheels: [
 			{
@@ -719,7 +749,7 @@ async function generateRouletteJSON() {
 		],
 	};
 
-	// 5. Trigger Download
+	// Trigger Download
 	const dataStr = JSON.stringify(rouletteData, null, 2);
 	const blob = new Blob([dataStr], { type: "application/json" });
 	const url = URL.createObjectURL(blob);
