@@ -10,6 +10,7 @@ const heroDefinitions = [
 	{ name: "Cloak and Dagger", role: "Strategist", color: "#899de1" },
 	{ name: "Daredevil", role: "Duelist", color: "#d44a69" },
 	{ name: "Deadpool", role: ["Vanguard", "Duelist", "Strategist"], color: "#d55959" },
+	{ name: "Devil Dinosaur", role: "Vanguard", color: "#C54245" },
 	{ name: "Doctor Strange", role: "Vanguard", color: "#ee7d5e" },
 	{ name: "Elsa Bloodstone", role: "Duelist", color: "#ee855f" },
 	{ name: "Emma Frost", role: "Vanguard", color: "#2599bf" },
@@ -338,8 +339,19 @@ function renderList() {
 		// Calculate Level Info
 		const totalScore = calculateTotalScore(hero);
 		const levelInfo = getLevelInfoFromTotal(totalScore);
-
-		const subFolder = ranks.indexOf(levelInfo.title) >= ranks.indexOf("Lord") ? "lord/" : "";
+		
+		let subFolder;
+		let style = `background: linear-gradient(180deg,rgba(0, 0, 0, 0) 10%, ${hero.color || "#000"} 100%);`
+		if (levelInfo.level >= 50) {
+			subFolder = "dyna/";
+			style = `box-shadow: 0 0 22px ${hero.color};`
+		}
+		else if (levelInfo.level >= 20) {
+			subFolder = "lord/";
+		}
+		else {
+			subFolder = "";
+		}
 		const heroImgPath = `img/char/${subFolder}${getHeroFileName(hero.name)}`;
 		const rankBadgePath = `img/icons/${levelInfo.title}_Badge.webp`;
 
@@ -358,7 +370,7 @@ function renderList() {
 			<div class="portrait-container">
 				<img src="${heroImgPath}" 
 					class="hero-portrait rank-${levelInfo.title}" 
-					style="background: linear-gradient(180deg,rgba(0, 0, 0, 0) 10%, ${hero.color || "#000"} 100%)"
+					style="${style}"
 					onerror="this.src='img/char/${getHeroFileName(hero.name)}'" alt="${hero.name}">
 				<div class="role-icon-container">
 					<img src="img/Vanguard_Icon.webp" class="role-icon-mini" title="Vanguard" style="display:${displayRole.includes("Vanguard") ? "block" : "none"}">
