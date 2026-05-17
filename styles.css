@@ -150,11 +150,17 @@ button:active {
 	position: relative;
 }
 
+.char-img-wrapper {
+	border-radius: 12px;
+	overflow: hidden;
+	width: 70px;
+	height: 70px;
+}
+
 .hero-portrait {
 	width: 100%;
 	height: 100%;
 	object-fit: cover;
-	border-radius: 12px;
 }
 
 .role-icon-container {
@@ -347,6 +353,10 @@ button:active {
 .rank-Champion {
 	color: var(--color-champion);
 	text-shadow: 0 0 22px var(--glow-champion);
+
+	& img {
+		transform: scale(2);
+	}
 }
 
 select,

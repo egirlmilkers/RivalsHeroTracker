@@ -37,9 +37,9 @@ const heroDefinitions = [
 	{ name: "Rocket Raccoon", role: "Strategist", color: "#c77356" },
 	{ name: "Rogue", role: "Vanguard", color: "#c2ae62" },
 	{ name: "Scarlet Witch", role: "Duelist", color: "#dc4769" },
-	{ name: "Spider Man", role: "Duelist", color: "#d35b60" },
+	{ name: "Spider-Man", role: "Duelist", color: "#d35b60" },
 	{ name: "Squirrel Girl", role: "Duelist", color: "#c88858" },
-	{ name: "Star Lord", role: "Duelist", color: "#4187cb" },
+	{ name: "Star-Lord", role: "Duelist", color: "#4187cb" },
 	{ name: "Storm", role: "Duelist", color: "#474e74" },
 	{ name: "The Punisher", role: "Duelist", color: "#56667a" },
 	{ name: "The Thing", role: "Vanguard", color: "#c98a58" },
@@ -94,7 +94,7 @@ const ranks = levelConfig.map((c) => c.title);
 let heroData = [];
 
 function getHeroFileName(name) {
-	return name.replace(/\s+/g, "") + ".webp";
+	return name.replace(/(\s+|_|-)/g, "") + ".webp";
 }
 
 function init() {
@@ -355,10 +355,8 @@ function renderList() {
 		const levelInfo = getLevelInfoFromTotal(totalScore);
 
 		let subFolder;
-		let style = `background: linear-gradient(180deg,rgba(0, 0, 0, 0) 10%, ${hero.color || "#000"} 100%);`
 		if (levelInfo.level >= 50) {
 			subFolder = "dyna/";
-			style = `box-shadow: 0 0 22px ${hero.color};`
 		}
 		else if (levelInfo.level >= 20) {
 			subFolder = "lord/";
@@ -382,10 +380,12 @@ function renderList() {
 
 		row.innerHTML = `
 			<div class="portrait-container">
-				<img src="${heroImgPath}" 
-					class="hero-portrait rank-${levelInfo.title}" 
-					style="${style}"
-					onerror="handleImageFallback(this, '${hero.name}')" alt="${hero.name}">
+				<div class="char-img-wrapper"${levelInfo.level >= 50 ? `style=\"box-shadow: 0 0 22px ${hero.color};\"` : ""}>
+					<img src="${heroImgPath}" 
+						class="hero-portrait rank-${levelInfo.title}" 
+						style="background: linear-gradient(180deg,rgba(0, 0, 0, 0) 10%, ${hero.color || "#000"} 100%); ${levelInfo.level >= 50 ? `transform: scale(1.4) translateY(-9px);` : ""}"
+						onerror="handleImageFallback(this, '${hero.name}')" alt="${hero.name}">
+				</div>
 				<div class="role-icon-container">
 					<img src="img/Vanguard_Icon.webp" class="role-icon-mini" title="Vanguard" style="display:${displayRole.includes("Vanguard") ? "block" : "none"}">
 					<img src="img/Duelist_Icon.webp" class="role-icon-mini" title="Duelist" style="display:${displayRole.includes("Duelist") ? "block" : "none"}">
@@ -581,7 +581,7 @@ async function fileUrlToDataUrl(url) {
 				ctx.drawImage(img, 0, 0, width, height);
 
 				// Crush it into a compressed JPEG
-				const dataUrl = canvas.toDataURL("image/jpeg", 0.7);
+				const dataUrl = canvas.toDataURL("image/webp", 0.7);
 				URL.revokeObjectURL(blobUrl);
 				resolve(dataUrl);
 			};
