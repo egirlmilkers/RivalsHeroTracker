@@ -8,6 +8,7 @@ const heroDefinitions = [
 	{ name: "Bruce Banner", role: "Vanguard", color: "#448f56" },
 	{ name: "Captain America", role: "Vanguard", color: "#366bac" },
 	{ name: "Cloak and Dagger", role: "Strategist", color: "#899de1" },
+	{ name: "Cyclops", role: "Duelist", color: "#1789B5" },
 	{ name: "Daredevil", role: "Duelist", color: "#d44a69" },
 	{ name: "Deadpool", role: ["Vanguard", "Duelist", "Strategist"], color: "#d55959" },
 	{ name: "Devil Dinosaur", role: "Vanguard", color: "#C54245" },
