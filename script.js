@@ -357,6 +357,7 @@ const defaultSettings = {
 	ladyLoki: false, // Show Lady Loki over Loki
 };
 let settings = { ...defaultSettings };
+let sorted = settings.autoSort;
 
 function loadSettings() {
 	const saved = localStorage.getItem('marvelRivalsSettings');
@@ -367,6 +368,7 @@ function loadSettings() {
 			settings = { ...defaultSettings };
 		}
 	}
+	sorted = settings.autoSort;
 }
 
 function saveSettings() {
@@ -389,17 +391,9 @@ function updateSetting(key, value) {
 	saveSettings();
 
 	if (key === 'autoSort') {
-		if (value) {
-			// Turn on: sort now by proficiency
-			heroData.sort(
-				(a, b) => calculateTotalScore(b) - calculateTotalScore(a),
-			);
-			saveData();
-		} else {
-			// Turn off: restore original (default) hero order
-			heroData.sort((a, b) => a.name.localeCompare(b.name));
-			saveData();
-		}
+		sorted = value;
+		sortHeroes();
+		saveData();
 	}
 
 	renderList();
@@ -468,15 +462,7 @@ function processLoadedData(savedData) {
 			originalIndex: idx,
 		}));
 	}
-
-	// Respect the "Always sort by highest" setting on load
-	if (settings.autoSort) {
-		heroData.sort(
-			(a, b) => calculateTotalScore(b) - calculateTotalScore(a),
-		);
-	}
-
-	renderList();
+	sortHeroes();
 }
 
 function getTopHeroesHTML(dataStr) {
@@ -839,20 +825,12 @@ function updateHero(name, field, value) {
 	heroData[index].rank = newData.rank;
 	heroData[index].points = newData.points;
 
-	if (settings.autoSort) {
-		heroData.sort(
-			(a, b) => calculateTotalScore(b) - calculateTotalScore(a),
-		);
-	}
-
+	sortHeroes();
 	saveData();
-	// Re-render to update bars/layout
-	renderList();
 }
 
-var sorted = false;
-function sortHeroes() {
-	sorted = !sorted;
+function sortHeroes(toggle=false) {
+	if (toggle) sorted = !sorted;
 	if (sorted) {
 		heroData.sort(
 			(a, b) => calculateTotalScore(b) - calculateTotalScore(a),
@@ -863,7 +841,6 @@ function sortHeroes() {
 		document.getElementById('btn-sort').textContent = 'Sort by Proficiency';
 	}
 	renderList();
-	saveData();
 }
 
 function saveData() {

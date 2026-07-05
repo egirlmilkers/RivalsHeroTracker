@@ -42,7 +42,7 @@
 }
 
 body {
-	font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 	background-color: var(--bg-color);
 	color: var(--text-color);
 	margin: 0;
@@ -96,6 +96,12 @@ button:active {
 	transform: scale(0.98);
 }
 
+button:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+	transform: none;
+}
+
 .btn-sort {
 	background-color: var(--color-knight);
 	color: #000;
@@ -107,13 +113,24 @@ button:active {
 }
 
 .btn-reset {
+	align-self: center;
+	max-width: 10rem;
+	padding: 5px 10px;
 	background-color: #333;
-	color: #888;
+	color: #f98284;
 }
 
 .btn-reset:hover {
-	background-color: var(--color-lord);
-	color: white;
+	background-color: #a10003;
+}
+
+.btn-share {
+	background-color: #6c5671;
+	color: #000;
+}
+
+.btn-share:hover {
+	background-color: #b0a9e4;
 }
 
 .btn-settings {
@@ -647,6 +664,47 @@ input:hover {
 	border-bottom: none;
 }
 
+/* >> Share Image Modal Styles << */
+.share-canvas-wrapper {
+	position: relative;
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	background: #000;
+	border-radius: 10px;
+	overflow: hidden;
+	min-height: 120px;
+}
+#share-canvas {
+	width: 100%;
+	height: auto;
+	display: block;
+}
+.share-loading {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: #888;
+	font-size: 0.9em;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	background: rgba(0, 0, 0, 0.4);
+}
+.share-loading.hidden {
+	display: none;
+}
+.share-modal-actions {
+	display: flex;
+	gap: 15px;
+	justify-content: center;
+	margin-top: 20px;
+}
+
 /* >> Settings Modal Styles << */
 .settings-list {
 	display: flex;
@@ -689,7 +747,7 @@ input:hover {
 }
 
 /* Base styling for the checkbox input */
-.settings-row input[type="checkbox"] {
+.settings-row input[type='checkbox'] {
 	appearance: none;
 	-webkit-appearance: none;
 
@@ -706,13 +764,13 @@ input:hover {
 	position: relative;
 }
 
-.settings-row input[type="checkbox"]:checked {
+.settings-row input[type='checkbox']:checked {
 	background-color: #4f46e5;
 	border-color: #4f46e5;
 }
 
-.settings-row input[type="checkbox"]::before {
-	content: "";
+.settings-row input[type='checkbox']::before {
+	content: '';
 	width: 0.65em;
 	height: 0.35em;
 	border-left: 2px solid #fff;
@@ -723,11 +781,11 @@ input:hover {
 	transition: opacity 0.1s ease-in-out;
 }
 
-.settings-row input[type="checkbox"]:checked::before {
+.settings-row input[type='checkbox']:checked::before {
 	opacity: 1;
 }
 
-.settings-row input[type="checkbox"]:focus-visible {
+.settings-row input[type='checkbox']:focus-visible {
 	outline: 2px solid #2563eb;
 	outline-offset: 2px;
 }
