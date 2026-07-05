@@ -2,6 +2,6 @@
 
 ## TODO
 - Image Generation
-- Alt name search
-- Cyclops dynamic icon
 - Badges
+- Tracking system for stats
+- reset sort

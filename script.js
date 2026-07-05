@@ -1,55 +1,55 @@
 const heroDefinitions = [
-	{ name: "Adam Warlock", role: "Strategist", color: "#cba25c" },
-	{ name: "Angela", role: "Vanguard", color: "#dd965c" },
-	{ name: "Black Cat", role: "Duelist", color: "#725EC2" },
-	{ name: "Black Panther", role: "Duelist", color: "#a86ccf" },
-	{ name: "Black Widow", role: "Duelist", color: "#545a68" },
-	{ name: "Blade", role: "Duelist", color: "#ba4340" },
-	{ name: "Bruce Banner", role: "Vanguard", color: "#448f56" },
-	{ name: "Captain America", role: "Vanguard", color: "#366bac" },
-	{ name: "Cloak and Dagger", role: "Strategist", color: "#899de1" },
-	{ name: "Cyclops", role: "Duelist", color: "#1789B5" },
-	{ name: "Daredevil", role: "Duelist", color: "#d44a69" },
-	{ name: "Deadpool", role: ["Vanguard", "Duelist", "Strategist"], color: "#d55959" },
-	{ name: "Devil Dinosaur", role: "Vanguard", color: "#C54245" },
-	{ name: "Doctor Strange", role: "Vanguard", color: "#ee7d5e" },
-	{ name: "Elsa Bloodstone", role: "Duelist", color: "#ee855f" },
-	{ name: "Emma Frost", role: "Vanguard", color: "#2599bf" },
-	{ name: "Gambit", role: "Strategist", color: "#bd5e98" },
-	{ name: "Groot", role: "Vanguard", color: "#7b9e63" },
-	{ name: "Hawkeye", role: "Duelist", color: "#9f70c3" },
-	{ name: "Hela", role: "Duelist", color: "#2f8888" },
-	{ name: "Human Torch", role: "Duelist", color: "#dc8f49" },
-	{ name: "Invisible Woman", role: "Strategist", color: "#4c91bc" },
-	{ name: "Iron Fist", role: "Duelist", color: "#4187cb" },
-	{ name: "Iron Man", role: "Duelist", color: "#d55968" },
-	{ name: "Jeff The Land Shark", role: "Strategist", color: "#5c77a1" },
-	{ name: "Loki", role: "Strategist", color: "#4a967b" },
-	{ name: "Luna Snow", role: "Strategist", color: "#4d77ba" },
-	{ name: "Magik", role: "Duelist", color: "#8b615f" },
-	{ name: "Magneto", role: "Vanguard", color: "#5e5688" },
-	{ name: "Mantis", role: "Strategist", color: "#8ca171" },
-	{ name: "Mister Fantastic", role: "Duelist", color: "#18a5be" },
-	{ name: "Moon Knight", role: "Duelist", color: "#657986" },
-	{ name: "Namor", role: "Duelist", color: "#009897" },
-	{ name: "Peni Parker", role: "Vanguard", color: "#e26363" },
-	{ name: "Phoenix", role: "Duelist", color: "#e27568" },
-	{ name: "Psylocke", role: "Duelist", color: "#a95db6" },
-	{ name: "Rocket Raccoon", role: "Strategist", color: "#c77356" },
-	{ name: "Rogue", role: "Vanguard", color: "#c2ae62" },
-	{ name: "Scarlet Witch", role: "Duelist", color: "#dc4769" },
-	{ name: "Spider-Man", role: "Duelist", color: "#d35b60" },
-	{ name: "Squirrel Girl", role: "Duelist", color: "#c88858" },
-	{ name: "Star-Lord", role: "Duelist", color: "#4187cb" },
-	{ name: "Storm", role: "Duelist", color: "#474e74" },
-	{ name: "The Punisher", role: "Duelist", color: "#56667a" },
-	{ name: "The Thing", role: "Vanguard", color: "#c98a58" },
-	{ name: "Thor", role: "Vanguard", color: "#666aae" },
-	{ name: "Ultron", role: "Strategist", color: "#8391b8" },
-	{ name: "Venom", role: "Vanguard", color: "#576788" },
-	{ name: "White Fox", role: "Strategist", color: "#2db0b9" },
-	{ name: "Winter Soldier", role: "Duelist", color: "#667b48" },
-	{ name: "Wolverine", role: "Duelist", color: "#c49c3e" },
+	{ name: "Adam Warlock", role: "Strategist", color: "#cba25c", tags: ["cosmic", "gold", "soul stone"] },
+	{ name: "Angela", role: "Vanguard", color: "#dd965c", tags: ["asgard", "wings", "warrior"] },
+	{ name: "Black Cat", role: "Duelist", color: "#725EC2", tags: ["cat", "luck", "thief"] },
+	{ name: "Black Panther", role: "Duelist", color: "#a86ccf", tags: ["wakanda", "king", "cat", "vibranium"] },
+	{ name: "Black Widow", role: "Duelist", color: "#545a68", tags: ["spy", "red", "assassin"] },
+	{ name: "Blade", role: "Duelist", color: "#ba4340", tags: ["vampire", "hunter"] },
+	{ name: "Bruce Banner", role: "Vanguard", color: "#448f56", tags: ["green", "hulk", "gamma", "science", "rage", "bruce", "banner"] },
+	{ name: "Captain America", role: "Vanguard", color: "#366bac", tags: ["shield", "patriot", "blue", "super soldier"] },
+	{ name: "Cloak and Dagger", role: "Strategist", color: "#899de1", tags: ["light", "dark", "duo"] },
+	{ name: "Cyclops", role: "Duelist", color: "#1789B5", tags: ["laser", "visor", "x-men"] },
+	{ name: "Daredevil", role: "Duelist", color: "#d44a69", tags: ["blind", "red", "ninja"] },
+	{ name: "Deadpool", role: ["Vanguard", "Duelist", "Strategist"], color: "#d55959", tags: ["red", "mercenary", "funny", "chimichanga"] },
+	{ name: "Devil Dinosaur", role: "Vanguard", color: "#C54245", tags: ["dinosaur", "red", "giant"] },
+	{ name: "Doctor Strange", role: "Vanguard", color: "#ee7d5e", tags: ["magic", "cloak", "sorcerer"] },
+	{ name: "Elsa Bloodstone", role: "Duelist", color: "#ee855f", tags: ["monster hunter", "gun"] },
+	{ name: "Emma Frost", role: "Vanguard", color: "#2599bf", tags: ["diamond", "telepath", "white", "x-men"] },
+	{ name: "Gambit", role: "Strategist", color: "#bd5e98", tags: ["cards", "cajun", "kinetic", "x-men"] },
+	{ name: "Groot", role: "Vanguard", color: "#7b9e63", tags: ["tree", "wood", "guardian"] },
+	{ name: "Hawkeye", role: "Duelist", color: "#9f70c3", tags: ["archer", "bow", "arrow"] },
+	{ name: "Hela", role: "Duelist", color: "#2f8888", tags: ["death", "goddess", "asgard"] },
+	{ name: "Human Torch", role: "Duelist", color: "#dc8f49", tags: ["fire", "flame", "fantastic four"] },
+	{ name: "Invisible Woman", role: "Strategist", color: "#4c91bc", tags: ["invisible", "force field", "fantastic four"] },
+	{ name: "Iron Fist", role: "Duelist", color: "#4187cb", tags: ["kung fu", "chi", "fist"] },
+	{ name: "Iron Man", role: "Duelist", color: "#d55968", tags: ["armor", "tech", "red and gold"] },
+	{ name: "Jeff The Land Shark", role: "Strategist", color: "#5c77a1", tags: ["shark", "cute", "baby"] },
+	{ name: "Loki", role: "Strategist", color: "#4a967b", tags: ["trickster", "god", "magic", "asgard", "lady"] },
+	{ name: "Luna Snow", role: "Strategist", color: "#4d77ba", tags: ["ice", "kpop", "healer"] },
+	{ name: "Magik", role: "Duelist", color: "#8b615f", tags: ["demon", "sword", "portal", "x-men"] },
+	{ name: "Magneto", role: "Vanguard", color: "#5e5688", tags: ["metal", "magnet", "mutant", "x-men"] },
+	{ name: "Mantis", role: "Strategist", color: "#8ca171", tags: ["empath", "plant", "guardian"] },
+	{ name: "Mister Fantastic", role: "Duelist", color: "#18a5be", tags: ["stretch", "elastic", "fantastic four"] },
+	{ name: "Moon Knight", role: "Duelist", color: "#657986", tags: ["moon", "white", "mercenary"] },
+	{ name: "Namor", role: "Duelist", color: "#009897", tags: ["ocean", "king", "atlantis", "wings"] },
+	{ name: "Peni Parker", role: "Vanguard", color: "#e26363", tags: ["mech", "spider", "robot"] },
+	{ name: "Phoenix", role: "Duelist", color: "#e27568", tags: ["fire", "cosmic", "telepath", "x-men"] },
+	{ name: "Psylocke", role: "Duelist", color: "#a95db6", tags: ["psychic", "katana", "purple", "x-men"] },
+	{ name: "Rocket Raccoon", role: "Strategist", color: "#c77356", tags: ["raccoon", "gun", "guardian"] },
+	{ name: "Rogue", role: "Vanguard", color: "#c2ae62", tags: ["absorb", "flight", "mutant", "x-men"] },
+	{ name: "Scarlet Witch", role: "Duelist", color: "#dc4769", tags: ["chaos", "magic", "red"] },
+	{ name: "Spider-Man", role: "Duelist", color: "#d35b60", tags: ["spider", "web", "red and blue"] },
+	{ name: "Squirrel Girl", role: "Duelist", color: "#c88858", tags: ["squirrel", "cute"] },
+	{ name: "Star-Lord", role: "Duelist", color: "#4187cb", tags: ["space", "guardian", "blaster"] },
+	{ name: "Storm", role: "Duelist", color: "#474e74", tags: ["weather", "wind", "mutant", "x-men"] },
+	{ name: "The Punisher", role: "Duelist", color: "#56667a", tags: ["skull", "gun", "vigilante"] },
+	{ name: "The Thing", role: "Vanguard", color: "#c98a58", tags: ["rock", "orange", "fantastic four"] },
+	{ name: "Thor", role: "Vanguard", color: "#666aae", tags: ["hammer", "thunder", "god", "asgard"] },
+	{ name: "Ultron", role: "Strategist", color: "#8391b8", tags: ["robot", "ai", "villain"] },
+	{ name: "Venom", role: "Vanguard", color: "#576788", tags: ["symbiote", "black", "alien"] },
+	{ name: "White Fox", role: "Strategist", color: "#2db0b9", tags: ["fox", "korean", "healer"] },
+	{ name: "Winter Soldier", role: "Duelist", color: "#667b48", tags: ["metal arm", "assassin"] },
+	{ name: "Wolverine", role: "Duelist", color: "#c49c3e", tags: ["claws", "healing", "mutant", "x-men"] },
 ];
 
 // Configuration for Levels and XP
@@ -94,11 +94,63 @@ const ranks = levelConfig.map((c) => c.title);
 
 let heroData = [];
 
+// >> Settings <<
+const defaultSettings = {
+	autoSort: false, // Always sort by highest proficiency on load/change
+	hulkIcon: false, // Show Hulk icon instead of Bruce Banner
+};
+let settings = { ...defaultSettings };
+
+function loadSettings() {
+	const saved = localStorage.getItem("marvelRivalsSettings");
+	if (saved) {
+		try {
+			settings = { ...defaultSettings, ...JSON.parse(saved) };
+		} catch (e) {
+			settings = { ...defaultSettings };
+		}
+	}
+}
+
+function saveSettings() {
+	localStorage.setItem("marvelRivalsSettings", JSON.stringify(settings));
+}
+
+function openSettingsModal() {
+	document.getElementById("setting-autoSort").checked = settings.autoSort;
+	document.getElementById("setting-hulkIcon").checked = settings.hulkIcon;
+	document.getElementById("settings-modal").style.display = "flex";
+}
+
+function closeSettingsModal() {
+	document.getElementById("settings-modal").style.display = "none";
+}
+
+function updateSetting(key, value) {
+	settings[key] = value;
+	saveSettings();
+
+	if (key === "autoSort") {
+		if (value) {
+			// Turn on: sort now by proficiency
+			heroData.sort((a, b) => calculateTotalScore(b) - calculateTotalScore(a));
+			saveData();
+		} else {
+			// Turn off: restore original (default) hero order
+			heroData.sort((a, b) => a.originalIndex - b.originalIndex);
+			saveData();
+		}
+	}
+
+	renderList();
+}
+
 function getHeroFileName(name) {
 	return name.replace(/(\s+|_|-)/g, "") + ".webp";
 }
 
 function init() {
+	loadSettings();
 	let v3Data = localStorage.getItem("marvelRivalsDataV3");
 	let stdData = localStorage.getItem("marvelRivalsData");
 
@@ -136,17 +188,24 @@ function init() {
 function processLoadedData(savedData) {
 	if (savedData) {
 		const parsedData = JSON.parse(savedData);
-		heroData = heroDefinitions.map((def) => {
+		heroData = heroDefinitions.map((def, idx) => {
 			const saved = parsedData.find((p) => p.name === def.name);
-			return saved ? { ...def, rank: saved.rank, points: saved.points } : { ...def, rank: "Agent", points: 0 };
+			return saved ? { ...def, rank: saved.rank, points: saved.points, originalIndex: idx } : { ...def, rank: "Agent", points: 0, originalIndex: idx };
 		});
 	} else {
-		heroData = heroDefinitions.map((def) => ({
+		heroData = heroDefinitions.map((def, idx) => ({
 			...def,
 			rank: "Agent",
 			points: 0,
+			originalIndex: idx,
 		}));
 	}
+
+	// Respect the "Always sort by highest" setting on load
+	if (settings.autoSort) {
+		heroData.sort((a, b) => calculateTotalScore(b) - calculateTotalScore(a));
+	}
+
 	renderList();
 }
 
@@ -284,13 +343,12 @@ function getDataFromLevel(targetLevel, targetXP) {
 				rank: conf.title,
 				points: Math.round(pointsInTier),
 			};
-		}
-		else if (targetLevel == conf.endLvl + 1) {
+		} else if (targetLevel == conf.endLvl + 1) {
 			// If char has max level, xp input is uncapped
 			return {
 				rank: conf.title,
 				points: Math.round((conf.endLvl - conf.startLvl + 1) * conf.xpPerLevel + targetXP),
-			}
+			};
 		}
 		cumulativeXP += conf.totalRankXP; // Not used for return, but for loop logic if needed
 	}
@@ -304,17 +362,18 @@ function toggleFilters() {
 	arrow.style.transform = content.classList.contains("expanded") ? "rotate(90deg)" : "rotate(0deg)";
 }
 
-function handleImageFallback(img, heroName) {
-	const baseSrc = `img/char/${getHeroFileName(heroName)}`;
-	const lordSrc = `img/char/lord/${getHeroFileName(heroName)}`;
+function handleImageFallback(img, heroName, fileName) {
+	fileName = fileName || getHeroFileName(heroName);
+	const baseSrc = `img/char/${fileName}`;
+	const lordSrc = `img/char/lord/${fileName}`;
 
-	if (img.src.includes('/dyna/')) {
+	if (img.src.includes("/dyna/")) {
 		img.src = lordSrc;
-	} else if (img.src.includes('/lord/')) {
+	} else if (img.src.includes("/lord/")) {
 		img.src = baseSrc;
 	} else {
 		img.onerror = null; // Kills the infinite loop if the base image is also gone
-		alert("The base image for " + heroName + " is missing.")
+		alert("The base image for " + heroName + " is missing.");
 	}
 }
 
@@ -328,9 +387,10 @@ function renderList() {
 	// Filter Data
 	const visibleHeroes = heroData.filter((hero) => {
 		const matchesName = hero.name.toLowerCase().includes(searchText);
+		const matchesTag = Array.isArray(hero.tags) && hero.tags.some((tag) => tag.toLowerCase().includes(searchText));
 
 		const matchesRole = checkedRoles.length === 0 || (Array.isArray(hero.role) ? hero.role.some((r) => checkedRoles.includes(r)) : checkedRoles.includes(hero.role));
-		return matchesName && matchesRole;
+		return (matchesName || matchesTag) && matchesRole;
 	});
 
 	container.innerHTML = `
@@ -358,14 +418,17 @@ function renderList() {
 		let subFolder;
 		if (levelInfo.level >= 50) {
 			subFolder = "dyna/";
-		}
-		else if (levelInfo.level >= 20) {
+		} else if (levelInfo.level >= 20) {
 			subFolder = "lord/";
-		}
-		else {
+		} else {
 			subFolder = "";
 		}
-		const heroImgPath = `img/char/${subFolder}${getHeroFileName(hero.name)}`;
+		// Allow the "Hulk Icon instead of Banner" setting to swap in an alternate portrait
+		let heroFileName = getHeroFileName(hero.name);
+		if (settings.hulkIcon && hero.name === "Bruce Banner") {
+			heroFileName = getHeroFileName("Hulk");
+		}
+		const heroImgPath = `img/char/${subFolder}${heroFileName}`;
 		const rankBadgePath = `img/icons/${levelInfo.title}_Badge.webp`;
 
 		// Progress Bars
@@ -385,7 +448,7 @@ function renderList() {
 					<img src="${heroImgPath}" 
 						class="hero-portrait rank-${levelInfo.title}" 
 						style="background: linear-gradient(180deg,rgba(0, 0, 0, 0) 10%, ${hero.color || "#000"} 100%); ${levelInfo.level >= 50 ? `transform: scale(1.4) translateY(-9px);` : ""}"
-						onerror="handleImageFallback(this, '${hero.name}')" alt="${hero.name}">
+						onerror="handleImageFallback(this, '${hero.name}', '${heroFileName}')" alt="${hero.name}">
 				</div>
 				<div class="role-icon-container">
 					<img src="img/Vanguard_Icon.webp" class="role-icon-mini" title="Vanguard" style="display:${displayRole.includes("Vanguard") ? "block" : "none"}">
@@ -430,9 +493,9 @@ function renderList() {
 			</div>
 
 			<div class="point-container">
-				<input type="number" value="${levelInfo.xp}" min="0" ${levelInfo.level > currentConfig.endLvl ? '' : `max="${levelInfo.maxXp}"`}
+				<input type="number" value="${levelInfo.xp}" min="0" ${levelInfo.level > currentConfig.endLvl ? "" : `max="${levelInfo.maxXp}"`}
 						onchange="updateHero('${hero.name}', 'points', this.value)" placeholder="0">
-				<span class="point-suffix">/ ${levelInfo.level > currentConfig.endLvl ? '&infin;' : levelInfo.maxXp}</span>
+				<span class="point-suffix">/ ${levelInfo.level > currentConfig.endLvl ? "&infin;" : levelInfo.maxXp}</span>
 			</div>
 		`;
 		container.appendChild(row);
@@ -464,6 +527,10 @@ function updateHero(name, field, value) {
 	// Update Data
 	heroData[index].rank = newData.rank;
 	heroData[index].points = newData.points;
+
+	if (settings.autoSort) {
+		heroData.sort((a, b) => calculateTotalScore(b) - calculateTotalScore(a));
+	}
 
 	saveData();
 	// Re-render to update bars/layout

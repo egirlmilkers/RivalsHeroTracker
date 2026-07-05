@@ -116,6 +116,18 @@ button:active {
 	color: white;
 }
 
+.btn-settings {
+	background-color: #333;
+	color: #ccc;
+	border: 1px solid #444;
+}
+
+.btn-settings:hover {
+	background-color: var(--color-knight);
+	color: #000;
+	border-color: var(--color-knight);
+}
+
 .container {
 	width: 100%;
 	max-width: 950px;
@@ -636,12 +648,61 @@ input:hover {
 	border-bottom: none;
 }
 
+/* >> Settings Modal Styles << */
+.settings-list {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	text-align: left;
+}
+
+.settings-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 20px;
+	background: var(--input-bg);
+	border: 1px solid #333;
+	border-radius: 8px;
+	padding: 14px 16px;
+	cursor: pointer;
+}
+
+.settings-row:hover {
+	border-color: #555;
+}
+
+.settings-row-text {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.settings-row-title {
+	font-weight: 600;
+	color: #fff;
+	font-size: 0.95em;
+}
+
+.settings-row-desc {
+	font-size: 0.8em;
+	color: #888;
+}
+
+.settings-row input[type="checkbox"] {
+	width: 20px;
+	height: 20px;
+	flex-shrink: 0;
+	accent-color: var(--color-knight);
+	cursor: pointer;
+}
+
 /* >> Mobile Styles << */
 @media (max-width: 600px) {
 	.hero-row {
 		/* Define a 2-column, 2-row grid */
 		display: grid;
-		grid-template-columns: 80px 1fr; 
+		grid-template-columns: 80px 1fr;
 		grid-template-rows: auto auto;
 		gap: 20px 15px; /* Added more vertical gap to account for the "Level" label */
 		padding: 15px;
