@@ -690,11 +690,9 @@ input:hover {
 
 /* Base styling for the checkbox input */
 .settings-row input[type="checkbox"] {
-	/* Remove default browser styling */
 	appearance: none;
 	-webkit-appearance: none;
 
-	/* Set explicit dimensions */
 	width: 1.25em;
 	height: 1.25em;
 	border: 2px solid #9ca3af;
@@ -702,40 +700,33 @@ input:hover {
 	background-color: transparent;
 	cursor: pointer;
 
-	/* Use grid to center the checkmark pseudo-element */
 	display: inline-grid;
 	place-content: center;
 	vertical-align: middle;
 	position: relative;
 }
 
-/* Styling for the checked state */
 .settings-row input[type="checkbox"]:checked {
 	background-color: #4f46e5;
 	border-color: #4f46e5;
 }
 
-/* Create the checkmark icon using the ::before pseudo-element */
 .settings-row input[type="checkbox"]::before {
 	content: "";
 	width: 0.65em;
 	height: 0.35em;
-	/* Create an L-shape border to simulate a checkmark */
 	border-left: 2px solid #fff;
 	border-bottom: 2px solid #fff;
 	transform: rotate(-45deg) translate(1px, -1px);
 
-	/* Hide the checkmark by default */
 	opacity: 0;
 	transition: opacity 0.1s ease-in-out;
 }
 
-/* Reveal the checkmark when checked */
 .settings-row input[type="checkbox"]:checked::before {
 	opacity: 1;
 }
 
-/* Optional: Style focus state for accessibility */
 .settings-row input[type="checkbox"]:focus-visible {
 	outline: 2px solid #2563eb;
 	outline-offset: 2px;

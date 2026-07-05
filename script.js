@@ -4,7 +4,7 @@ const heroDefinitions = [
 		name: 'Adam Warlock',
 		role: 'Strategist',
 		color: '#c28b43',
-		tags: ['gold'],
+		tags: ['gold', 'guardian', 'gotg'],
 	},
 	{
 		name: 'Angela',
@@ -106,7 +106,7 @@ const heroDefinitions = [
 		name: 'Groot',
 		role: 'Vanguard',
 		color: '#83a862',
-		tags: ['green'],
+		tags: ['green', 'guardian', 'gotg'],
 	},
 	{
 		name: 'Hawkeye',
@@ -172,7 +172,7 @@ const heroDefinitions = [
 		name: 'Magneto',
 		role: 'Vanguard',
 		color: '#425f67',
-		tags: ['mutant', 'grey', 'gray', 'purple', 'max', 'eisenhardt'],
+		tags: ['mutant', 'grey', 'gray', 'max', 'eisenhardt'],
 	},
 	{
 		name: 'Mantis',
