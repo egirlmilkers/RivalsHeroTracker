@@ -1,70 +1,326 @@
+// prettier-ignore
 const heroDefinitions = [
-	{ name: "Adam Warlock", role: "Strategist", color: "#cba25c", tags: ["cosmic", "gold", "soul stone"] },
-	{ name: "Angela", role: "Vanguard", color: "#dd965c", tags: ["asgard", "wings", "warrior"] },
-	{ name: "Black Cat", role: "Duelist", color: "#725EC2", tags: ["cat", "luck", "thief"] },
-	{ name: "Black Panther", role: "Duelist", color: "#a86ccf", tags: ["wakanda", "king", "cat", "vibranium"] },
-	{ name: "Black Widow", role: "Duelist", color: "#545a68", tags: ["spy", "red", "assassin"] },
-	{ name: "Blade", role: "Duelist", color: "#ba4340", tags: ["vampire", "hunter"] },
-	{ name: "Bruce Banner", role: "Vanguard", color: "#448f56", tags: ["green", "hulk", "gamma", "science", "rage", "bruce", "banner"] },
-	{ name: "Captain America", role: "Vanguard", color: "#366bac", tags: ["shield", "patriot", "blue", "super soldier"] },
-	{ name: "Cloak and Dagger", role: "Strategist", color: "#899de1", tags: ["light", "dark", "duo"] },
-	{ name: "Cyclops", role: "Duelist", color: "#1789B5", tags: ["laser", "visor", "x-men"] },
-	{ name: "Daredevil", role: "Duelist", color: "#d44a69", tags: ["blind", "red", "ninja"] },
-	{ name: "Deadpool", role: ["Vanguard", "Duelist", "Strategist"], color: "#d55959", tags: ["red", "mercenary", "funny", "chimichanga"] },
-	{ name: "Devil Dinosaur", role: "Vanguard", color: "#C54245", tags: ["dinosaur", "red", "giant"] },
-	{ name: "Doctor Strange", role: "Vanguard", color: "#ee7d5e", tags: ["magic", "cloak", "sorcerer"] },
-	{ name: "Elsa Bloodstone", role: "Duelist", color: "#ee855f", tags: ["monster hunter", "gun"] },
-	{ name: "Emma Frost", role: "Vanguard", color: "#2599bf", tags: ["diamond", "telepath", "white", "x-men"] },
-	{ name: "Gambit", role: "Strategist", color: "#bd5e98", tags: ["cards", "cajun", "kinetic", "x-men"] },
-	{ name: "Groot", role: "Vanguard", color: "#7b9e63", tags: ["tree", "wood", "guardian"] },
-	{ name: "Hawkeye", role: "Duelist", color: "#9f70c3", tags: ["archer", "bow", "arrow"] },
-	{ name: "Hela", role: "Duelist", color: "#2f8888", tags: ["death", "goddess", "asgard"] },
-	{ name: "Human Torch", role: "Duelist", color: "#dc8f49", tags: ["fire", "flame", "fantastic four"] },
-	{ name: "Invisible Woman", role: "Strategist", color: "#4c91bc", tags: ["invisible", "force field", "fantastic four"] },
-	{ name: "Iron Fist", role: "Duelist", color: "#4187cb", tags: ["kung fu", "chi", "fist"] },
-	{ name: "Iron Man", role: "Duelist", color: "#d55968", tags: ["armor", "tech", "red and gold"] },
-	{ name: "Jeff The Land Shark", role: "Strategist", color: "#5c77a1", tags: ["shark", "cute", "baby"] },
-	{ name: "Loki", role: "Strategist", color: "#4a967b", tags: ["trickster", "god", "magic", "asgard", "lady"] },
-	{ name: "Luna Snow", role: "Strategist", color: "#4d77ba", tags: ["ice", "kpop", "healer"] },
-	{ name: "Magik", role: "Duelist", color: "#8b615f", tags: ["demon", "sword", "portal", "x-men"] },
-	{ name: "Magneto", role: "Vanguard", color: "#5e5688", tags: ["metal", "magnet", "mutant", "x-men"] },
-	{ name: "Mantis", role: "Strategist", color: "#8ca171", tags: ["empath", "plant", "guardian"] },
-	{ name: "Mister Fantastic", role: "Duelist", color: "#18a5be", tags: ["stretch", "elastic", "fantastic four"] },
-	{ name: "Moon Knight", role: "Duelist", color: "#657986", tags: ["moon", "white", "mercenary"] },
-	{ name: "Namor", role: "Duelist", color: "#009897", tags: ["ocean", "king", "atlantis", "wings"] },
-	{ name: "Peni Parker", role: "Vanguard", color: "#e26363", tags: ["mech", "spider", "robot"] },
-	{ name: "Phoenix", role: "Duelist", color: "#e27568", tags: ["fire", "cosmic", "telepath", "x-men"] },
-	{ name: "Psylocke", role: "Duelist", color: "#a95db6", tags: ["psychic", "katana", "purple", "x-men"] },
-	{ name: "Rocket Raccoon", role: "Strategist", color: "#c77356", tags: ["raccoon", "gun", "guardian"] },
-	{ name: "Rogue", role: "Vanguard", color: "#c2ae62", tags: ["absorb", "flight", "mutant", "x-men"] },
-	{ name: "Scarlet Witch", role: "Duelist", color: "#dc4769", tags: ["chaos", "magic", "red", "wanda"] },
-	{ name: "Spider-Man", role: "Duelist", color: "#d35b60", tags: ["spider", "web", "red and blue"] },
-	{ name: "Squirrel Girl", role: "Duelist", color: "#c88858", tags: ["squirrel", "cute"] },
-	{ name: "Star-Lord", role: "Duelist", color: "#4187cb", tags: ["space", "guardian", "blaster"] },
-	{ name: "Storm", role: "Duelist", color: "#474e74", tags: ["weather", "wind", "mutant", "x-men"] },
-	{ name: "The Punisher", role: "Duelist", color: "#56667a", tags: ["skull", "gun", "vigilante"] },
-	{ name: "The Thing", role: "Vanguard", color: "#c98a58", tags: ["rock", "orange", "fantastic four"] },
-	{ name: "Thor", role: "Vanguard", color: "#666aae", tags: ["hammer", "thunder", "god", "asgard"] },
-	{ name: "Ultron", role: "Strategist", color: "#8391b8", tags: ["robot", "ai", "villain"] },
-	{ name: "Venom", role: "Vanguard", color: "#576788", tags: ["symbiote", "black", "alien"] },
-	{ name: "White Fox", role: "Strategist", color: "#2db0b9", tags: ["fox", "korean", "healer"] },
-	{ name: "Winter Soldier", role: "Duelist", color: "#667b48", tags: ["metal arm", "assassin"] },
-	{ name: "Wolverine", role: "Duelist", color: "#c49c3e", tags: ["claws", "healing", "mutant", "x-men"] },
+	{
+		name: 'Adam Warlock',
+		role: 'Strategist',
+		color: '#c28b43',
+		tags: ['gold'],
+	},
+	{
+		name: 'Angela',
+		role: 'Vanguard',
+		color: '#e68820',
+		tags: ['gold'],
+	},
+	{
+		name: 'Black Cat',
+		role: 'Duelist',
+		color: '#6252da',
+		tags: ['purple', 'felicia', 'hardy'],
+	},
+	{
+		name: 'Black Panther',
+		role: 'Duelist',
+		color: '#644579',
+		tags: ['purple', "t'challa", 'challa'],
+	},
+	{
+		name: 'Black Widow',
+		role: 'Duelist',
+		color: '#555b6a',
+		tags: ['natasha', 'romanova', 'black'],
+	},
+	{
+		name: 'Blade',
+		role: 'Duelist',
+		color: '#b23e43',
+		tags: ['red', 'eric', 'brooks'],
+	},
+	{
+		name: 'Bruce Banner',
+		role: 'Vanguard',
+		color: '#387458',
+		tags: ['green', 'hulk', 'bruce', 'banner'],
+	},
+	{
+		name: 'Captain America',
+		role: 'Vanguard',
+		color: '#3872b1',
+		tags: ['blue', 'steven', 'steve', 'rogers'],
+	},
+	{
+		name: 'Cloak and Dagger',
+		role: 'Strategist',
+		color: '#889bfd',
+		tags: ['blue', 'tyrone', 'johnson', 'tandy', 'bowen'],
+	},
+	{
+		name: 'Cyclops',
+		role: 'Duelist',
+		color: '#37bdda',
+		tags: ['mutant', 'scott', 'summers', 'blue'],
+	},
+	{
+		name: 'Daredevil',
+		role: 'Duelist',
+		color: '#d02959',
+		tags: ['matt', 'murdock', 'red'],
+	},
+	{
+		name: 'Deadpool',
+		role: ['Vanguard', 'Duelist', 'Strategist'],
+		color: '#f24547',
+		tags: ['red', 'flex', 'wade', 'wilson'],
+	},
+	{
+		name: 'Devil Dinosaur',
+		role: 'Vanguard',
+		color: '#b22d39',
+		tags: ['red', 'dino', 'moon', 'girl'],
+	},
+	{
+		name: 'Doctor Strange',
+		role: 'Vanguard',
+		color: '#db635c',
+		tags: ['stephen', 'strange', 'orange'],
+	},
+	{
+		name: 'Elsa Bloodstone',
+		role: 'Duelist',
+		color: '#e96346',
+		tags: ['orange'],
+	},
+	{
+		name: 'Emma Frost',
+		role: 'Vanguard',
+		color: '#35ade4',
+		tags: ['blue', 'mutant'],
+	},
+	{
+		name: 'Gambit',
+		role: 'Strategist',
+		color: '#d763a0',
+		tags: ['gambit', 'pink', 'remy', 'lebeau'],
+	},
+	{
+		name: 'Groot',
+		role: 'Vanguard',
+		color: '#83a862',
+		tags: ['green'],
+	},
+	{
+		name: 'Hawkeye',
+		role: 'Duelist',
+		color: '#8969a6',
+		tags: ['purple', 'clint', 'barton'],
+	},
+	{
+		name: 'Hela',
+		role: 'Duelist',
+		color: '#388c8c',
+		tags: ['green'],
+	},
+	{
+		name: 'Human Torch',
+		role: 'Duelist',
+		color: '#d8764a',
+		tags: ['orange', 'johnny', 'storm', '4', 'fantastic'],
+	},
+	{
+		name: 'Invisible Woman',
+		role: 'Strategist',
+		color: '#3ac4f7',
+		tags: ['blue', 'sue', 'susan', 'storm', '4', 'fantastic'],
+	},
+	{
+		name: 'Iron Fist',
+		role: 'Duelist',
+		color: '#088078',
+		tags: ['green', 'lin', 'lie'],
+	},
+	{
+		name: 'Iron Man',
+		role: 'Duelist',
+		color: '#dd5067',
+		tags: ['anthony', 'stark', 'tony', 'red'],
+	},
+	{
+		name: 'Jeff The Land Shark',
+		role: 'Strategist',
+		color: '#5f79a5',
+		tags: ['blue', 'gray', 'grey'],
+	},
+	{
+		name: 'Loki',
+		role: 'Strategist',
+		color: '#4c865c',
+		tags: ['green', 'lady', 'laufeyson'],
+	},
+	{
+		name: 'Luna Snow',
+		role: 'Strategist',
+		color: '#1165bf',
+		tags: ['blue', 'seol', 'hee'],
+	},
+	{
+		name: 'Magik',
+		role: 'Duelist',
+		color: '#8f615f',
+		tags: ['mutant', 'illyana', 'rasputin', 'brown'],
+	},
+	{
+		name: 'Magneto',
+		role: 'Vanguard',
+		color: '#425f67',
+		tags: ['mutant', 'grey', 'gray', 'purple', 'max', 'eisenhardt'],
+	},
+	{
+		name: 'Mantis',
+		role: 'Strategist',
+		color: '#6c8c66',
+		tags: ['green', 'guardian', 'gotg'],
+	},
+	{
+		name: 'Mister Fantastic',
+		role: 'Duelist',
+		color: '#2ccbe7',
+		tags: ['blue', 'reed', 'richards', 'fantastic', '4'],
+	},
+	{
+		name: 'Moon Knight',
+		role: 'Duelist',
+		color: '#6b8290',
+		tags: ['grey', 'gray', 'marc', 'spector', 'steven', 'grant', 'jake', 'lockley'],
+	},
+	{
+		name: 'Namor',
+		role: 'Duelist',
+		color: '#22938a',
+		tags: ['mutant', 'green', 'mckenzie'],
+	},
+	{
+		name: 'Peni Parker',
+		role: 'Vanguard',
+		color: '#db5151',
+		tags: ['red'],
+	},
+	{
+		name: 'Phoenix',
+		role: 'Duelist',
+		color: '#db5d51',
+		tags: ['mutant', 'jean', 'grey', 'orange'],
+	},
+	{
+		name: 'Psylocke',
+		role: 'Duelist',
+		color: '#a85bbb',
+		tags: ['mutant', 'purple', 'sai'],
+	},
+	{
+		name: 'Rocket Raccoon',
+		role: 'Strategist',
+		color: '#d47253',
+		tags: ['orange', 'guardian', 'gotg'],
+	},
+	{
+		name: 'Rogue',
+		role: 'Vanguard',
+		color: '#d1b231',
+		tags: ['mutant', 'yellow', 'anna', 'marie'],
+	},
+	{
+		name: 'Scarlet Witch',
+		role: 'Duelist',
+		color: '#d24466',
+		tags: ['red', 'wanda', 'maximoff'],
+	},
+	{
+		name: 'Spider-Man',
+		role: 'Duelist',
+		color: '#d44f5a',
+		tags: ['red', 'peter', 'parker'],
+	},
+	{
+		name: 'Squirrel Girl',
+		role: 'Duelist',
+		color: '#d38850',
+		tags: ['orange', 'doreen', 'green'],
+	},
+	{
+		name: 'Star-Lord',
+		role: 'Duelist',
+		color: '#467ed7',
+		tags: ['blue', 'guardian', 'gotg', 'peter', 'quill'],
+	},
+	{
+		name: 'Storm',
+		role: 'Duelist',
+		color: '#454f76',
+		tags: ['mutant', 'ororo', 'munroe', 'gray', 'grey'],
+	},
+	{
+		name: 'The Punisher',
+		role: 'Duelist',
+		color: '#495366',
+		tags: ['frank', 'castle', 'gray', 'grey'],
+	},
+	{
+		name: 'The Thing',
+		role: 'Vanguard',
+		color: '#e1a75e',
+		tags: ['orange', 'fantastic', 'four', 'ben', 'grimm'],
+	},
+	{
+		name: 'Thor',
+		role: 'Vanguard',
+		color: '#5964ab',
+		tags: ['blue', 'odinson'],
+	},
+	{
+		name: 'Ultron',
+		role: 'Strategist',
+		color: '#6b779f',
+		tags: ['gray', 'grey'],
+	},
+	{
+		name: 'Venom',
+		role: 'Vanguard',
+		color: '#2a2e3d',
+		tags: ['black', 'edward', 'eddie', 'brock'],
+	},
+	{
+		name: 'White Fox',
+		role: 'Strategist',
+		color: '#62d4de',
+		tags: ['ami', 'han', 'blue', 'turquoise'],
+	},
+	{
+		name: 'Winter Soldier',
+		role: 'Duelist',
+		color: '#6d7f41',
+		tags: ['green', 'james', 'buchanan', 'bucky', 'barnes'],
+	},
+	{
+		name: 'Wolverine',
+		role: 'Duelist',
+		color: '#be962a',
+		tags: ['mutant', 'yellow', 'logan'],
+	},
 ];
 
 // Configuration for Levels and XP
 const levelConfig = [
-	{ title: "Agent", startLvl: 1, endLvl: 4, totalRankXP: 500 },
-	{ title: "Knight", startLvl: 5, endLvl: 9, totalRankXP: 1200 },
-	{ title: "Captain", startLvl: 10, endLvl: 14, totalRankXP: 2000 },
-	{ title: "Centurion", startLvl: 15, endLvl: 19, totalRankXP: 2400 },
-	{ title: "Lord", startLvl: 20, endLvl: 24, totalRankXP: 8000 },
-	{ title: "Count", startLvl: 25, endLvl: 29, totalRankXP: 8000 },
-	{ title: "Colonel", startLvl: 30, endLvl: 34, totalRankXP: 8000 },
-	{ title: "Warrior", startLvl: 35, endLvl: 39, totalRankXP: 8000 },
-	{ title: "Elite", startLvl: 40, endLvl: 44, totalRankXP: 8000 },
-	{ title: "Guardian", startLvl: 45, endLvl: 49, totalRankXP: 8000 },
-	{ title: "Champion", startLvl: 50, endLvl: 69, totalRankXP: 62000 }, // Approx 3100 per level
+	{ title: 'Agent', startLvl: 1, endLvl: 4, totalRankXP: 500 },
+	{ title: 'Knight', startLvl: 5, endLvl: 9, totalRankXP: 1200 },
+	{ title: 'Captain', startLvl: 10, endLvl: 14, totalRankXP: 2000 },
+	{ title: 'Centurion', startLvl: 15, endLvl: 19, totalRankXP: 2400 },
+	{ title: 'Lord', startLvl: 20, endLvl: 24, totalRankXP: 8000 },
+	{ title: 'Count', startLvl: 25, endLvl: 29, totalRankXP: 8000 },
+	{ title: 'Colonel', startLvl: 30, endLvl: 34, totalRankXP: 8000 },
+	{ title: 'Warrior', startLvl: 35, endLvl: 39, totalRankXP: 8000 },
+	{ title: 'Elite', startLvl: 40, endLvl: 44, totalRankXP: 8000 },
+	{ title: 'Guardian', startLvl: 45, endLvl: 49, totalRankXP: 8000 },
+	{ title: 'Champion', startLvl: 50, endLvl: 69, totalRankXP: 62000 }, // Approx 3100 per level
 ];
 
 // Pre-calculate per-level XP for each rank for easy lookup
@@ -103,7 +359,7 @@ const defaultSettings = {
 let settings = { ...defaultSettings };
 
 function loadSettings() {
-	const saved = localStorage.getItem("marvelRivalsSettings");
+	const saved = localStorage.getItem('marvelRivalsSettings');
 	if (saved) {
 		try {
 			settings = { ...defaultSettings, ...JSON.parse(saved) };
@@ -114,28 +370,30 @@ function loadSettings() {
 }
 
 function saveSettings() {
-	localStorage.setItem("marvelRivalsSettings", JSON.stringify(settings));
+	localStorage.setItem('marvelRivalsSettings', JSON.stringify(settings));
 }
 
 function openSettingsModal() {
-	document.getElementById("setting-autoSort").checked = settings.autoSort;
-	document.getElementById("setting-hulkIcon").checked = settings.hulkIcon;
-	document.getElementById("setting-ladyLoki").checked = settings.ladyLoki;
-	document.getElementById("settings-modal").style.display = "flex";
+	document.getElementById('setting-autoSort').checked = settings.autoSort;
+	document.getElementById('setting-hulkIcon').checked = settings.hulkIcon;
+	document.getElementById('setting-ladyLoki').checked = settings.ladyLoki;
+	document.getElementById('settings-modal').style.display = 'flex';
 }
 
 function closeSettingsModal() {
-	document.getElementById("settings-modal").style.display = "none";
+	document.getElementById('settings-modal').style.display = 'none';
 }
 
 function updateSetting(key, value) {
 	settings[key] = value;
 	saveSettings();
 
-	if (key === "autoSort") {
+	if (key === 'autoSort') {
 		if (value) {
 			// Turn on: sort now by proficiency
-			heroData.sort((a, b) => calculateTotalScore(b) - calculateTotalScore(a));
+			heroData.sort(
+				(a, b) => calculateTotalScore(b) - calculateTotalScore(a),
+			);
 			saveData();
 		} else {
 			// Turn off: restore original (default) hero order
@@ -148,28 +406,29 @@ function updateSetting(key, value) {
 }
 
 function getHeroFileName(name) {
-	return name.replace(/(\s+|_|-)/g, "") + ".webp";
+	return name.replace(/(\s+|_|-)/g, '') + '.webp';
 }
 
 function init() {
 	loadSettings();
-	let v3Data = localStorage.getItem("marvelRivalsDataV3");
-	let stdData = localStorage.getItem("marvelRivalsData");
+	let v3Data = localStorage.getItem('marvelRivalsDataV3');
+	let stdData = localStorage.getItem('marvelRivalsData');
 
 	// >>> Data Migration Conflict <<<
 	if (v3Data && stdData) {
 		openComparisonModal({
-			title: "Save File Conflict Detected!",
+			title: 'Save File Conflict Detected!',
 			desc: "We found an older 'V3' save file alongside a newer save file. Please check your top heroes to decide which data you want to keep.",
-			opt1Title: "Older Save (V3)",
+			opt1Title: 'Older Save (V3)',
 			opt1Data: v3Data,
-			opt1BtnText: "Keep V3 Save",
-			opt1Action: () => resolveMigration("v3"),
-			opt2Title: "Newest Save",
+			opt1BtnText: 'Keep V3 Save',
+			opt1Action: () => resolveMigration('v3'),
+			opt2Title: 'Newest Save',
 			opt2Data: stdData,
-			opt2BtnText: "Keep Newest Save",
-			opt2Action: () => resolveMigration("std"),
-			footerText: "Whichever you choose, the old V3 data will be removed to prevent this loop from happening again.",
+			opt2BtnText: 'Keep Newest Save',
+			opt2Action: () => resolveMigration('std'),
+			footerText:
+				'Whichever you choose, the old V3 data will be removed to prevent this loop from happening again.',
 		});
 		return;
 	}
@@ -178,8 +437,8 @@ function init() {
 	let savedData = null;
 	if (v3Data && !stdData) {
 		savedData = v3Data;
-		localStorage.setItem("marvelRivalsData", v3Data);
-		localStorage.removeItem("marvelRivalsDataV3");
+		localStorage.setItem('marvelRivalsData', v3Data);
+		localStorage.removeItem('marvelRivalsDataV3');
 	} else {
 		savedData = stdData;
 	}
@@ -192,12 +451,19 @@ function processLoadedData(savedData) {
 		const parsedData = JSON.parse(savedData);
 		heroData = heroDefinitions.map((def, idx) => {
 			const saved = parsedData.find((p) => p.name === def.name);
-			return saved ? { ...def, rank: saved.rank, points: saved.points, originalIndex: idx } : { ...def, rank: "Agent", points: 0, originalIndex: idx };
+			return saved
+				? {
+						...def,
+						rank: saved.rank,
+						points: saved.points,
+						originalIndex: idx,
+					}
+				: { ...def, rank: 'Agent', points: 0, originalIndex: idx };
 		});
 	} else {
 		heroData = heroDefinitions.map((def, idx) => ({
 			...def,
-			rank: "Agent",
+			rank: 'Agent',
 			points: 0,
 			originalIndex: idx,
 		}));
@@ -205,25 +471,31 @@ function processLoadedData(savedData) {
 
 	// Respect the "Always sort by highest" setting on load
 	if (settings.autoSort) {
-		heroData.sort((a, b) => calculateTotalScore(b) - calculateTotalScore(a));
+		heroData.sort(
+			(a, b) => calculateTotalScore(b) - calculateTotalScore(a),
+		);
 	}
 
 	renderList();
 }
 
 function getTopHeroesHTML(dataStr) {
-	if (!dataStr) return "<div style='text-align:center; color:#666; margin-top:20px;'>No progress</div>";
+	if (!dataStr)
+		return "<div style='text-align:center; color:#666; margin-top:20px;'>No progress</div>";
 	try {
 		const parsed = JSON.parse(dataStr);
 		// Sort by points to find the highest
 		parsed.sort((a, b) => calculateTotalScore(b) - calculateTotalScore(a));
 
 		// Filter out heroes that have 0 points (no progress) and get top 4
-		const top4 = parsed.filter((h) => calculateTotalScore(h) > 0).slice(0, 4);
+		const top4 = parsed
+			.filter((h) => calculateTotalScore(h) > 0)
+			.slice(0, 4);
 
-		if (top4.length === 0) return "<div style='text-align:center; color:#666; margin-top:20px;'>No progress</div>";
+		if (top4.length === 0)
+			return "<div style='text-align:center; color:#666; margin-top:20px;'>No progress</div>";
 
-		let html = "";
+		let html = '';
 		top4.forEach((h) => {
 			const totalPts = calculateTotalScore(h);
 			const levelInfo = getLevelInfoFromTotal(totalPts);
@@ -240,38 +512,42 @@ function getTopHeroesHTML(dataStr) {
 }
 
 function openComparisonModal(config) {
-	document.getElementById("modal-title").innerText = config.title;
-	document.getElementById("modal-desc").innerText = config.desc;
+	document.getElementById('modal-title').innerText = config.title;
+	document.getElementById('modal-desc').innerText = config.desc;
 
-	document.getElementById("modal-opt1-title").innerText = config.opt1Title;
-	document.getElementById("modal-opt1-heroes").innerHTML = getTopHeroesHTML(config.opt1Data);
-	document.getElementById("modal-opt1-btn").innerText = config.opt1BtnText;
-	document.getElementById("modal-opt1-btn").onclick = config.opt1Action;
+	document.getElementById('modal-opt1-title').innerText = config.opt1Title;
+	document.getElementById('modal-opt1-heroes').innerHTML = getTopHeroesHTML(
+		config.opt1Data,
+	);
+	document.getElementById('modal-opt1-btn').innerText = config.opt1BtnText;
+	document.getElementById('modal-opt1-btn').onclick = config.opt1Action;
 
-	document.getElementById("modal-opt2-title").innerText = config.opt2Title;
-	document.getElementById("modal-opt2-heroes").innerHTML = getTopHeroesHTML(config.opt2Data);
-	document.getElementById("modal-opt2-btn").innerText = config.opt2BtnText;
-	document.getElementById("modal-opt2-btn").onclick = config.opt2Action;
+	document.getElementById('modal-opt2-title').innerText = config.opt2Title;
+	document.getElementById('modal-opt2-heroes').innerHTML = getTopHeroesHTML(
+		config.opt2Data,
+	);
+	document.getElementById('modal-opt2-btn').innerText = config.opt2BtnText;
+	document.getElementById('modal-opt2-btn').onclick = config.opt2Action;
 
-	document.getElementById("modal-footer").innerText = config.footerText;
+	document.getElementById('modal-footer').innerText = config.footerText;
 
-	document.getElementById("migration-modal").style.display = "flex";
+	document.getElementById('migration-modal').style.display = 'flex';
 }
 
 function resolveMigration(choice) {
-	let v3Data = localStorage.getItem("marvelRivalsDataV3");
-	let stdData = localStorage.getItem("marvelRivalsData");
+	let v3Data = localStorage.getItem('marvelRivalsDataV3');
+	let stdData = localStorage.getItem('marvelRivalsData');
 
-	if (choice === "v3") {
+	if (choice === 'v3') {
 		processLoadedData(v3Data);
-		localStorage.setItem("marvelRivalsData", v3Data); // Overwrite newest with V3
+		localStorage.setItem('marvelRivalsData', v3Data); // Overwrite newest with V3
 	} else {
 		processLoadedData(stdData); // Keep newest
 	}
 
 	// Clean up V3 so we don't ask again
-	localStorage.removeItem("marvelRivalsDataV3");
-	document.getElementById("migration-modal").style.display = "none";
+	localStorage.removeItem('marvelRivalsDataV3');
+	document.getElementById('migration-modal').style.display = 'none';
 }
 
 // convert between Stored Rank/Points and UI Levels
@@ -290,7 +566,7 @@ function getLevelInfoFromTotal(totalPoints) {
 		const tierEndXP = cumulativeXP + tierTotal;
 
 		// If total points fall in this tier (or it's the last tier)
-		if (totalPoints < tierEndXP || conf.title === "Champion") {
+		if (totalPoints < tierEndXP || conf.title === 'Champion') {
 			const pointsInTier = Math.max(0, totalPoints - cumulativeXP);
 
 			// Calculate which level within the tier
@@ -304,7 +580,8 @@ function getLevelInfoFromTotal(totalPoints) {
 
 			// Calculate XP remaining in that specific level
 			// If we are capped at 70, we might be full
-			let xpInCurrentLevel = pointsInTier - (clampedLevel - conf.startLvl) * conf.xpPerLevel;
+			let xpInCurrentLevel =
+				pointsInTier - (clampedLevel - conf.startLvl) * conf.xpPerLevel;
 			xpInCurrentLevel = Math.max(0, Math.round(xpInCurrentLevel));
 
 			return {
@@ -319,18 +596,19 @@ function getLevelInfoFromTotal(totalPoints) {
 	}
 
 	// Fallback max
-	return { level: 70, xp: 3100, maxXp: 3100, title: "Champion" };
+	return { level: 70, xp: 3100, maxXp: 3100, title: 'Champion' };
 }
 
 function getDataFromLevel(targetLevel, targetXP) {
-	console.log("Calculating data from Level:", targetLevel, "XP:", targetXP);
+	console.log('Calculating data from Level:', targetLevel, 'XP:', targetXP);
 	let cumulativeXP = 0;
 
 	for (let conf of levelConfig) {
 		if (targetLevel >= conf.startLvl && targetLevel <= conf.endLvl) {
 			// Found the tier
 			const levelsCompletedInTier = targetLevel - conf.startLvl;
-			const pointsFromCompletedLevels = levelsCompletedInTier * conf.xpPerLevel;
+			const pointsFromCompletedLevels =
+				levelsCompletedInTier * conf.xpPerLevel;
 
 			// Calculate points relative to the Rank Baseline (Agent start, Knight start, etc)
 
@@ -339,7 +617,9 @@ function getDataFromLevel(targetLevel, targetXP) {
 
 			const pointsInTier = pointsFromCompletedLevels + finalXP;
 
-			console.log(`> Rank: ${conf.title}, Points: ${pointsInTier} (Levels Completed: ${levelsCompletedInTier}, XP in Current Level: ${finalXP})`);
+			console.log(
+				`> Rank: ${conf.title}, Points: ${pointsInTier} (Levels Completed: ${levelsCompletedInTier}, XP in Current Level: ${finalXP})`,
+			);
 
 			return {
 				rank: conf.title,
@@ -349,19 +629,24 @@ function getDataFromLevel(targetLevel, targetXP) {
 			// If char has max level, xp input is uncapped
 			return {
 				rank: conf.title,
-				points: Math.round((conf.endLvl - conf.startLvl + 1) * conf.xpPerLevel + targetXP),
+				points: Math.round(
+					(conf.endLvl - conf.startLvl + 1) * conf.xpPerLevel +
+						targetXP,
+				),
 			};
 		}
 		cumulativeXP += conf.totalRankXP; // Not used for return, but for loop logic if needed
 	}
-	return { rank: "Champion", points: 62000 };
+	return { rank: 'Champion', points: 62000 };
 }
 
 function toggleFilters() {
-	const content = document.getElementById("filter-content");
-	const arrow = document.getElementById("filter-arrow");
-	content.classList.toggle("expanded");
-	arrow.style.transform = content.classList.contains("expanded") ? "rotate(90deg)" : "rotate(0deg)";
+	const content = document.getElementById('filter-content');
+	const arrow = document.getElementById('filter-arrow');
+	content.classList.toggle('expanded');
+	arrow.style.transform = content.classList.contains('expanded')
+		? 'rotate(90deg)'
+		: 'rotate(0deg)';
 }
 
 function handleImageFallback(img, heroName, fileName) {
@@ -369,29 +654,39 @@ function handleImageFallback(img, heroName, fileName) {
 	const baseSrc = `img/char/${fileName}`;
 	const lordSrc = `img/char/lord/${fileName}`;
 
-	if (img.src.includes("/dyna/")) {
+	if (img.src.includes('/dyna/')) {
 		img.src = lordSrc;
-	} else if (img.src.includes("/lord/")) {
+	} else if (img.src.includes('/lord/')) {
 		img.src = baseSrc;
 	} else {
 		img.onerror = null; // Kills the infinite loop if the base image is also gone
-		alert("The base image for " + heroName + " is missing.");
+		alert('The base image for ' + heroName + ' is missing.');
 	}
 }
 
 function renderList() {
-	const container = document.getElementById("hero-list");
+	const container = document.getElementById('hero-list');
 
 	// Get Filter Values
-	const searchText = document.getElementById("searchInput").value.toLowerCase();
-	const checkedRoles = Array.from(document.querySelectorAll(".role-filters input:checked")).map((cb) => cb.value);
+	const searchText = document
+		.getElementById('searchInput')
+		.value.toLowerCase();
+	const checkedRoles = Array.from(
+		document.querySelectorAll('.role-filters input:checked'),
+	).map((cb) => cb.value);
 
 	// Filter Data
 	const visibleHeroes = heroData.filter((hero) => {
 		const matchesName = hero.name.toLowerCase().includes(searchText);
-		const matchesTag = Array.isArray(hero.tags) && hero.tags.some((tag) => tag.toLowerCase().includes(searchText));
+		const matchesTag =
+			Array.isArray(hero.tags) &&
+			hero.tags.some((tag) => tag.toLowerCase().includes(searchText));
 
-		const matchesRole = checkedRoles.length === 0 || (Array.isArray(hero.role) ? hero.role.some((r) => checkedRoles.includes(r)) : checkedRoles.includes(hero.role));
+		const matchesRole =
+			checkedRoles.length === 0 ||
+			(Array.isArray(hero.role)
+				? hero.role.some((r) => checkedRoles.includes(r))
+				: checkedRoles.includes(hero.role));
 		return (matchesName || matchesTag) && matchesRole;
 	});
 
@@ -410,8 +705,8 @@ function renderList() {
 	}
 
 	visibleHeroes.forEach((hero) => {
-		const row = document.createElement("div");
-		row.className = "hero-row";
+		const row = document.createElement('div');
+		row.className = 'hero-row';
 
 		// Calculate Level Info
 		const totalScore = calculateTotalScore(hero);
@@ -419,19 +714,19 @@ function renderList() {
 
 		let subFolder;
 		if (levelInfo.level >= 50) {
-			subFolder = "dyna/";
+			subFolder = 'dyna/';
 		} else if (levelInfo.level >= 20) {
-			subFolder = "lord/";
+			subFolder = 'lord/';
 		} else {
-			subFolder = "";
+			subFolder = '';
 		}
 		// Allow the "Hulk Icon instead of Banner" setting to swap in an alternate portrait
 		let heroName = hero.name;
-		if (settings.hulkIcon && hero.name === "Bruce Banner") {
-			heroName = "Hulk";
+		if (settings.hulkIcon && hero.name === 'Bruce Banner') {
+			heroName = 'Hulk';
 		}
-		if (settings.ladyLoki && hero.name === "Loki") {
-			heroName = "Lady Loki";
+		if (settings.ladyLoki && hero.name === 'Loki') {
+			heroName = 'Lady Loki';
 		}
 		let heroFileName = getHeroFileName(heroName);
 		const heroImgPath = `img/char/${subFolder}${heroFileName}`;
@@ -439,39 +734,49 @@ function renderList() {
 
 		// Progress Bars
 		// Bar 1: Progress to Next Title
-		const currentConfig = levelConfig.find((c) => c.title === levelInfo.title);
-		const pointsInTier = (levelInfo.level - currentConfig.startLvl) * currentConfig.xpPerLevel + levelInfo.xp;
-		const titlePct = Math.min(100, (pointsInTier / currentConfig.totalRankXP) * 100);
+		const currentConfig = levelConfig.find(
+			(c) => c.title === levelInfo.title,
+		);
+		const pointsInTier =
+			(levelInfo.level - currentConfig.startLvl) *
+				currentConfig.xpPerLevel +
+			levelInfo.xp;
+		const titlePct = Math.min(
+			100,
+			(pointsInTier / currentConfig.totalRankXP) * 100,
+		);
 
 		// Bar 2: Total Progress (Max)
 		const totalPct = Math.min(100, (totalScore / pointBaselines.MAX) * 100);
 
-		const displayRole = Array.isArray(hero.role) ? hero.role.join(" / ") : hero.role;
+		const displayRole = Array.isArray(hero.role)
+			? hero.role.join(' / ')
+			: hero.role;
 
 		row.innerHTML = `
 			<div class="portrait-container">
-				<div class="char-img-wrapper"${levelInfo.level >= 50 ? `style=\"box-shadow: 0 0 22px ${hero.color};\"` : ""}>
+				<div class="char-img-wrapper"${levelInfo.level >= 50 ? `style=\"box-shadow: 0 0 22px ${hero.color};\"` : ''}>
 					<img src="${heroImgPath}" 
 						class="hero-portrait rank-${levelInfo.title}" 
-						style="background: linear-gradient(180deg,rgba(0, 0, 0, 0) 10%, ${hero.color || "#000"} 100%); ${levelInfo.level >= 50 ? `transform: scale(1.4) translateY(-9px);` : ""}"
+						style="background: linear-gradient(180deg,rgba(0, 0, 0, 0) 10%, ${hero.color || '#000'} 100%); ${levelInfo.level >= 50 ? `transform: scale(1.4) translateY(-9px);` : ''}"
 						onerror="handleImageFallback(this, '${heroName}', '${heroFileName}')" alt="${heroName}">
 				</div>
 				<div class="role-icon-container">
-					<img src="img/Vanguard_Icon.webp" class="role-icon-mini" title="Vanguard" style="display:${displayRole.includes("Vanguard") ? "block" : "none"}">
-					<img src="img/Duelist_Icon.webp" class="role-icon-mini" title="Duelist" style="display:${displayRole.includes("Duelist") ? "block" : "none"}">
-					<img src="img/Strategist_Icon.webp" class="role-icon-mini" title="Strategist" style="display:${displayRole.includes("Strategist") ? "block" : "none"}">
+					<img src="img/Vanguard_Icon.webp" class="role-icon-mini" title="Vanguard" style="display:${displayRole.includes('Vanguard') ? 'block' : 'none'}">
+					<img src="img/Duelist_Icon.webp" class="role-icon-mini" title="Duelist" style="display:${displayRole.includes('Duelist') ? 'block' : 'none'}">
+					<img src="img/Strategist_Icon.webp" class="role-icon-mini" title="Strategist" style="display:${displayRole.includes('Strategist') ? 'block' : 'none'}">
 				</div>
 			</div>
 
 			<div class="hero-details">
-				<span class="hero-name ${"rank-" + levelInfo.title}">
+				<span class="hero-name ${'rank-' + levelInfo.title}">
 					${heroName} 
 					<span style="font-size:0.7em; margin-left:10px; color:#666; font-weight:normal;">(${levelInfo.title})</span>
 				</span>
 				
 				<div class="progress-section">
 					<div class="progress-label">
-						<span>To ${ranks[ranks.indexOf(levelInfo.title) + 1] || "MAX"}</span>
+						<span>To ${ranks[ranks.indexOf(levelInfo.title) + 1] || 'MAX'}</span>
 						<span>${titlePct.toFixed(1)}%</span>
 					</div>
 					<div class="progress-bg">
@@ -499,9 +804,9 @@ function renderList() {
 			</div>
 
 			<div class="point-container">
-				<input type="number" value="${levelInfo.xp}" min="0" ${levelInfo.level > currentConfig.endLvl ? "" : `max="${levelInfo.maxXp}"`}
+				<input type="number" value="${levelInfo.xp}" min="0" ${levelInfo.level > currentConfig.endLvl ? '' : `max="${levelInfo.maxXp}"`}
 						onchange="updateHero('${hero.name}', 'points', this.value)" placeholder="0">
-				<span class="point-suffix">/ ${levelInfo.level > currentConfig.endLvl ? "&infin;" : levelInfo.maxXp}</span>
+				<span class="point-suffix">/ ${levelInfo.level > currentConfig.endLvl ? '&infin;' : levelInfo.maxXp}</span>
 			</div>
 		`;
 		container.appendChild(row);
@@ -520,10 +825,10 @@ function updateHero(name, field, value) {
 	let newLevel = currentInfo.level;
 	let newXP = currentInfo.xp;
 
-	if (field === "level") {
+	if (field === 'level') {
 		newLevel = parseInt(value);
 		newXP = 0; // Reset XP when level changes to avoid a rare bug where it will level you back up if your points are max
-	} else if (field === "points") {
+	} else if (field === 'points') {
 		newXP = parseInt(value);
 	}
 
@@ -535,7 +840,9 @@ function updateHero(name, field, value) {
 	heroData[index].points = newData.points;
 
 	if (settings.autoSort) {
-		heroData.sort((a, b) => calculateTotalScore(b) - calculateTotalScore(a));
+		heroData.sort(
+			(a, b) => calculateTotalScore(b) - calculateTotalScore(a),
+		);
 	}
 
 	saveData();
@@ -547,11 +854,13 @@ var sorted = false;
 function sortHeroes() {
 	sorted = !sorted;
 	if (sorted) {
-		heroData.sort((a, b) => calculateTotalScore(b) - calculateTotalScore(a));
-		document.getElementById("btn-sort").textContent  = "Sort Alphabetically";
+		heroData.sort(
+			(a, b) => calculateTotalScore(b) - calculateTotalScore(a),
+		);
+		document.getElementById('btn-sort').textContent = 'Sort Alphabetically';
 	} else {
 		heroData.sort((a, b) => a.name.localeCompare(b.name));
-		document.getElementById("btn-sort").textContent  = "Sort by Proficiency";
+		document.getElementById('btn-sort').textContent = 'Sort by Proficiency';
 	}
 	renderList();
 	saveData();
@@ -559,27 +868,36 @@ function sortHeroes() {
 
 function saveData() {
 	// We map only the dynamic data for saving to keep localStorage clean
-	const dataToSave = heroData.map((h) => ({ name: h.name, rank: h.rank, points: h.points }));
-	localStorage.setItem("marvelRivalsData", JSON.stringify(dataToSave));
+	const dataToSave = heroData.map((h) => ({
+		name: h.name,
+		rank: h.rank,
+		points: h.points,
+	}));
+	localStorage.setItem('marvelRivalsData', JSON.stringify(dataToSave));
 }
 
 function clearData() {
-	if (confirm("Are you sure you want to clear all your inputs?")) {
-		localStorage.removeItem("marvelRivalsData");
-		localStorage.removeItem("marvelRivalsDataV3"); // Also clear legacy just in case
+	if (confirm('Are you sure you want to clear all your inputs?')) {
+		localStorage.removeItem('marvelRivalsData');
+		localStorage.removeItem('marvelRivalsDataV3'); // Also clear legacy just in case
 		location.reload();
 	}
 }
 
 function downloadBackup() {
 	// Backup needs to save basic stats, definitions (colors/roles) are hardcoded
-	const dataToSave = heroData.map((h) => ({ name: h.name, rank: h.rank, points: h.points }));
+	const dataToSave = heroData.map((h) => ({
+		name: h.name,
+		rank: h.rank,
+		points: h.points,
+	}));
 	const dataStr = JSON.stringify(dataToSave, null, 2);
-	const blob = new Blob([dataStr], { type: "application/json" });
+	const blob = new Blob([dataStr], { type: 'application/json' });
 	const url = URL.createObjectURL(blob);
-	const a = document.createElement("a");
+	const a = document.createElement('a');
 	a.href = url;
-	a.download = "rivals_data_backup_" + new Date().toISOString().slice(0, 10) + ".json";
+	a.download =
+		'rivals_data_backup_' + new Date().toISOString().slice(0, 10) + '.json';
 	document.body.appendChild(a);
 	a.click();
 	document.body.removeChild(a);
@@ -594,36 +912,51 @@ function handleFileUpload(input) {
 		try {
 			const contents = e.target.result;
 			const parsedData = JSON.parse(contents);
-			if (Array.isArray(parsedData) && parsedData.length > 0 && parsedData[0].hasOwnProperty("name")) {
+			if (
+				Array.isArray(parsedData) &&
+				parsedData.length > 0 &&
+				parsedData[0].hasOwnProperty('name')
+			) {
 				// Grab current data directly from our active array to compare
-				const currentDataStr = JSON.stringify(heroData.map((h) => ({ name: h.name, rank: h.rank, points: h.points })));
+				const currentDataStr = JSON.stringify(
+					heroData.map((h) => ({
+						name: h.name,
+						rank: h.rank,
+						points: h.points,
+					})),
+				);
 
 				openComparisonModal({
-					title: "Confirm Backup Import",
-					desc: "You are about to overwrite your current progress with a backup file. Please compare below to make sure this is what you want to do.",
-					opt1Title: "Current Progress",
+					title: 'Confirm Backup Import',
+					desc: 'You are about to overwrite your current progress with a backup file. Please compare below to make sure this is what you want to do.',
+					opt1Title: 'Current Progress',
 					opt1Data: currentDataStr,
-					opt1BtnText: "Keep Current (Cancel)",
+					opt1BtnText: 'Keep Current (Cancel)',
 					opt1Action: () => {
-						document.getElementById("migration-modal").style.display = "none";
-						input.value = ""; // Reset input so they can upload the same file again if needed
+						document.getElementById(
+							'migration-modal',
+						).style.display = 'none';
+						input.value = ''; // Reset input so they can upload the same file again if needed
 					},
-					opt2Title: "Backup File",
+					opt2Title: 'Backup File',
 					opt2Data: contents,
-					opt2BtnText: "Import Backup",
+					opt2BtnText: 'Import Backup',
 					opt2Action: () => {
-						localStorage.setItem("marvelRivalsData", JSON.stringify(parsedData));
+						localStorage.setItem(
+							'marvelRivalsData',
+							JSON.stringify(parsedData),
+						);
 						location.reload();
 					},
-					footerText: "Importing the backup cannot be undone.",
+					footerText: 'Importing the backup cannot be undone.',
 				});
 			} else {
-				alert("Invalid backup file format.");
-				input.value = "";
+				alert('Invalid backup file format.');
+				input.value = '';
 			}
 		} catch (err) {
-			alert("Error reading file: " + err);
-			input.value = "";
+			alert('Error reading file: ' + err);
+			input.value = '';
 		}
 	};
 	reader.readAsText(file);
@@ -634,7 +967,8 @@ init();
 async function fileUrlToDataUrl(url) {
 	try {
 		const response = await fetch(url);
-		if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+		if (!response.ok)
+			throw new Error(`HTTP error! status: ${response.status}`);
 
 		const blob = await response.blob();
 		const blobUrl = URL.createObjectURL(blob);
@@ -642,8 +976,8 @@ async function fileUrlToDataUrl(url) {
 		return new Promise((resolve, reject) => {
 			const img = new Image();
 			img.onload = () => {
-				const canvas = document.createElement("canvas");
-				const ctx = canvas.getContext("2d");
+				const canvas = document.createElement('canvas');
+				const ctx = canvas.getContext('2d');
 
 				// Shrink it down
 				const MAX_SIZE = 150;
@@ -663,13 +997,13 @@ async function fileUrlToDataUrl(url) {
 				ctx.drawImage(img, 0, 0, width, height);
 
 				// Crush it into a compressed JPEG
-				const dataUrl = canvas.toDataURL("image/webp", 0.7);
+				const dataUrl = canvas.toDataURL('image/webp', 0.7);
 				URL.revokeObjectURL(blobUrl);
 				resolve(dataUrl);
 			};
 			img.onerror = () => {
 				URL.revokeObjectURL(blobUrl);
-				reject(new Error("Canvas image conversion failed."));
+				reject(new Error('Canvas image conversion failed.'));
 			};
 			img.src = blobUrl;
 		});
@@ -697,41 +1031,64 @@ async function generateRouletteJSON() {
 					role: r,
 				};
 
-				if (r === "Vanguard") {
-					entry.name = hero.name === "Deadpool" ? "Tankpool" : `${hero.name} (${r})`;
+				if (r === 'Vanguard') {
+					entry.name =
+						hero.name === 'Deadpool'
+							? 'Tankpool'
+							: `${hero.name} (${r})`;
 					vanguards.push(entry);
 				}
-				if (r === "Duelist") {
-					entry.name = hero.name === "Deadpool" ? "DPSpool" : `${hero.name} (${r})`;
+				if (r === 'Duelist') {
+					entry.name =
+						hero.name === 'Deadpool'
+							? 'DPSpool'
+							: `${hero.name} (${r})`;
 					duelists.push(entry);
 				}
-				if (r === "Strategist") {
-					entry.name = hero.name === "Deadpool" ? "Healpool" : `${hero.name} (${r})`;
+				if (r === 'Strategist') {
+					entry.name =
+						hero.name === 'Deadpool'
+							? 'Healpool'
+							: `${hero.name} (${r})`;
 					strategists.push(entry);
 				}
 			});
 		} else {
-			if (hero.role === "Vanguard") vanguards.push(hero);
-			if (hero.role === "Duelist") duelists.push(hero);
-			if (hero.role === "Strategist") strategists.push(hero);
+			if (hero.role === 'Vanguard') vanguards.push(hero);
+			if (hero.role === 'Duelist') duelists.push(hero);
+			if (hero.role === 'Strategist') strategists.push(hero);
 		}
 	});
 
 	// Calculate weight per hero within their role and use Math.round() for whole numbers
-	const vWeight = vanguards.length > 0 ? Math.round(ROLE_TOTAL_WEIGHT / vanguards.length) : 0;
-	const dWeight = duelists.length > 0 ? Math.round(ROLE_TOTAL_WEIGHT / duelists.length) : 0;
-	const sWeight = strategists.length > 0 ? Math.round(ROLE_TOTAL_WEIGHT / strategists.length) : 0;
+	const vWeight =
+		vanguards.length > 0
+			? Math.round(ROLE_TOTAL_WEIGHT / vanguards.length)
+			: 0;
+	const dWeight =
+		duelists.length > 0
+			? Math.round(ROLE_TOTAL_WEIGHT / duelists.length)
+			: 0;
+	const sWeight =
+		strategists.length > 0
+			? Math.round(ROLE_TOTAL_WEIGHT / strategists.length)
+			: 0;
 
 	// Helper function to process an array of heroes into entries asynchronously
 	const processEntries = async (heroList, weight) => {
 		return Promise.all(
 			heroList.map(async (hero) => {
-				let base64Image = "";
+				let base64Image = '';
 				try {
 					// Wait for the image to be fetched and converted
-					base64Image = await fileUrlToDataUrl(`img/char/${hero.imageName}`);
+					base64Image = await fileUrlToDataUrl(
+						`img/char/${hero.imageName}`,
+					);
 				} catch (err) {
-					console.error(`Error converting image for ${hero.name} (${hero.imageName}):`, err);
+					console.error(
+						`Error converting image for ${hero.name} (${hero.imageName}):`,
+						err,
+					);
 				}
 
 				return {
@@ -752,92 +1109,97 @@ async function generateRouletteJSON() {
 	const sEntries = await processEntries(strategists, sWeight);
 
 	// Combine them all into the final entries array and sort by name again
-	const entries = [...vEntries, ...dEntries, ...sEntries].sort((a, b) => b.imageName.localeCompare(a.imageName));
+	const entries = [...vEntries, ...dEntries, ...sEntries].sort((a, b) =>
+		b.imageName.localeCompare(a.imageName),
+	);
 
 	// Construct the full JSON object using settings from the user's example
 	const rouletteData = {
 		wheels: [
 			{
 				wheelConfig: {
-					afterSpinSound: "cymbal-sound",
+					afterSpinSound: 'cymbal-sound',
 					afterSpinSoundVolume: 50,
 					allowDuplicates: true,
 					animateWinner: false,
 					autoRemoveWinner: false,
-					centerText: "",
+					centerText: '',
 					colorSettings: [
 						{
-							color: "#32334f",
+							color: '#32334f',
 							enabled: true,
 						},
 						{
-							color: "#fefefc",
+							color: '#fefefc',
 							enabled: true,
 						},
 						{
-							color: "#f3d22b",
+							color: '#f3d22b',
 							enabled: true,
 						},
 						{
-							color: "#009925",
+							color: '#009925',
 							enabled: false,
 						},
 						{
-							color: "#000000",
+							color: '#000000',
 							enabled: false,
 						},
 						{
-							color: "#000000",
+							color: '#000000',
 							enabled: false,
 						},
 					],
-					coverImageName: "",
-					coverImageType: "",
-					customCoverImageDataUri: "",
-					customPictureDataUri: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDABALDA4MChAODQ4SERATGCgaGBYWGDEjJR0oOjM9PDkzODdASFxOQERXRTc4UG1RV19iZ2hnPk1xeXBkeFxlZ2P/2wBDARESEhgVGC8aGi9jQjhCY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2P/wAARCAFyAXIDASIAAhEBAxEB/8QAGwABAQACAwEAAAAAAAAAAAAAAAEFBgIEBwP/xABAEAACAQMBBAYHBwMDAwUAAAAAAQIDBBEFBhIhMRNBUVJh0RZCcYGRkqEUIjJUgrHhI0PBM0RiFSTxU3JzovD/xAAaAQEAAwEBAQAAAAAAAAAAAAAAAQIDBQQG/8QALREBAAICAQIFBAEDBQAAAAAAAAECAxEhBDEFEhNBURQVUmEigZGxI0JDcaH/2gAMAwEAAhEDEQA/ANaABugDAYEAKBAUAQpCgAABACgEAgAZCsgFQAAAAAQoAgRSICgACAFAgKAIAUCFIUAQpAAAAApAKgEADIVgCAoAhUMAAGABCohQAAAAZAEBQBEUhQBCkAAoAgKQACjAAAACFIAAKBCoYAAMACFGAAAAAhSAAABUAMgAAAAAAAAAMgCAFAgLgAQAoEKMAAAAIAAAKMAEAADIUYAAAAAABCkAFRCgAMgAAAAGRkABkACFIABRgCAuBgAgOQyAZCkAAAAAUCFQwAAYAEKhgAAAAAAEAAFQAyAAAAAZAAZGQAAAEKQAC4GAIVDAABjIAgBQIUYAAhckAqAGQAGRkAyFGAICkAAAAVEKAACAAAAAAAGQAAAEAKBAUAEAADIUgAFGAAAAERSAUAAAxkAQFAEKQoAAAQAoEBSAAVDABAAAyFZAAAAAoAhUAADAAgBQhCgACFAAEKAAIBWQqAEBWACAAAhSAAUAQAqCUKgAAYDAgAAAFAiKAAIUAEAAAAAMhWQAAAKCACghUBCgMCFIUhADI2ei1L6G9b3FtN9cd5qS92Dteit736HzPyMbdTirOrW0v5LT7MGDN+it736HzPyHore9+h8z8iv1WH8j07fDCAzfore9+h8z8h6LXvfofM/IfV4fyPTt8MIDN+it736HzPyHore9+h8z8h9Xh/I9O3wwqBmvRW979D5n5D0Vve/Q+Z+Q+rw/kenb4YVkM36K3vfofM/Iei1736HzPyH1eH8j07fDCAzfote9+h8z8h6LXvfofM/IfV4fyPTt8MIDN+it737f5n5HGpsxfU6cpp0ZbqzhSeX9BHVYZ48x6dvhhwJLdeJcHnHEI9ETtXQACUAACQMBgQAACkAFBEUAAQCggAoCABkKyAAAAKQqABAAAwGBCkKBYVJ05qUJSjJcmnhozdhtNc0mo3UelgvWXCRggY5cNMkfyjaa2mOz0Cy1G2vlmhUTl1xfBr3HbSfUjzaE5QkpQbi11p4Mzp+0t1QajdLp6fbykvM5Obw60c4523rmie7cCHUstStb5Zo1Vvd18JI7mDm2pak6tHLeJieyFAKAAAIAAAAAAADAbQ6Iq6ld2sV0mMzgvWXajVeTwz0ntNa2i0aL3ry1j41IL90dfous7Y7/ANGGTH7w1sEyDsvMoIVEgGAwlCkKAAAAAgQpAUAQZwMohKoEBKFZAAkAAFwAAAAABgMCDJTP7I6VQ1O5uHc09+lCCXPH3m+D+jImdDX+rOGU3HUNilhysK/shU8zWb7S73T21cW04pesllfEiJ2adMpM8OTKSLGUoSUotqS5NMy+n7RXVviFwumh7cNGHIZ5cNMkatG0xaa9m/WGp2t8kqNRKeM7kuEv5O71ZPNU5R4xeH1YMvYbRXVtiNd9PDtf4l7zk5vDZjnH/ZvXN8w3Ip0bDVLS9SVKqlN+pLgzvNYOZek0nVuG8TE9kAYKAAUCAoAg5gDY1XaHRlRlK7tYf0+c4L1fFGvp5x4npTSksSSaxjBqGvaO7SrK4t4t0G+KXqPyO10XV71S7z5MeuYYUDPEHWecyGQEgUhQGRkgIFyQmXnkzJWGiahf4dG3koP1p/dX1G0sdksE6klCEZSk+UUstm7afsVSjuyvq7m+5DgvibHZ6bZ2MN21t4U+1pcX7ys3NND0/ZPUrvEqkPs1N9dTn8DMXWzmn6RpVe6rZr1IR4OXBbz4Lh7TbcJGrbeXfR2FC2i+NWpvNeEf5a+BXczJpor5gA1QowAEgAAZGSAC5BCoAAAJ1pHoWxFr0WjutJYlWm37lwPPUm6kVFcW8I9a0q3VrptvQXqQSKWngh2sElTjOO7JKUX1NZOZDNLCahsrpt6m1TdCo/WpcPpyNW1HZHULTMrfduaa7nCXwNo1Lae006/la1qdSTilmUfElLazSKuM15Qz3oP/AAWiZQ85q06tGbhVpShJPDUljicfaem1b3QtShuVa9rUTWFvySa+JiLzZGzuk56bdKL6ouW9EtFjTSg0ZG/0PUNPbdW3lKC9eHFf/vaY4ttB95cVJp9plrDaC7tMQq/16a6pPivYzEkM74qZI1aNrRaY7N8sdXs75JU6ihPuT4P+TvM8145Ty8oy1hr91aYhUfTU+tS5/E5Wbw2Y5xz/AHb1zfLdBk6FhrFne4jGfR1H6k+Dfs7TvvDfB5OXelqTq3dvExPYABQAUgAjjGcXGUU4tcU+soJidcjTNc0l2NbpaMW7eT4f8H2GJ6z0erTp1qUqdWKlCSw0zSda0qpp1xvRTlQk/uy7PBnd6Pq/P/p37vLkx+XmGOIOsvWdJig455HbtbWjVxK4u6dvDxTlL4Iy1rW2dssSdOveVFz3klH4ETKWFtbO7vKm5b29So/+KNj0/Yq4qNTvq0aMe5D70vJfU+z2zpUYblpp6hFck3hfQ6lXbTUJ56OnRp57FkifMNrsNn9NsEnSoKU169T7zMmklwSSXJHmdbabVqyad24rsikjJ7G1ru/1Z1Li4q1I0oOWHJ4zyKzWfdO294ABURnne2l102tuknlUYKPv5v8Ac9DnJRg5SeElls8k1Gu7nUriu3+ObZasIl8BgIGgAAkAABCkKgGAAwAICEO/ods7vWbWljK395+xcT1VcjQ9hbXpNQrXLXClDC9r/g3xcjO3daFJJ4y3yKdLV7hWml3NdvG7TZUeaazcO71a5rbzxKbxjsOlu+LGW+L5sptCrjuLtZY/cknFtPtR2LWxurxSdvSdRR57vUfV6PqK/wBrU9yKWyVidWlaImYSlquoUP8ASva8fBTeD43FzUuqnSVt1zfOSik37cH1elahHnaVl+hnB6fernbVfkfkRGSnyal8CH2dncrnRqL9LOLoVo/ihNfpLees+6NS4AvRz7JfAbkvH4DzR8mvdxxxz1mVsNevLRqE5dPSXqz5r3mL3X2/QmO1orelMkat2TFpjs3qx1qyvMRVTo6ndmZDgeapYeev2mUsNcu7LEXLpaa5Qn1ex9Rys3h3vjn+jeuX2s3chjbDXbK9xHedKr3J9vh2mSTycu+O2OdWjTaJiewACiQ+dxQp3NCVGrFShJYaPoCYma8wND1XTKun3Li+NOX4Jdp0uo9Eu7Wle28qNaKcX8U+1Gjahp9bT7h06nGL4xlj8SPoOk6uMseW3d5cmPyzw6mEyY8WUHvYmEMAAMG77AW25Y3Fw1xqT3V7F/5NIPT9mrb7JoVpBrDcN9+/j/krbsllQA+RkljNoLr7JotzUzhuG6va+B5bhb2TeNvLncs7e1T41JOTXgv/ACaOaVhEqMkBcUBAkAABCkAFBAAHHKwBuuU4pJtt4wusIeibE2vQ6J0rXGvNyz4Lgv2NhOvp9urSwt7f/wBOnGL9uOJ2DGe6wa5txcdFozpp8a01HHs4mxmjbfXKneW9suO5Bzfvf8fUV7jU48kUifAprrarsWN5VsbhVqMsSXBrt8Gbxp2o0tRtlVpPjylHsZ5+dnT7+rp9wqtJ8OUo9UkeHq+ljNHmrxLWmTyzqXoOWTJ8LG8o31sq1F8HzXYz7nz9oms6l697UgKRuRxcYvnFP3EdGk+dOD/SjmCfNPyPk7ag+dCn8iODsbV87el8qOwCYvf2lGodV6bZPnbUvlOD0mwfO1p+5HdBb1Mke55YY56Jpz/2sfdk7lChC3huU1JR6k23j4n0BE5L2jUynUQAAzAAAU62oWVK/tpUqq/9suuLOyMlq2ms7qiY289vbKtYXEqNdNPmmuUl2o65v2p6dT1G1dOfCa4wl1pmjXVrVs60qVaLUo9fb4n0PSdVGaup7w8uSnlnh8gCHtZPvZUHdXlGgudSaj8Xg9chBQioxWFFYR5xsZb9PrtOT5UU5/4X7npJnfusEfIpxnJQhKUnhJZbKjzrbO66fXpUk8qjBR9j5swR9r64d3qFa4fOrNy+LyfE2jsqAAkAGQJUEAAAACohUAMjs/a/a9btaeMpT337FxMcbXsHa713cXLWVCKin4srPYbwihAySjPLto7n7Xrt3UTzFT3F7I8P8Hpd7X+zWdau/wC3By+CPIpSc5ObeXJ5bL0RKFIU0QEKQiR3dL1OpptdThxg/wAcOpo3i1uaV3bxrUZb0JLh5M86MjpGq1NNrdcqMvxx/wA+05/WdLGWPNWOf8tseTXEt5Bwo1oXFGNWlLehJZTRzOBaJidS9SggICUVKLi+T7DEX2k3bW/ZX1WD7k5cPiZcGmPJOOdwiY3DSbi+1aynuVq1aDXb1+84LXdQX+5k/cjdq1CnXpuFWEZx7JIwOobL0ppzs57j57kuXuOph6rBfi9df4YWpaO0sStoNQX9/Ptj/BzW0moL+7B/oXkdG7sq9nPdr0nB54N8n7Dr58T3xhwWjcREwym14nlmFtPfrnKm/wBJzW1N6ucaT/T/ACYQpP0uH8Tz2Z2O1l2udGi/c/M5+l1frtqT9/8AJr4Ino8M/wC0jJZsS2uqddpD3S/g5La/vWf/AN/4NaKU+hwfC3q2bOtr6fXZy90/4Onqus2ep2+JW1SFWKe7NYePDxMGMrtLU6PFS3mr3/7ROS0xoAyu1DJ6mbctgLbELq5a5tQX7m5mE2Ttvs2hUcrEqmZv3mbMpnlYMTtJdfZdDupZxKcdxe/h5mWfI0/b663aNtap8ZSc37hHMjS3xeQAaqhACRQAEgAAgBQICgDjLq9p6PsZbdBokajWHWk5+7qPOlFzlGKWW5JI9csKCtbKjQX9uCj9DO0kOyQAolgtsbn7PoVWKeHVagebRfBHrOo6ba6koQuoOcYPKWcHwo6BpVBfcsqS8Ws/uWi0Qh5hGMp/hi5exHapaZfV/wDTtK0v0s9HubrTNLhmtKhRxxxhb3uS4mv6httGOYafbuXZOrw+hbcyMJS2Z1WpxdtuLtnLGD4XGl07RPp7y3U16lP78vp5nG+1vUb9/wBevJx7seCR0OvJPIrxng3ggBKGW0XWJ6fU6Oo3K3m/vLu+JudOcalOM4NSjJZTXI82fgZnQ9ZlZTVCu27d8n3H2+w5nW9J5489I5b48muJbiAmpRUk001lNA4c8d3pAAQKCADjVpQrQcKsIzg1hqSyYHUNl6VTM7KfRy7knlfE2Aptiz3xT/GVbVi0cvPLuyuLOe7XpOHj1P3nXyekVKUKsHCrFTi+aaMHf7MW9VudpLop92X4TrYfEazxdhbDPeGpg7N5Y3NlPduKbj2S5xfsZ1so6VbRbmJ2xmJju5QnKE1KL4pmUttRsZ4jqGm0prrnRbpv4J4/YxILaG3W2kbN6nj7Pc1aU36kppP6o+1TYSk1mjev2Shn9maYm000ZKx2h1OxaVKs5QXqVPvIrMT7HDK1dh72K/pV6M145T/Y6ctktVpyX/bxlHOMxlkzunba21TEL6jKhLrnH70fNfU2W1u7e7pKpbVqdWPbCWSszIttRVC2pUUuEIqP0PsTKzgZKpU822yuvtGvTgvw0koHo1Sap0pzk8KKbZ5He15XV5Vrvjvzci1US+IKMGgIAEgAAAAAhUQoAMZDZAyezdr9r121g1mMZb8vYuP+D1BcDSNhLePTXV3PCUY9Gm/Hi/okZ/UdpNNsk4yrdJUXqU+LM7cylmMo+de5o28HOtVjTj2yeDRdQ20va29Gzpwt48lJ/el5fQ16vdXNzNzuK06sn1yk2IrKNt71HbGxt8xtYyuJ9q4RNZv9qdUvE4xqKhB+rT4P4mF6ur3FLxVCznOo3KbcpPm28nEpCwAFwEoC4AQgZcDBAzuga07dxtbmX9JvEJP1fD2G2LjxyuJ5rjibJs/rTi42d3PhypzfV4M5PWdJ/wAlHox5NcS2YFawQ4r0AAAAACgADjOnCrFwqRUoPmpLOTB3+zVvVzO0l0U+x8UZ4G2PNfFP8ZRNYnu8+vdPubGWK9OSj1S5p+86qefYelSjCcXGcVKL5powmobN21bM7V9BPu+q/wDKOth8RrbjJw89sMx2agDt3unXVjJqvSeO8uKZ1E8nSratu07YzEx3D6ULivb1OkoVJU59sXhnzKW7jYtP2xv6GI3cY3EO3lL+TaNP2m029SXS9BN8N2rw+vI80CbXFfErNYk29O2mu1baDczjLjUjuRfbnh+2TzLJz+03EqPQOtJ0d7e3MvGe04YJiNAAMkgBkZJAAAAABAXAAgBQPoritGg6MKs40295xTwmz5LOeLyXAwQIC4AEKQpKEHWUYAiKMAJCFGAAACBk68lBA2fZ/Wuk3bO6n9/lTm+vwZsT545nmvFSTTxg27QNZV0lbXM8VorEZP1l5nF63pNbyU7fD048ntLOAYByW6ghQABAKCACghRscZRhKLjKKlF9TMNqGzttcZnbvoZ9nOJmyGmPNfHP8ZRaInu0C+026sH/AFqT3O/HjE6nHHFHpTSlHdlFNdj4ow2obOW1ynK3/oTfZ+F+462HxGJ4yf8Ajz2wz7NPId2/0u7sW3Vptw78eKOm01zOpS9bxuJ2xmJjuIAZLIGQpCUgKMAEAMgAMgAAAIVDAAAAAGAwIAABSFAAZAAAAABkAAAgEW4TU4tqS4prqBCJ5TE6bZpu0du7ZRvpuNWPBtLO948Dt+kOl/mH8j8jScE3UeC3h+K075hrGa0Q3f0h0z8w/kfkPSHTPzD+RmkbqG6iv23F+z1rN39IdL/MP5H5D0h0z8w/kfkaRhDCH23F+z1rN39IdM/MP5GPSHTPzD+Rmj7qLuofbcX7PWs3f0h0z8w/kY9IdM/MP5GaRuobqH23F+z1rN39IdL/ADD+R+Q9IdM/MP5H5GkYQ3UPtuL9nrWbv6Q6Z+YfyPyHpDpn5h/I/I0fdRcIfbcXzJ61m7vaHS5LDrZX/wAcjEah/wBBuszo13Qqf8ab3W/FeRr+EMI0x9FTHO6zMInJNuJhzqRjCbjCaml1pNL6nAqB7YZoCkJQqAASMhSAAABQAAAAAEKgAYDAgBQICgCIoAAhSAAVAAgAAZCkCFAASABAQFAEKiFABgAQAoEBQBAEUAgAAZCsgAAAAUAQFAAEAAAqAhUAwAZAAKQAUEAFIEUCApAKgQAVkAAAoAgKQAEUAAABAAAAKgIUAAAAIigAAAAZCsgAAAVAgAoIAKAAIVEAFDIABSFQAAAQpCgAAAIUgAAAUhUAAAAAAAAAAAAgAAFIAKCFAAAACACgIAGQrIBQEAAAAAAAAAIAABSFQDAAAAABgAAAAAIUgAAAUZIAKAAABAKCBAUAAQpCoAAAGAAwAIABcERQABAKQACggAoIAKCACgACAAAUgAuQQqAAABkZIALkERQBCkAowEAGBgAAMhkApAALgYAAZBAAKQAXIyQAXIIUBgAAQuSACkAAowEABCsgFGAgAwAAAAAhSFQDAwAAwAGAyCAAXBCgMDIIBSAAUZIALkZIAKMAACFIBcggAFIVAMABgQpCoBgAAAABAABRgIAAAAGAAAAAAAAAAIVAAAAADAAgAAFAAEAAAAAAAAAAoAAEAAAAAVAAAwAIVAAAAAAAEAAFQAAAAAAAAAAAAD//2Q==",
-					customPictureName: "470470635_122096646698702486_2430148602589562945_n.jpg",
-					description: "- All heroes up to Season 9\n- Adjusted weights for each class\n- Colored panels based on in-game colors\n- Hero portraits",
+					coverImageName: '',
+					coverImageType: '',
+					customCoverImageDataUri: '',
+					customPictureDataUri:
+						'data:image/jpeg;base64,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',
+					customPictureName:
+						'470470635_122096646698702486_2430148602589562945_n.jpg',
+					description:
+						'- All heroes up to Season 9\n- Adjusted weights for each class\n- Colored panels based on in-game colors\n- Hero portraits',
 					displayHideButton: true,
 					displayRemoveButton: true,
 					displayWinnerDialog: true,
 					drawOutlines: true,
 					drawShadow: false,
-					duringSpinSound: "ticking-sound",
+					duringSpinSound: 'ticking-sound',
 					duringSpinSoundVolume: 50,
 					entries: entries.map((h) => {
 						delete h.imageName; // Exclude the imageName from the final JSON (it was only for internal processing)
 						return h;
 					}),
-					galleryPicture: "/images/none.png",
-					hubSize: "M",
+					galleryPicture: '/images/none.png',
+					hubSize: 'M',
 					isAdvanced: true,
 					launchConfetti: true,
 					maxNames: 1000,
-					pageBackgroundColor: "#FFFFFF",
-					pictureType: "uploaded",
+					pageBackgroundColor: '#FFFFFF',
+					pictureType: 'uploaded',
 					playClickWhenWinnerRemoved: false,
 					showTitle: true,
 					slowSpin: false,
 					spinTime: 5,
-					title: "Marvel Rivals Roulette",
-					type: "color",
-					winnerMessage: "You have landed on",
+					title: 'Marvel Rivals Roulette',
+					type: 'color',
+					winnerMessage: 'You have landed on',
 					pointerChangesColor: true,
 					pageGradient: true,
 				},
-				path: "kg7-we2",
-				shareMode: "copyable",
+				path: 'kg7-we2',
+				shareMode: 'copyable',
 			},
 		],
 	};
 
 	// Trigger Download
 	const dataStr = JSON.stringify(rouletteData, null, 2);
-	const blob = new Blob([dataStr], { type: "application/json" });
+	const blob = new Blob([dataStr], { type: 'application/json' });
 	const url = URL.createObjectURL(blob);
-	const a = document.createElement("a");
+	const a = document.createElement('a');
 	a.href = url;
-	a.download = "Marvel Rivals Roulette.wheel";
+	a.download = 'Marvel Rivals Roulette.wheel';
 	document.body.appendChild(a);
 	a.click();
 	document.body.removeChild(a);
