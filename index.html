@@ -15,7 +15,7 @@
 	<h3>Created by LadyOfPain & LaysOreoChips</h3>
 
 	<div class="controls">
-		<button class="btn-sort" onclick="sortHeroes()">Sort by Highest Proficiency</button>
+		<button id="btn-sort" class="btn-sort" onclick="sortHeroes()">Sort by Proficiency</button>
 		<button class="btn-reset" onclick="clearData()">Reset All Data</button>
 		<button class="btn-settings" onclick="openSettingsModal()">⚙ Settings</button>
 	</div>
@@ -100,11 +100,18 @@
 
 				<label class="settings-row">
 					<div class="settings-row-text">
-						<span class="settings-row-title">Hulk Icon instead of Banner</span>
-						<span class="settings-row-desc">Shows the Hulk portrait for Bruce Banner instead of his default
-							portrait.</span>
+						<span class="settings-row-title">Hulk instead of Banner</span>
+						<span class="settings-row-desc">Shows Hulk rather than Bruce Banner.</span>
 					</div>
 					<input type="checkbox" id="setting-hulkIcon" onchange="updateSetting('hulkIcon', this.checked)" />
+				</label>
+
+				<label class="settings-row">
+					<div class="settings-row-text">
+						<span class="settings-row-title">Lady Loki instead of Loki</span>
+						<span class="settings-row-desc">Shows Lady Loki rather than Loki.</span>
+					</div>
+					<input type="checkbox" id="setting-ladyLoki" onchange="updateSetting('ladyLoki', this.checked)" />
 				</label>
 			</div>
 
