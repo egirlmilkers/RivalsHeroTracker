@@ -151,6 +151,12 @@ const heroDefinitions = [
 		tags: ['blue', 'gray', 'grey'],
 	},
 	{
+		name: 'Jubilee',
+		role: 'Strategist',
+		color: '#cbb341',
+		tags: ['yellow', 'jubilation', 'lee'],
+	},
+	{
 		name: 'Loki',
 		role: 'Strategist',
 		color: '#4c865c',
