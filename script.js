@@ -1047,7 +1047,7 @@ function renderList() {
 		const levelInfo = getLevelInfoFromTotal(totalScore);
 
 		let subFolder;
-		const isChamp = false;
+		let isChamp = false;
 		if (levelInfo.level >= 50) {
 			subFolder = 'champion/';
 			isChamp = true;
