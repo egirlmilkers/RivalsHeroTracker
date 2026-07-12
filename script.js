@@ -1,317 +1,659 @@
 // prettier-ignore
 const heroDefinitions = [
 	{
-		name: 'Adam Warlock',
-		role: 'Strategist',
-		color: '#c28b43',
-		tags: ['gold', 'guardian', 'gotg'],
+		"name": "Adam Warlock",
+		"role": "Strategist",
+		"color": "#c28b43",
+		"tags": [
+			"gold",
+			"guardian",
+			"gotg"
+		],
+		"offsetX": 6,
+		"offsetY": -9
 	},
 	{
-		name: 'Angela',
-		role: 'Vanguard',
-		color: '#e68820',
-		tags: ['gold'],
+		"name": "Angela",
+		"role": "Vanguard",
+		"color": "#e68820",
+		"tags": [
+			"gold"
+		],
+		"offsetX": 4,
+		"offsetY": -9
 	},
 	{
-		name: 'Black Cat',
-		role: 'Duelist',
-		color: '#6252da',
-		tags: ['purple', 'felicia', 'hardy'],
+		"name": "Black Cat",
+		"role": "Duelist",
+		"color": "#6252da",
+		"tags": [
+			"purple",
+			"felicia",
+			"hardy"
+		],
+		"offsetX": 0,
+		"offsetY": -9
 	},
 	{
-		name: 'Black Panther',
-		role: 'Duelist',
-		color: '#644579',
-		tags: ['purple', "t'challa", 'challa'],
+		"name": "Black Panther",
+		"role": "Duelist",
+		"color": "#644579",
+		"tags": [
+			"purple",
+			"t'challa",
+			"challa"
+		],
+		"offsetX": 3,
+		"offsetY": -9
 	},
 	{
-		name: 'Black Widow',
-		role: 'Duelist',
-		color: '#555b6a',
-		tags: ['natasha', 'romanova', 'black'],
+		"name": "Black Widow",
+		"role": "Duelist",
+		"color": "#555b6a",
+		"tags": [
+			"natasha",
+			"romanova",
+			"black"
+		],
+		"offsetX": -2,
+		"offsetY": -9
 	},
 	{
-		name: 'Blade',
-		role: 'Duelist',
-		color: '#b23e43',
-		tags: ['red', 'eric', 'brooks'],
+		"name": "Blade",
+		"role": "Duelist",
+		"color": "#b23e43",
+		"tags": [
+			"red",
+			"eric",
+			"brooks"
+		],
+		"offsetX": -1,
+		"offsetY": -9
 	},
 	{
-		name: 'Bruce Banner',
-		role: 'Vanguard',
-		color: '#387458',
-		tags: ['green', 'hulk', 'bruce', 'banner'],
+		"name": "Bruce Banner",
+		"role": "Vanguard",
+		"color": "#387458",
+		"tags": [
+			"green",
+			"hulk",
+			"bruce",
+			"banner"
+		],
+		"offsetX": 10,
+		"offsetY": -9
 	},
 	{
-		name: 'Captain America',
-		role: 'Vanguard',
-		color: '#3872b1',
-		tags: ['blue', 'steven', 'steve', 'rogers'],
+		"name": "Captain America",
+		"role": "Vanguard",
+		"color": "#3872b1",
+		"tags": [
+			"blue",
+			"steven",
+			"steve",
+			"rogers"
+		],
+		"offsetX": 0,
+		"offsetY": -9
 	},
 	{
-		name: 'Cloak and Dagger',
-		role: 'Strategist',
-		color: '#889bfd',
-		tags: ['blue', 'tyrone', 'johnson', 'tandy', 'bowen'],
+		"name": "Cloak and Dagger",
+		"role": "Strategist",
+		"color": "#889bfd",
+		"tags": [
+			"blue",
+			"tyrone",
+			"johnson",
+			"tandy",
+			"bowen"
+		],
+		"offsetX": -9,
+		"offsetY": 0
 	},
 	{
-		name: 'Cyclops',
-		role: 'Duelist',
-		color: '#37bdda',
-		tags: ['mutant', 'scott', 'summers', 'blue'],
+		"name": "Cyclops",
+		"role": "Duelist",
+		"color": "#37bdda",
+		"tags": [
+			"mutant",
+			"scott",
+			"summers",
+			"blue"
+		],
+		"offsetX": 8,
+		"offsetY": 2
 	},
 	{
-		name: 'Daredevil',
-		role: 'Duelist',
-		color: '#d02959',
-		tags: ['matt', 'murdock', 'red'],
+		"name": "Daredevil",
+		"role": "Duelist",
+		"color": "#d02959",
+		"tags": [
+			"matt",
+			"murdock",
+			"red"
+		],
+		"offsetX": 2,
+		"offsetY": -7
 	},
 	{
-		name: 'Deadpool',
-		role: ['Vanguard', 'Duelist', 'Strategist'],
-		color: '#f24547',
-		tags: ['red', 'flex', 'wade', 'wilson'],
+		"name": "Deadpool",
+		"role": [
+			"Vanguard",
+			"Duelist",
+			"Strategist"
+		],
+		"color": "#f24547",
+		"tags": [
+			"red",
+			"flex",
+			"wade",
+			"wilson"
+		],
+		"offsetX": -1,
+		"offsetY": -5
 	},
 	{
-		name: 'Devil Dinosaur',
-		role: 'Vanguard',
-		color: '#b22d39',
-		tags: ['red', 'dino', 'moon', 'girl'],
+		"name": "Devil Dinosaur",
+		"role": "Vanguard",
+		"color": "#b22d39",
+		"tags": [
+			"red",
+			"dino",
+			"moon",
+			"girl"
+		],
+		"offsetX": -6,
+		"offsetY": -9
 	},
 	{
-		name: 'Doctor Strange',
-		role: 'Vanguard',
-		color: '#db635c',
-		tags: ['stephen', 'strange', 'orange'],
+		"name": "Doctor Strange",
+		"role": "Vanguard",
+		"color": "#db635c",
+		"tags": [
+			"stephen",
+			"strange",
+			"orange"
+		],
+		"offsetX": -3,
+		"offsetY": -10
 	},
 	{
-		name: 'Elsa Bloodstone',
-		role: 'Duelist',
-		color: '#e96346',
-		tags: ['orange'],
+		"name": "Elsa Bloodstone",
+		"role": "Duelist",
+		"color": "#e96346",
+		"tags": [
+			"orange"
+		],
+		"offsetX": 3,
+		"offsetY": -10
 	},
 	{
-		name: 'Emma Frost',
-		role: 'Vanguard',
-		color: '#35ade4',
-		tags: ['blue', 'mutant'],
+		"name": "Emma Frost",
+		"role": "Vanguard",
+		"color": "#35ade4",
+		"tags": [
+			"blue",
+			"mutant"
+		],
+		"offsetX": 5,
+		"offsetY": -4
 	},
 	{
-		name: 'Gambit',
-		role: 'Strategist',
-		color: '#d763a0',
-		tags: ['gambit', 'pink', 'remy', 'lebeau'],
+		"name": "Gambit",
+		"role": "Strategist",
+		"color": "#d763a0",
+		"tags": [
+			"gambit",
+			"pink",
+			"remy",
+			"lebeau"
+		],
+		"offsetX": 0,
+		"offsetY": 3
 	},
 	{
-		name: 'Groot',
-		role: 'Vanguard',
-		color: '#83a862',
-		tags: ['green', 'guardian', 'gotg'],
+		"name": "Groot",
+		"role": "Vanguard",
+		"color": "#83a862",
+		"tags": [
+			"green",
+			"guardian",
+			"gotg"
+		],
+		"offsetX": 5,
+		"offsetY": -1
 	},
 	{
-		name: 'Hawkeye',
-		role: 'Duelist',
-		color: '#8969a6',
-		tags: ['purple', 'clint', 'barton'],
+		"name": "Hawkeye",
+		"role": "Duelist",
+		"color": "#8969a6",
+		"tags": [
+			"purple",
+			"clint",
+			"barton"
+		],
+		"offsetX": -5,
+		"offsetY": -7
 	},
 	{
-		name: 'Hela',
-		role: 'Duelist',
-		color: '#388c8c',
-		tags: ['green'],
+		"name": "Hela",
+		"role": "Duelist",
+		"color": "#388c8c",
+		"tags": [
+			"green"
+		],
+		"offsetX": 5,
+		"offsetY": -9
 	},
 	{
-		name: 'Human Torch',
-		role: 'Duelist',
-		color: '#d8764a',
-		tags: ['orange', 'johnny', 'storm', '4', 'fantastic'],
+		"name": "Human Torch",
+		"role": "Duelist",
+		"color": "#d8764a",
+		"tags": [
+			"orange",
+			"johnny",
+			"storm",
+			"4",
+			"fantastic"
+		],
+		"offsetX": 3,
+		"offsetY": -7
 	},
 	{
-		name: 'Invisible Woman',
-		role: 'Strategist',
-		color: '#3ac4f7',
-		tags: ['blue', 'sue', 'susan', 'storm', '4', 'fantastic'],
+		"name": "Invisible Woman",
+		"role": "Strategist",
+		"color": "#3ac4f7",
+		"tags": [
+			"blue",
+			"sue",
+			"susan",
+			"storm",
+			"4",
+			"fantastic"
+		],
+		"offsetX": 3,
+		"offsetY": -10
 	},
 	{
-		name: 'Iron Fist',
-		role: 'Duelist',
-		color: '#088078',
-		tags: ['green', 'lin', 'lie'],
+		"name": "Iron Fist",
+		"role": "Duelist",
+		"color": "#088078",
+		"tags": [
+			"green",
+			"lin",
+			"lie"
+		],
+		"offsetX": 4,
+		"offsetY": -3
 	},
 	{
-		name: 'Iron Man',
-		role: 'Duelist',
-		color: '#dd5067',
-		tags: ['anthony', 'stark', 'tony', 'red'],
+		"name": "Iron Man",
+		"role": "Duelist",
+		"color": "#dd5067",
+		"tags": [
+			"anthony",
+			"stark",
+			"tony",
+			"red"
+		],
+		"offsetX": 7,
+		"offsetY": -10
 	},
 	{
-		name: 'Jeff The Land Shark',
-		role: 'Strategist',
-		color: '#5f79a5',
-		tags: ['blue', 'gray', 'grey'],
+		"name": "Jeff The Land Shark",
+		"role": "Strategist",
+		"color": "#5f79a5",
+		"tags": [
+			"blue",
+			"gray",
+			"grey"
+		],
+		"offsetX": 7,
+		"offsetY": -10
 	},
 	{
-		name: 'Jubilee',
-		role: 'Strategist',
-		color: '#cbb341',
-		tags: ['yellow', 'jubilation', 'lee'],
+		"name": "Jubilee",
+		"role": "Strategist",
+		"color": "#cbb341",
+		"tags": [
+			"yellow",
+			"jubilation",
+			"lee"
+		],
+		"offsetX": 0,
+		"offsetY": -10
 	},
 	{
-		name: 'Loki',
-		role: 'Strategist',
-		color: '#4c865c',
-		tags: ['green', 'lady', 'laufeyson'],
+		"name": "Loki",
+		"role": "Strategist",
+		"color": "#4c865c",
+		"tags": [
+			"green",
+			"lady",
+			"laufeyson"
+		],
+		"offsetX": 3,
+		"offsetY": -2
 	},
 	{
-		name: 'Luna Snow',
-		role: 'Strategist',
-		color: '#1165bf',
-		tags: ['blue', 'seol', 'hee'],
+		"name": "Luna Snow",
+		"role": "Strategist",
+		"color": "#1165bf",
+		"tags": [
+			"blue",
+			"seol",
+			"hee"
+		],
+		"offsetX": 5,
+		"offsetY": -2
 	},
 	{
-		name: 'Magik',
-		role: 'Duelist',
-		color: '#8f615f',
-		tags: ['mutant', 'illyana', 'rasputin', 'brown'],
+		"name": "Magik",
+		"role": "Duelist",
+		"color": "#8f615f",
+		"tags": [
+			"mutant",
+			"illyana",
+			"rasputin",
+			"brown"
+		],
+		"offsetX": 3,
+		"offsetY": -4
 	},
 	{
-		name: 'Magneto',
-		role: 'Vanguard',
-		color: '#425f67',
-		tags: ['mutant', 'grey', 'gray', 'max', 'eisenhardt'],
+		"name": "Magneto",
+		"role": "Vanguard",
+		"color": "#425f67",
+		"tags": [
+			"mutant",
+			"grey",
+			"gray",
+			"max",
+			"eisenhardt"
+		],
+		"offsetX": 3,
+		"offsetY": -9
 	},
 	{
-		name: 'Mantis',
-		role: 'Strategist',
-		color: '#6c8c66',
-		tags: ['green', 'guardian', 'gotg'],
+		"name": "Mantis",
+		"role": "Strategist",
+		"color": "#6c8c66",
+		"tags": [
+			"green",
+			"guardian",
+			"gotg"
+		],
+		"offsetX": 5,
+		"offsetY": -10
 	},
 	{
-		name: 'Mister Fantastic',
-		role: 'Duelist',
-		color: '#2ccbe7',
-		tags: ['blue', 'reed', 'richards', 'fantastic', '4'],
+		"name": "Mister Fantastic",
+		"role": "Duelist",
+		"color": "#2ccbe7",
+		"tags": [
+			"blue",
+			"reed",
+			"richards",
+			"fantastic",
+			"4"
+		],
+		"offsetX": 3,
+		"offsetY": -10
 	},
 	{
-		name: 'Moon Knight',
-		role: 'Duelist',
-		color: '#6b8290',
-		tags: ['grey', 'gray', 'marc', 'spector', 'steven', 'grant', 'jake', 'lockley'],
+		"name": "Moon Knight",
+		"role": "Duelist",
+		"color": "#6b8290",
+		"tags": [
+			"grey",
+			"gray",
+			"marc",
+			"spector",
+			"steven",
+			"grant",
+			"jake",
+			"lockley"
+		],
+		"offsetX": -1,
+		"offsetY": 0
 	},
 	{
-		name: 'Namor',
-		role: 'Duelist',
-		color: '#22938a',
-		tags: ['mutant', 'green', 'mckenzie'],
+		"name": "Namor",
+		"role": "Duelist",
+		"color": "#22938a",
+		"tags": [
+			"mutant",
+			"green",
+			"mckenzie"
+		],
+		"offsetX": 3,
+		"offsetY": -4
 	},
 	{
-		name: 'Peni Parker',
-		role: 'Vanguard',
-		color: '#db5151',
-		tags: ['red'],
+		"name": "Peni Parker",
+		"role": "Vanguard",
+		"color": "#db5151",
+		"tags": [
+			"red"
+		],
+		"offsetX": 3,
+		"offsetY": -5
 	},
 	{
-		name: 'Phoenix',
-		role: 'Duelist',
-		color: '#db5d51',
-		tags: ['mutant', 'jean', 'grey', 'orange'],
+		"name": "Phoenix",
+		"role": "Duelist",
+		"color": "#db5d51",
+		"tags": [
+			"mutant",
+			"jean",
+			"grey",
+			"orange"
+		],
+		"offsetX": -2,
+		"offsetY": -6
 	},
 	{
-		name: 'Psylocke',
-		role: 'Duelist',
-		color: '#a85bbb',
-		tags: ['mutant', 'purple', 'sai'],
+		"name": "Psylocke",
+		"role": "Duelist",
+		"color": "#a85bbb",
+		"tags": [
+			"mutant",
+			"purple",
+			"sai"
+		],
+		"offsetX": 4,
+		"offsetY": -8
 	},
 	{
-		name: 'Rocket Raccoon',
-		role: 'Strategist',
-		color: '#d47253',
-		tags: ['orange', 'guardian', 'gotg'],
+		"name": "Rocket Raccoon",
+		"role": "Strategist",
+		"color": "#d47253",
+		"tags": [
+			"orange",
+			"guardian",
+			"gotg"
+		],
+		"offsetX": 3,
+		"offsetY": -4
 	},
 	{
-		name: 'Rogue',
-		role: 'Vanguard',
-		color: '#d1b231',
-		tags: ['mutant', 'yellow', 'anna', 'marie'],
+		"name": "Rogue",
+		"role": "Vanguard",
+		"color": "#d1b231",
+		"tags": [
+			"mutant",
+			"yellow",
+			"anna",
+			"marie"
+		],
+		"offsetX": 7,
+		"offsetY": -5
 	},
 	{
-		name: 'Scarlet Witch',
-		role: 'Duelist',
-		color: '#d24466',
-		tags: ['red', 'wanda', 'maximoff'],
+		"name": "Scarlet Witch",
+		"role": "Duelist",
+		"color": "#d24466",
+		"tags": [
+			"red",
+			"wanda",
+			"maximoff"
+		],
+		"offsetX": 3,
+		"offsetY": -5
 	},
 	{
-		name: 'Spider-Man',
-		role: 'Duelist',
-		color: '#d44f5a',
-		tags: ['red', 'peter', 'parker'],
+		"name": "Spider-Man",
+		"role": "Duelist",
+		"color": "#d44f5a",
+		"tags": [
+			"red",
+			"peter",
+			"parker"
+		],
+		"offsetX": 5,
+		"offsetY": -10
 	},
 	{
-		name: 'Squirrel Girl',
-		role: 'Duelist',
-		color: '#d38850',
-		tags: ['orange', 'doreen', 'green'],
+		"name": "Squirrel Girl",
+		"role": "Duelist",
+		"color": "#d38850",
+		"tags": [
+			"orange",
+			"doreen",
+			"green"
+		],
+		"offsetX": 6,
+		"offsetY": -10
 	},
 	{
-		name: 'Star-Lord',
-		role: 'Duelist',
-		color: '#467ed7',
-		tags: ['blue', 'guardian', 'gotg', 'peter', 'quill'],
+		"name": "Star-Lord",
+		"role": "Duelist",
+		"color": "#467ed7",
+		"tags": [
+			"blue",
+			"guardian",
+			"gotg",
+			"peter",
+			"quill"
+		],
+		"offsetX": 0,
+		"offsetY": 2
 	},
 	{
-		name: 'Storm',
-		role: 'Duelist',
-		color: '#454f76',
-		tags: ['mutant', 'ororo', 'munroe', 'gray', 'grey'],
+		"name": "Storm",
+		"role": "Duelist",
+		"color": "#454f76",
+		"tags": [
+			"mutant",
+			"ororo",
+			"munroe",
+			"gray",
+			"grey"
+		],
+		"offsetX": 7,
+		"offsetY": -10
 	},
 	{
-		name: 'The Punisher',
-		role: 'Duelist',
-		color: '#495366',
-		tags: ['frank', 'castle', 'gray', 'grey'],
+		"name": "The Punisher",
+		"role": "Duelist",
+		"color": "#495366",
+		"tags": [
+			"frank",
+			"castle",
+			"gray",
+			"grey"
+		],
+		"offsetX": 5,
+		"offsetY": -9
 	},
 	{
-		name: 'The Thing',
-		role: 'Vanguard',
-		color: '#e1a75e',
-		tags: ['orange', 'fantastic', 'four', 'ben', 'grimm'],
+		"name": "The Thing",
+		"role": "Vanguard",
+		"color": "#e1a75e",
+		"tags": [
+			"orange",
+			"fantastic",
+			"four",
+			"ben",
+			"grimm"
+		],
+		"offsetX": 3,
+		"offsetY": 2
 	},
 	{
-		name: 'Thor',
-		role: 'Vanguard',
-		color: '#5964ab',
-		tags: ['blue', 'odinson'],
+		"name": "Thor",
+		"role": "Vanguard",
+		"color": "#5964ab",
+		"tags": [
+			"blue",
+			"odinson"
+		],
+		"offsetX": 3,
+		"offsetY": -10
 	},
 	{
-		name: 'Ultron',
-		role: 'Strategist',
-		color: '#6b779f',
-		tags: ['gray', 'grey'],
+		"name": "Ultron",
+		"role": "Strategist",
+		"color": "#6b779f",
+		"tags": [
+			"gray",
+			"grey"
+		],
+		"offsetX": 3,
+		"offsetY": -6
 	},
 	{
-		name: 'Venom',
-		role: 'Vanguard',
-		color: '#2a2e3d',
-		tags: ['black', 'edward', 'eddie', 'brock'],
+		"name": "Venom",
+		"role": "Vanguard",
+		"color": "#2a2e3d",
+		"tags": [
+			"black",
+			"edward",
+			"eddie",
+			"brock"
+		],
+		"offsetX": 8,
+		"offsetY": -10
 	},
 	{
-		name: 'White Fox',
-		role: 'Strategist',
-		color: '#62d4de',
-		tags: ['ami', 'han', 'blue', 'turquoise'],
+		"name": "White Fox",
+		"role": "Strategist",
+		"color": "#62d4de",
+		"tags": [
+			"ami",
+			"han",
+			"blue",
+			"turquoise"
+		],
+		"offsetX": -2,
+		"offsetY": 0
 	},
 	{
-		name: 'Winter Soldier',
-		role: 'Duelist',
-		color: '#6d7f41',
-		tags: ['green', 'james', 'buchanan', 'bucky', 'barnes'],
+		"name": "Winter Soldier",
+		"role": "Duelist",
+		"color": "#6d7f41",
+		"tags": [
+			"green",
+			"james",
+			"buchanan",
+			"bucky",
+			"barnes"
+		],
+		"offsetX": 4,
+		"offsetY": 0
 	},
 	{
-		name: 'Wolverine',
-		role: 'Duelist',
-		color: '#be962a',
-		tags: ['mutant', 'yellow', 'logan'],
-	},
+		"name": "Wolverine",
+		"role": "Duelist",
+		"color": "#be962a",
+		"tags": [
+			"mutant",
+			"yellow",
+			"logan"
+		],
+		"offsetX": 4,
+		"offsetY": -10
+	}
 ];
 
 // Configuration for Levels and XP
@@ -688,7 +1030,7 @@ function renderList() {
 					<div>Hero & Level</div>
 					<div>Rank</div>
 					<div>Points</div>
-				</div>
+				</div> 
 			`;
 
 	if (visibleHeroes.length === 0) {
@@ -705,8 +1047,10 @@ function renderList() {
 		const levelInfo = getLevelInfoFromTotal(totalScore);
 
 		let subFolder;
+		const isChamp = false;
 		if (levelInfo.level >= 50) {
 			subFolder = 'champion/';
+			isChamp = true;
 		} else if (levelInfo.level >= 20) {
 			subFolder = 'lord/';
 		} else {
@@ -745,12 +1089,21 @@ function renderList() {
 			? hero.role.join(' / ')
 			: hero.role;
 
+		// Safely grab the offsets, defaulting to your standard 0 and -9
+		const offX = hero.offsetX !== undefined ? hero.offsetX : 0;
+		const offY = hero.offsetY !== undefined ? hero.offsetY : -9;
+		
+		// Calculate the CSS Transform
+		const transformStyle = levelInfo.level >= 50 
+			? `transform: scale(1.4) translate(${offX}px, ${offY}px);` 
+			: `transform: translate(${offX}px, ${offY}px);`;
+
 		row.innerHTML = `
 			<div class="portrait-container">
 				<div class="char-img-wrapper"${levelInfo.level >= 50 ? `style=\"box-shadow: 0 0 22px ${hero.color};\"` : ''}>
 					<img src="${heroImgPath}" 
 						class="hero-portrait rank-${levelInfo.title}" 
-						style="background: linear-gradient(180deg,rgba(0, 0, 0, 0) 10%, ${hero.color || '#000'} 100%); ${levelInfo.level >= 50 ? `transform: scale(1.4) translateY(-9px);` : ''}"
+						style="background: linear-gradient(180deg,rgba(0, 0, 0, 0) 10%, ${hero.color || '#000'} 100%); ${isChamp ? transformStyle : ''}"
 						onerror="handleImageFallback(this, '${heroName}', '${heroFileName}')" alt="${heroName}">
 				</div>
 				<div class="role-icon-container">
