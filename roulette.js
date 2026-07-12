@@ -192,7 +192,7 @@ async function generateRouletteJSON() {
 				customPictureName:
 					'470470635_122096646698702486_2430148602589562945_n.jpg',
 				description:
-					'- All heroes up to Season 8.5\n- Adjusted weights for each class\n- Colored panels based on in-game colors\n- Hero portraits',
+					'- All heroes up to Season 9\n- Adjusted weights for each class\n- Colored panels based on in-game colors\n- Hero portraits',
 				displayHideButton: true,
 				displayRemoveButton: true,
 				displayWinnerDialog: true,
@@ -224,10 +224,10 @@ async function generateRouletteJSON() {
 			},
 		],
 		path: 'kg7-we2',
-		shareMode: 'copyable',
+		shareMode: 'gallery',
 		title: 'Marvel Rivals Roulette',
 		description:
-			'- All heroes up to Season 8.5\n- Adjusted weights for each class\n- Colored panels based on in-game colors\n- Hero portraits',
+			'- All heroes up to Season 9\n- Adjusted weights for each class\n- Colored panels based on in-game colors\n- Hero portraits',
 	};
 
 	// Trigger Download

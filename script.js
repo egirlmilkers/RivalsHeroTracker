@@ -646,7 +646,7 @@ function handleImageFallback(img, heroName, fileName) {
 	const baseSrc = `img/char/${fileName}`;
 	const lordSrc = `img/char/lord/${fileName}`;
 
-	if (img.src.includes('/dyna/')) {
+	if (img.src.includes('/champion/')) {
 		img.src = lordSrc;
 	} else if (img.src.includes('/lord/')) {
 		img.src = baseSrc;
@@ -706,7 +706,7 @@ function renderList() {
 
 		let subFolder;
 		if (levelInfo.level >= 50) {
-			subFolder = 'dyna/';
+			subFolder = 'champion/';
 		} else if (levelInfo.level >= 20) {
 			subFolder = 'lord/';
 		} else {
