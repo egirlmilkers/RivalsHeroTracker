@@ -140,10 +140,6 @@ button:disabled {
 	color: #ccc;
 }
 
-.btn-settings:hover {
-	color: #fff;
-}
-
 .container {
 	width: 100%;
 	max-width: 950px;
@@ -675,11 +671,13 @@ input:hover {
 	overflow: hidden;
 	min-height: 120px;
 }
+
 #share-canvas {
 	width: 100%;
 	height: auto;
 	display: block;
 }
+
 .share-loading {
 	position: absolute;
 	top: 0;
@@ -695,9 +693,11 @@ input:hover {
 	text-transform: uppercase;
 	background: rgba(0, 0, 0, 0.4);
 }
+
 .share-loading.hidden {
 	display: none;
 }
+
 .share-modal-actions {
 	display: flex;
 	gap: 15px;
@@ -790,6 +790,151 @@ input:hover {
 	outline-offset: 2px;
 }
 
+/* >> Pin Button Styles << */
+.pin-btn {
+	cursor: pointer;
+	margin-left: 8px;
+	font-size: 1em;
+	color: #ffffff11;
+	transition:
+		color 0.2s,
+		transform 0.2s;
+	user-select: none;
+	display: inline-block;
+}
+
+.pin-btn:hover {
+	color: #fff !important;
+	transform: scale(1.1);
+}
+
+.pin-btn.pinned {
+	color: #a2a2a2;
+	text-shadow: 0 0 8px;
+}
+
+/* >> Version & Changelog Styles << */
+.version-display {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	color: #666;
+	cursor: pointer;
+	font-size: 0.9em;
+	font-weight: 600;
+	transition:
+		color 0.2s ease,
+		transform 0.2s ease;
+	letter-spacing: 1px;
+}
+
+/* Custom Markdown styling overrides for the modal */
+.modal-content {
+	max-width: 600px;
+	max-height: 85vh;
+	overflow-y: auto;
+	text-align: left;
+}
+
+#changelog-title {
+	text-align: center;
+	margin-bottom: -15px;
+}
+
+#changelog-body ul {
+	margin-top: 8px;
+	padding-left: 20px;
+	color: #bbb;
+}
+
+#changelog-body li {
+	margin-bottom: 6px;
+	line-height: 1.4;
+}
+
+#changelog-body blockquote {
+	border-left: 3px solid var(--color-knight);
+	padding-left: 12px;
+	margin: 12px 0;
+	color: #999;
+	font-style: italic;
+	background: rgba(255, 255, 255, 0.03);
+	padding-top: 8px;
+	padding-bottom: 8px;
+	border-radius: 0 4px 4px 0;
+}
+
+.cl-headers {
+	color: #fac53c;
+	border-bottom: 1px solid #333;
+	padding-bottom: 6px;
+	margin-top: 40px;
+	margin-bottom: 8px;
+	font-size: 1.2em;
+	text-transform: none;
+	font-variant: small-caps;
+	/* font-weight: 600; */
+}
+
+.cl-headers span {
+	font-size: 0.75em;
+	color: #777;
+	margin-left: 10px;
+	font-weight: normal;
+	text-transform: uppercase;
+}
+
+div:has(> .close-btn) {
+	text-align: end;
+}
+
+.close-btn {
+	padding: 2px;
+	background-color: transparent;
+	color: #777;
+	font-size: 2rem;
+	position: absolute;
+	top: 4%;
+}
+
+.hover-btn {
+	transition:
+		color 0.2s ease,
+		transform 0.2s ease;
+
+	&:hover {
+		color: #fff;
+		transform: scale(1.05);
+	}
+}
+
+/* >> Scrollbar Styles << */
+html,
+.no-scroll-track {
+	overflow-y: auto;
+	/* Firefox */
+	scrollbar-width: thin;
+	scrollbar-color: #888 transparent;
+
+	/* Chrome, Edge, Safari */
+	&::-webkit-scrollbar {
+		width: 8px;
+	}
+
+	&::-webkit-scrollbar-track {
+		background: transparent;
+	}
+
+	&::-webkit-scrollbar-thumb {
+		background: #888;
+		border-radius: 4px;
+	}
+
+	&::-webkit-scrollbar-thumb:hover {
+		background: #555;
+	}
+}
+
 /* >> Mobile Styles << */
 @media (max-width: 600px) {
 	.hero-row {
@@ -797,7 +942,8 @@ input:hover {
 		display: grid;
 		grid-template-columns: 80px 1fr;
 		grid-template-rows: auto auto;
-		gap: 20px 15px; /* Added more vertical gap to account for the "Level" label */
+		gap: 20px 15px;
+		/* Added more vertical gap to account for the "Level" label */
 		padding: 15px;
 		border: 1px solid #333;
 		margin-bottom: 10px;
@@ -823,7 +969,8 @@ input:hover {
 	.rank-select-container {
 		grid-column: 1;
 		grid-row: 2;
-		justify-content: flex-start; /* Align to the left under the portrait */
+		justify-content: flex-start;
+		/* Align to the left under the portrait */
 	}
 
 	.point-container {
@@ -834,11 +981,13 @@ input:hover {
 
 	/* UI Adjustments for small screens */
 	.header-row {
-		display: none; /* Keep headers hidden on mobile */
+		display: none;
+		/* Keep headers hidden on mobile */
 	}
 
 	.rank-badge-img {
-		height: 30px; /* Shrink badge slightly to fit the column width */
+		height: 30px;
+		/* Shrink badge slightly to fit the column width */
 		margin-right: 8px;
 	}
 

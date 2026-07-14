@@ -11,6 +11,20 @@
 </head>
 
 <body>
+	<!-- Version Display -->
+	<div id="version-display" class="version-display hover-btn" onclick="showFullChangelog()"></div>
+
+	<!-- Changelog Modal -->
+	<div id="changelog-modal" class="modal-overlay" style="display: none">
+		<div class="modal-content">
+			<div><button class="close-btn hover-btn" onclick="closeChangelogModal()">&times;</button></div>
+			<h2 id="changelog-title">Update History</h2>
+			<div id="changelog-body" class="no-scroll-track">
+                <!-- JS Injects markdown HTML here -->
+            </div>
+		</div>
+	</div>
+
 	<h1>Marvel Rivals Proficiency Tracker</h1>
 	<h3>Created by Lady of Pain & LaysOreoChips</h3>
 
@@ -21,7 +35,7 @@
 		<button class="btn-share" onclick="openShareModal()">
 			Share Top 5
 		</button>
-		<button class="btn-settings" onclick="openSettingsModal()">
+		<button class="btn-settings hover-btn" onclick="openSettingsModal()">
 			⚙
 		</button>
 	</div>
@@ -166,6 +180,9 @@
 		</div>
 	</div>
 
+	<script src="https://cdn.jsdelivr.net/npm/marked/lib/marked.umd.js"></script>
+
+	<script src="changelog.js"></script>
 	<script src="script.js"></script>
 	<script src="roulette.js"></script>
 	<script src="share.js"></script>

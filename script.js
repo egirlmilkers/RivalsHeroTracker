@@ -760,7 +760,7 @@ function init() {
 	if (v3Data && stdData) {
 		openComparisonModal({
 			title: 'Save File Conflict Detected!',
-			desc: "We found an older 'V3' save file alongside a newer save file. Please check your top heroes to decide which data you want to keep.",
+			desc: "We found an older 'V3' save file alongside a newer save file. Please review your top heroes to decide which data you want to keep.",
 			opt1Title: 'Older Save (V3)',
 			opt1Data: v3Data,
 			opt1BtnText: 'Keep V3 Save',
@@ -786,6 +786,7 @@ function init() {
 	}
 
 	processLoadedData(savedData);
+	checkChangelog();
 }
 
 function processLoadedData(savedData) {
@@ -798,15 +799,23 @@ function processLoadedData(savedData) {
 						...def,
 						rank: saved.rank,
 						points: saved.points,
+						pinned: saved.pinned || false, // pinning
 						originalIndex: idx,
 					}
-				: { ...def, rank: 'Agent', points: 0, originalIndex: idx };
+				: {
+						...def,
+						rank: 'Agent',
+						points: 0,
+						pinned: false, // pinning
+						originalIndex: idx,
+					};
 		});
 	} else {
 		heroData = heroDefinitions.map((def, idx) => ({
 			...def,
 			rank: 'Agent',
 			points: 0,
+			pinned: false, // pinning
 			originalIndex: idx,
 		}));
 	}
@@ -1092,11 +1101,12 @@ function renderList() {
 		// Safely grab the offsets, defaulting to your standard 0 and -9
 		const offX = hero.offsetX !== undefined ? hero.offsetX : 0;
 		const offY = hero.offsetY !== undefined ? hero.offsetY : -9;
-		
+
 		// Calculate the CSS Transform
-		const transformStyle = levelInfo.level >= 50 
-			? `transform: scale(1.4) translate(${offX}px, ${offY}px);` 
-			: `transform: translate(${offX}px, ${offY}px);`;
+		const transformStyle =
+			levelInfo.level >= 50
+				? `transform: scale(1.4) translate(${offX}px, ${offY}px);`
+				: `transform: translate(${offX}px, ${offY}px);`;
 
 		row.innerHTML = `
 			<div class="portrait-container">
@@ -1117,6 +1127,9 @@ function renderList() {
 				<span class="hero-name ${'rank-' + levelInfo.title}">
 					${heroName} 
 					<span style="font-size:0.7em; margin-left:10px; color:#666; font-weight:normal;">(${levelInfo.title})</span>
+					<span class="pin-btn ${hero.pinned ? 'pinned' : ''} hover-btn" onclick="togglePin('${hero.name}')" title="Pin ${heroName}">
+						${hero.pinned ? '★' : '☆'}
+					</span>
 				</span>
 				
 				<div class="progress-section">
@@ -1149,7 +1162,7 @@ function renderList() {
 			</div>
 
 			<div class="point-container">
-				<input type="number" value="${levelInfo.xp}" min="0" ${levelInfo.level > currentConfig.endLvl ? '' : `max="${levelInfo.maxXp}"`}
+				<input type="number" class="no-scroll-track" value="${levelInfo.xp}" min="0" ${levelInfo.level > currentConfig.endLvl ? '' : `max="${levelInfo.maxXp}"`}
 						onchange="updateHero('${hero.name}', 'points', this.value)" placeholder="0">
 				<span class="point-suffix">/ ${levelInfo.level > currentConfig.endLvl ? '&infin;' : levelInfo.maxXp}</span>
 			</div>
@@ -1190,16 +1203,35 @@ function updateHero(name, field, value) {
 
 function sortHeroes(toggle = false) {
 	if (toggle) sorted = !sorted;
+
+	heroData.sort((a, b) => {
+		// check if pinned
+		if (a.pinned && !b.pinned) return -1;
+		if (!a.pinned && b.pinned) return 1;
+
+		// fallback to current toggle sort
+		if (sorted) {
+			return calculateTotalScore(b) - calculateTotalScore(a);
+		} else {
+			return a.name.localeCompare(b.name);
+		}
+	});
+
 	if (sorted) {
-		heroData.sort(
-			(a, b) => calculateTotalScore(b) - calculateTotalScore(a),
-		);
 		document.getElementById('btn-sort').textContent = 'Sort Alphabetically';
 	} else {
-		heroData.sort((a, b) => a.name.localeCompare(b.name));
 		document.getElementById('btn-sort').textContent = 'Sort by Proficiency';
 	}
 	renderList();
+}
+
+function togglePin(name) {
+	const index = heroData.findIndex((h) => h.name === name);
+	if (index === -1) return;
+
+	heroData[index].pinned = !heroData[index].pinned;
+	saveData();
+	sortHeroes();
 }
 
 function saveData() {
@@ -1208,6 +1240,7 @@ function saveData() {
 		name: h.name,
 		rank: h.rank,
 		points: h.points,
+		pinned: h.pinned || false, // pinning
 	}));
 	localStorage.setItem('marvelRivalsData', JSON.stringify(dataToSave));
 }
@@ -1226,6 +1259,7 @@ function downloadBackup() {
 		name: h.name,
 		rank: h.rank,
 		points: h.points,
+		pinned: h.pinned, // pinning
 	}));
 	const dataStr = JSON.stringify(dataToSave, null, 2);
 	const blob = new Blob([dataStr], { type: 'application/json' });
@@ -1259,6 +1293,7 @@ function handleFileUpload(input) {
 						name: h.name,
 						rank: h.rank,
 						points: h.points,
+						pinned: h.pinned, // pinning
 					})),
 				);
 
