@@ -1234,6 +1234,13 @@ function togglePin(name) {
 	sortHeroes();
 }
 
+// Close modals when clicking on the overlay background
+window.addEventListener('click', function (event) {
+	if (event.target.classList.contains('modal-overlay')) {
+		event.target.style.display = 'none';
+	}
+});
+
 function saveData() {
 	// We map only the dynamic data for saving to keep localStorage clean
 	const dataToSave = heroData.map((h) => ({

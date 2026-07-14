@@ -602,6 +602,7 @@ input:hover {
 }
 
 .modal-content {
+	position: relative;
 	background: var(--card-bg);
 	border: 1px solid var(--border-color);
 	border-radius: 12px;
@@ -894,7 +895,8 @@ div:has(> .close-btn) {
 	color: #777;
 	font-size: 2rem;
 	position: absolute;
-	top: 4%;
+	top: 15px;
+	right: 20px;
 }
 
 .hover-btn {

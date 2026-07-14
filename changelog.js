@@ -54,23 +54,27 @@ async function checkChangelog() {
 			}
 
 			// Check for new updates since the user's last visit
-			const lastSeenVersion = localStorage.getItem(
-				'lastSeenVersion',
-			);
+			const lastSeenVersion = localStorage.getItem('lastSeenVersion');
 
-			if (lastSeenVersion !== latestVersion) {
+			// extremely lazy way to reset version numbers (only version that had old number was v31)
+			if (lastSeenVersion < latestVersion || lastSeenVersion == "31") {
 				let newUpdates = [];
 				for (let entry of allChangelogEntries) {
-					if (entry.version === lastSeenVersion) break;
+					if (entry.version <= lastSeenVersion) break;
 					newUpdates.push(entry);
 				}
-
+				
+				let h = "New Updates!"
 				// If it's a first time visitor, only show the single most recent update
-				if (!lastSeenVersion) {
-					newUpdates = [allChangelogEntries[0]];
+				if (lastSeenVersion) {
+					newUpdates = [allChangelogEntries.find(e => !e.version.includes('.'))];
+					h = "Latest Update"
 				}
 
-				showChangelogModal(newUpdates, 'New updates since your last visit!');
+				showChangelogModal(
+					newUpdates,
+					h,
+				);
 				localStorage.setItem('lastSeenVersion', latestVersion);
 			}
 		}
@@ -78,45 +82,6 @@ async function checkChangelog() {
 		console.error('Error fetching changelog:', e);
 	}
 }
-
-// function renderMarkdown(lines) {
-// 	let html = '';
-// 	let inList = false;
-
-// 	for (let line of lines) {
-// 		line = line.trim();
-// 		if (!line) continue;
-
-// 		if (line.startsWith('#### ')) {
-// 			if (inList) {
-// 				html += '</ul>';
-// 				inList = false;
-// 			}
-// 			html += `<h4 style="margin-top: 20px; margin-bottom: 5px; color: #eee; font-size: 1.1em;">${line.substring(5)}</h4>`;
-// 		} else if (line.startsWith('- ')) {
-// 			if (!inList) {
-// 				html += '<ul>';
-// 				inList = true;
-// 			}
-// 			html += `<li>${line.substring(2)}</li>`;
-// 		} else if (line.startsWith('> ')) {
-// 			if (inList) {
-// 				html += '</ul>';
-// 				inList = false;
-// 			}
-// 			html += `<blockquote>${line.substring(2)}</blockquote>`;
-// 		} else {
-// 			// Catch-all for basic HTML like <small> or plain text
-// 			if (inList) {
-// 				html += '</ul>';
-// 				inList = false;
-// 			}
-// 			html += `<div style="color: #aaa; margin-top: 5px;">${line}</div>`;
-// 		}
-// 	}
-// 	if (inList) html += '</ul>';
-// 	return html;
-// }
 
 function showChangelogModal(entries, title = 'Update History') {
 	document.getElementById('changelog-title').innerText = title;
@@ -132,7 +97,6 @@ function showChangelogModal(entries, title = 'Update History') {
 
 	document.getElementById('changelog-body').innerHTML = html;
 	document.getElementById('changelog-modal').style.display = 'flex';
-	renderMarkdown();
 }
 
 function showFullChangelog() {
