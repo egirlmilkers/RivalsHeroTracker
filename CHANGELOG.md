@@ -1,5 +1,10 @@
 # Changelog
 
+### Aug 7th 2026 v30
+#### 🩷 Features
+- Added The Hood
+> <small>champion icon coming soon</small>
+
 ### Jul 14th 2026 v29
 #### ✏️ Tweaks
 - You can now close modals by clicking outside of them

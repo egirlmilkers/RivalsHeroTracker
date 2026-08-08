@@ -554,6 +554,18 @@ const heroDefinitions = [
 		"offsetY": -10
 	},
 	{
+		"name": "The Hood",
+		"role": "Vanguard",
+		"color": "#c62c33",
+		"tags": [
+			"parker",
+			"robbins",
+			"red"
+		],
+		"offsetX": 5,
+		"offsetY": -9
+	},
+	{
 		"name": "The Punisher",
 		"role": "Duelist",
 		"color": "#495366",
