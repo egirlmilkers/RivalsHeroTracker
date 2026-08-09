@@ -10,7 +10,8 @@ const heroDefinitions = [
 			"gotg"
 		],
 		"offsetX": 6,
-		"offsetY": -9
+		"offsetY": -9,
+		"scale": 1.5
 	},
 	{
 		"name": "Angela",
@@ -20,7 +21,8 @@ const heroDefinitions = [
 			"gold"
 		],
 		"offsetX": 4,
-		"offsetY": -9
+		"offsetY": -11,
+		"scale": 1.5
 	},
 	{
 		"name": "Black Cat",
@@ -32,7 +34,8 @@ const heroDefinitions = [
 			"hardy"
 		],
 		"offsetX": 0,
-		"offsetY": -9
+		"offsetY": -8,
+		"scale": 1.55
 	},
 	{
 		"name": "Black Panther",
@@ -44,7 +47,8 @@ const heroDefinitions = [
 			"challa"
 		],
 		"offsetX": 3,
-		"offsetY": -9
+		"offsetY": -11,
+		"scale": 1.6
 	},
 	{
 		"name": "Black Widow",
@@ -56,7 +60,8 @@ const heroDefinitions = [
 			"black"
 		],
 		"offsetX": -2,
-		"offsetY": -9
+		"offsetY": -9,
+		"scale": 1.4
 	},
 	{
 		"name": "Blade",
@@ -68,7 +73,8 @@ const heroDefinitions = [
 			"brooks"
 		],
 		"offsetX": -1,
-		"offsetY": -9
+		"offsetY": -9,
+		"scale": 1.4
 	},
 	{
 		"name": "Bruce Banner",
@@ -80,8 +86,9 @@ const heroDefinitions = [
 			"bruce",
 			"banner"
 		],
-		"offsetX": 10,
-		"offsetY": -9
+		"offsetX": 12,
+		"offsetY": -9,
+		"scale": 1.5
 	},
 	{
 		"name": "Captain America",
@@ -93,8 +100,9 @@ const heroDefinitions = [
 			"steve",
 			"rogers"
 		],
-		"offsetX": 0,
-		"offsetY": -9
+		"offsetX": -1,
+		"offsetY": -11,
+		"scale": 1.65
 	},
 	{
 		"name": "Cloak and Dagger",
@@ -108,7 +116,8 @@ const heroDefinitions = [
 			"bowen"
 		],
 		"offsetX": -9,
-		"offsetY": 0
+		"offsetY": 0,
+		"scale": 1.45
 	},
 	{
 		"name": "Cyclops",
@@ -120,8 +129,9 @@ const heroDefinitions = [
 			"summers",
 			"blue"
 		],
-		"offsetX": 8,
-		"offsetY": 2
+		"offsetX": 12,
+		"offsetY": 3,
+		"scale": 1.6
 	},
 	{
 		"name": "Daredevil",
@@ -133,7 +143,8 @@ const heroDefinitions = [
 			"red"
 		],
 		"offsetX": 2,
-		"offsetY": -7
+		"offsetY": -11,
+		"scale": 1.6
 	},
 	{
 		"name": "Deadpool",
@@ -150,7 +161,8 @@ const heroDefinitions = [
 			"wilson"
 		],
 		"offsetX": -1,
-		"offsetY": -5
+		"offsetY": -5,
+		"scale": 1.5
 	},
 	{
 		"name": "Devil Dinosaur",
@@ -162,8 +174,9 @@ const heroDefinitions = [
 			"moon",
 			"girl"
 		],
-		"offsetX": -6,
-		"offsetY": -9
+		"offsetX": -9,
+		"offsetY": -11,
+		"scale": 1.55
 	},
 	{
 		"name": "Doctor Strange",
@@ -175,7 +188,8 @@ const heroDefinitions = [
 			"orange"
 		],
 		"offsetX": -3,
-		"offsetY": -10
+		"offsetY": -10,
+		"scale": 1.4
 	},
 	{
 		"name": "Elsa Bloodstone",
@@ -185,7 +199,8 @@ const heroDefinitions = [
 			"orange"
 		],
 		"offsetX": 3,
-		"offsetY": -10
+		"offsetY": -10,
+		"scale": 1.4
 	},
 	{
 		"name": "Emma Frost",
@@ -196,7 +211,8 @@ const heroDefinitions = [
 			"mutant"
 		],
 		"offsetX": 5,
-		"offsetY": -4
+		"offsetY": -4,
+		"scale": 1.4
 	},
 	{
 		"name": "Gambit",
@@ -209,7 +225,8 @@ const heroDefinitions = [
 			"lebeau"
 		],
 		"offsetX": 0,
-		"offsetY": 3
+		"offsetY": 4,
+		"scale": 1.5
 	},
 	{
 		"name": "Groot",
@@ -221,7 +238,8 @@ const heroDefinitions = [
 			"gotg"
 		],
 		"offsetX": 5,
-		"offsetY": -1
+		"offsetY": 1,
+		"scale": 1.4
 	},
 	{
 		"name": "Hawkeye",
@@ -233,7 +251,8 @@ const heroDefinitions = [
 			"barton"
 		],
 		"offsetX": -5,
-		"offsetY": -7
+		"offsetY": -6,
+		"scale": 1.5
 	},
 	{
 		"name": "Hela",
@@ -242,8 +261,9 @@ const heroDefinitions = [
 		"tags": [
 			"green"
 		],
-		"offsetX": 5,
-		"offsetY": -9
+		"offsetX": 2,
+		"offsetY": -10,
+		"scale": 1.4
 	},
 	{
 		"name": "Human Torch",
@@ -256,8 +276,9 @@ const heroDefinitions = [
 			"4",
 			"fantastic"
 		],
-		"offsetX": 3,
-		"offsetY": -7
+		"offsetX": 1,
+		"offsetY": -7,
+		"scale": 1.4
 	},
 	{
 		"name": "Invisible Woman",
@@ -271,8 +292,9 @@ const heroDefinitions = [
 			"4",
 			"fantastic"
 		],
-		"offsetX": 3,
-		"offsetY": -10
+		"offsetX": 0,
+		"offsetY": -2,
+		"scale": 1.05
 	},
 	{
 		"name": "Iron Fist",
@@ -284,7 +306,8 @@ const heroDefinitions = [
 			"lie"
 		],
 		"offsetX": 4,
-		"offsetY": -3
+		"offsetY": -2,
+		"scale": 1.5
 	},
 	{
 		"name": "Iron Man",
@@ -296,8 +319,9 @@ const heroDefinitions = [
 			"tony",
 			"red"
 		],
-		"offsetX": 7,
-		"offsetY": -10
+		"offsetX": 6,
+		"offsetY": -13,
+		"scale": 1.65
 	},
 	{
 		"name": "Jeff The Land Shark",
@@ -309,7 +333,8 @@ const heroDefinitions = [
 			"grey"
 		],
 		"offsetX": 7,
-		"offsetY": -10
+		"offsetY": -10,
+		"scale": 1.4
 	},
 	{
 		"name": "Jubilee",
@@ -321,7 +346,8 @@ const heroDefinitions = [
 			"lee"
 		],
 		"offsetX": 0,
-		"offsetY": -10
+		"offsetY": -10,
+		"scale": 1.4
 	},
 	{
 		"name": "Loki",
@@ -333,7 +359,8 @@ const heroDefinitions = [
 			"laufeyson"
 		],
 		"offsetX": 3,
-		"offsetY": -2
+		"offsetY": -2,
+		"scale": 1.4
 	},
 	{
 		"name": "Luna Snow",
@@ -345,7 +372,8 @@ const heroDefinitions = [
 			"hee"
 		],
 		"offsetX": 5,
-		"offsetY": -2
+		"offsetY": -1,
+		"scale": 1.55
 	},
 	{
 		"name": "Magik",
@@ -358,7 +386,8 @@ const heroDefinitions = [
 			"brown"
 		],
 		"offsetX": 3,
-		"offsetY": -4
+		"offsetY": -1,
+		"scale": 1.5
 	},
 	{
 		"name": "Magneto",
@@ -372,7 +401,8 @@ const heroDefinitions = [
 			"eisenhardt"
 		],
 		"offsetX": 3,
-		"offsetY": -9
+		"offsetY": -9,
+		"scale": 1.55
 	},
 	{
 		"name": "Mantis",
@@ -384,7 +414,8 @@ const heroDefinitions = [
 			"gotg"
 		],
 		"offsetX": 5,
-		"offsetY": -10
+		"offsetY": -11,
+		"scale": 1.5
 	},
 	{
 		"name": "Mister Fantastic",
@@ -398,7 +429,8 @@ const heroDefinitions = [
 			"4"
 		],
 		"offsetX": 3,
-		"offsetY": -10
+		"offsetY": -10,
+		"scale": 1.5
 	},
 	{
 		"name": "Moon Knight",
@@ -414,8 +446,9 @@ const heroDefinitions = [
 			"jake",
 			"lockley"
 		],
-		"offsetX": -1,
-		"offsetY": 0
+		"offsetX": -2,
+		"offsetY": 0,
+		"scale": 1.6
 	},
 	{
 		"name": "Namor",
@@ -427,7 +460,8 @@ const heroDefinitions = [
 			"mckenzie"
 		],
 		"offsetX": 3,
-		"offsetY": -4
+		"offsetY": -4,
+		"scale": 1.4
 	},
 	{
 		"name": "Peni Parker",
@@ -437,7 +471,8 @@ const heroDefinitions = [
 			"red"
 		],
 		"offsetX": 3,
-		"offsetY": -5
+		"offsetY": -5,
+		"scale": 1.4
 	},
 	{
 		"name": "Phoenix",
@@ -450,7 +485,8 @@ const heroDefinitions = [
 			"orange"
 		],
 		"offsetX": -2,
-		"offsetY": -6
+		"offsetY": -2,
+		"scale": 1.6
 	},
 	{
 		"name": "Psylocke",
@@ -462,7 +498,8 @@ const heroDefinitions = [
 			"sai"
 		],
 		"offsetX": 4,
-		"offsetY": -8
+		"offsetY": -5,
+		"scale": 1.55
 	},
 	{
 		"name": "Rocket Raccoon",
@@ -474,7 +511,8 @@ const heroDefinitions = [
 			"gotg"
 		],
 		"offsetX": 3,
-		"offsetY": -4
+		"offsetY": -4,
+		"scale": 1.4
 	},
 	{
 		"name": "Rogue",
@@ -487,7 +525,8 @@ const heroDefinitions = [
 			"marie"
 		],
 		"offsetX": 7,
-		"offsetY": -5
+		"offsetY": -5,
+		"scale": 1.4
 	},
 	{
 		"name": "Scarlet Witch",
@@ -499,7 +538,8 @@ const heroDefinitions = [
 			"maximoff"
 		],
 		"offsetX": 3,
-		"offsetY": -5
+		"offsetY": -5,
+		"scale": 1.4
 	},
 	{
 		"name": "Spider-Man",
@@ -510,8 +550,9 @@ const heroDefinitions = [
 			"peter",
 			"parker"
 		],
-		"offsetX": 5,
-		"offsetY": -10
+		"offsetX": 2,
+		"offsetY": -10,
+		"scale": 1.6
 	},
 	{
 		"name": "Squirrel Girl",
@@ -522,8 +563,9 @@ const heroDefinitions = [
 			"doreen",
 			"green"
 		],
-		"offsetX": 6,
-		"offsetY": -10
+		"offsetX": 5,
+		"offsetY": -10,
+		"scale": 1.5
 	},
 	{
 		"name": "Star-Lord",
@@ -537,7 +579,8 @@ const heroDefinitions = [
 			"quill"
 		],
 		"offsetX": 0,
-		"offsetY": 2
+		"offsetY": 2,
+		"scale": 1.5
 	},
 	{
 		"name": "Storm",
@@ -551,7 +594,8 @@ const heroDefinitions = [
 			"grey"
 		],
 		"offsetX": 7,
-		"offsetY": -10
+		"offsetY": -8,
+		"scale": 1.6
 	},
 	{
 		"name": "The Hood",
@@ -562,8 +606,9 @@ const heroDefinitions = [
 			"robbins",
 			"red"
 		],
-		"offsetX": 5,
-		"offsetY": -9
+		"offsetX": 11,
+		"offsetY": 0,
+		"scale": 1.5
 	},
 	{
 		"name": "The Punisher",
@@ -575,8 +620,9 @@ const heroDefinitions = [
 			"gray",
 			"grey"
 		],
-		"offsetX": 5,
-		"offsetY": -9
+		"offsetX": 3,
+		"offsetY": -7,
+		"scale": 1.7
 	},
 	{
 		"name": "The Thing",
@@ -590,7 +636,8 @@ const heroDefinitions = [
 			"grimm"
 		],
 		"offsetX": 3,
-		"offsetY": 2
+		"offsetY": 1,
+		"scale": 1.6
 	},
 	{
 		"name": "Thor",
@@ -601,7 +648,8 @@ const heroDefinitions = [
 			"odinson"
 		],
 		"offsetX": 3,
-		"offsetY": -10
+		"offsetY": -10,
+		"scale": 1.4
 	},
 	{
 		"name": "Ultron",
@@ -612,7 +660,8 @@ const heroDefinitions = [
 			"grey"
 		],
 		"offsetX": 3,
-		"offsetY": -6
+		"offsetY": -6,
+		"scale": 1.4
 	},
 	{
 		"name": "Venom",
@@ -625,7 +674,8 @@ const heroDefinitions = [
 			"brock"
 		],
 		"offsetX": 8,
-		"offsetY": -10
+		"offsetY": -12,
+		"scale": 1.5
 	},
 	{
 		"name": "White Fox",
@@ -638,7 +688,8 @@ const heroDefinitions = [
 			"turquoise"
 		],
 		"offsetX": -2,
-		"offsetY": 0
+		"offsetY": 0,
+		"scale": 1.4
 	},
 	{
 		"name": "Winter Soldier",
@@ -652,7 +703,8 @@ const heroDefinitions = [
 			"barnes"
 		],
 		"offsetX": 4,
-		"offsetY": 0
+		"offsetY": 0,
+		"scale": 1.4
 	},
 	{
 		"name": "Wolverine",
@@ -663,8 +715,9 @@ const heroDefinitions = [
 			"yellow",
 			"logan"
 		],
-		"offsetX": 4,
-		"offsetY": -10
+		"offsetX": 3,
+		"offsetY": -12,
+		"scale": 1.7
 	}
 ];
 
@@ -1113,11 +1166,12 @@ function renderList() {
 		// Safely grab the offsets, defaulting to your standard 0 and -9
 		const offX = hero.offsetX !== undefined ? hero.offsetX : 0;
 		const offY = hero.offsetY !== undefined ? hero.offsetY : -9;
+		const offScale = hero.scale !== undefined ? hero.scale : 1.4;
 
 		// Calculate the CSS Transform
 		const transformStyle =
 			levelInfo.level >= 50
-				? `transform: scale(1.4) translate(${offX}px, ${offY}px);`
+				? `transform: scale(${offScale}) translate(${offX}px, ${offY}px);`
 				: `transform: translate(${offX}px, ${offY}px);`;
 
 		row.innerHTML = `

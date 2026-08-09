@@ -1,5 +1,13 @@
 # Changelog
 
+### Aug 8th 2026 v31
+#### 🩷 Features
+- Added The Hood's Champion icon
+- Just like v27, I added metadata to all heroes but this time to allow for proper scaling of Champion icons inside their display boxes
+> <small>Sometimes Champion icons have a lot of whitespace so I scale them so they fill their display boxes more without cutting out anything.</small>
+#### ✏️ Tweaks
+- Updated all the Champion icons to the same ones ripped from the game but this time with all of the effects that some of them had on separate spritesheets
+
 ### Aug 7th 2026 v30
 #### 🩷 Features
 - Added The Hood
