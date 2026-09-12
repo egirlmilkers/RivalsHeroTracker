@@ -1,191 +1,238 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang='en'>
 
 <head>
-	<meta charset="UTF-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta charset='UTF-8' />
+	<meta name='viewport' content='width=device-width, initial-scale=1.0' />
 
 	<title>Marvel Rivals Proficiency Tracker</title>
 
-	<link rel="stylesheet" href="styles.css" />
+	<link rel='stylesheet' href='styles.css' />
 </head>
 
 <body>
 	<!-- Version Display -->
-	<div id="version-display" class="version-display hover-btn" onclick="showFullChangelog()"></div>
+	<div
+		id='version-display'
+		class='version-display hover-btn'
+		onclick='showFullChangelog()'></div>
 
 	<!-- Changelog Modal -->
-	<div id="changelog-modal" class="modal-overlay" style="display: none">
-		<div class="modal-content">
-			<div><button class="close-btn hover-btn" onclick="closeChangelogModal()">&times;</button></div>
-			<h2 id="changelog-title">Update History</h2>
-			<div id="changelog-body" class="no-scroll-track">
-                <!-- JS Injects markdown HTML here -->
-            </div>
+	<div id='changelog-modal' class='modal-overlay' style='display: none'>
+		<div class='modal-content'>
+			<div><button
+					class='close-btn hover-btn'
+					onclick='closeChangelogModal()'>&times;</button></div>
+			<h2 id='changelog-title'>Update History</h2>
+			<div id='changelog-body' class='no-scroll-track'>
+				<!-- JS Injects markdown HTML here -->
+			</div>
 		</div>
 	</div>
 
 	<h1>Marvel Rivals Proficiency Tracker</h1>
 	<h3>Created by Lady of Pain & LaysOreoChips</h3>
 
-	<div class="controls">
-		<button id="btn-sort" class="btn-sort" onclick="sortHeroes(true)">
+	<div class='controls'>
+		<button id='btn-sort' class='btn-sort' onclick='sortHeroes(true)'>
 			Sort by Proficiency
 		</button>
-		<button class="btn-share" onclick="openShareModal()">
+		<button class='btn-share' onclick='openShareModal()'>
 			Share Top 5
 		</button>
-		<button class="btn-settings hover-btn" onclick="openSettingsModal()">
+		<button class='btn-settings hover-btn' onclick='openSettingsModal()'>
 			⚙
 		</button>
 	</div>
 
-	<div class="filter-container">
-		<button class="btn-filter-toggle" onclick="toggleFilters()">
-			<span id="filter-arrow">▶</span> Filter & Search
+	<div class='filter-container'>
+		<button class='btn-filter-toggle' onclick='toggleFilters()'>
+			<span id='filter-arrow'>▶</span> Filter & Search
 		</button>
-		<div id="filter-content" class="filter-content">
-			<div class="filter-inner">
-				<input type="text" id="searchInput" placeholder="Search by name or tag..." oninput="renderList()" />
+		<div id='filter-content' class='filter-content'>
+			<div class='filter-inner'>
+				<input
+					type='text'
+					id='searchInput'
+					placeholder='Search by name or tag...'
+					oninput='renderList()'
+				/>
 
-				<div class="role-filters">
-					<label class="role-checkbox">
-						<input type="checkbox" value="Vanguard" checked onchange="renderList()" />
-						<span class="role-text">Vanguard</span>
+				<div class='role-filters'>
+					<label class='role-checkbox'>
+						<input
+							type='checkbox'
+							value='Vanguard'
+							checked
+							onchange='renderList()'
+						/>
+						<span class='role-text'>Vanguard</span>
 					</label>
-					<label class="role-checkbox">
-						<input type="checkbox" value="Duelist" checked onchange="renderList()" />
-						<span class="role-text">Duelist</span>
+					<label class='role-checkbox'>
+						<input
+							type='checkbox'
+							value='Duelist'
+							checked
+							onchange='renderList()'
+						/>
+						<span class='role-text'>Duelist</span>
 					</label>
-					<label class="role-checkbox">
-						<input type="checkbox" value="Strategist" checked onchange="renderList()" />
-						<span class="role-text">Strategist</span>
+					<label class='role-checkbox'>
+						<input
+							type='checkbox'
+							value='Strategist'
+							checked
+							onchange='renderList()'
+						/>
+						<span class='role-text'>Strategist</span>
 					</label>
 				</div>
 			</div>
 		</div>
 	</div>
 
-	<div class="container" id="hero-list">
+	<div class='container' id='hero-list'>
 		<!-- JS Injects content here -->
 	</div>
 
-	<div class="backup-section">
-		<div class="backup-title">Data Management (JSON)</div>
-		<div class="backup-controls">
-			<button class="btn-backup" onclick="downloadBackup()">
+	<div class='backup-section'>
+		<div class='backup-title'>Data Management (JSON)</div>
+		<div class='backup-controls'>
+			<button class='btn-backup' onclick='downloadBackup()'>
 				Download Backup (.json)
 			</button>
-			<button class="btn-backup" onclick="document.getElementById('fileInput').click()">
+			<button class='btn-backup' onclick='document.getElementById("fileInput").click()'>
 				Upload Backup
 			</button>
-			<input type="file" id="fileInput" accept=".json" onchange="handleFileUpload(this)" />
+			<input
+				type='file'
+				id='fileInput'
+				accept='.json'
+				onchange='handleFileUpload(this)'
+			/>
 		</div>
-		<div style="margin-top: 10px; font-size: 0.8em; color: #555">
-			Save the .json file to your PC. Upload it later to restore your
-			progress.
+		<div style='margin-top: 10px; font-size: .8em; color: #555'>
+			Save the .json file to your PC. Upload it later to restore your progress.
 		</div>
 	</div>
 
-	<div id="migration-modal" class="modal-overlay" style="display: none">
-		<div class="modal-content">
-			<h2 id="modal-title"></h2>
-			<p id="modal-desc" style="color: #aaa; margin-bottom: 20px"></p>
+	<div id='migration-modal' class='modal-overlay' style='display: none'>
+		<div class='modal-content'>
+			<h2 id='modal-title'></h2>
+			<p id='modal-desc' style='color: #AAA; margin-bottom: 20px'></p>
 
-			<div class="comparison-container">
-				<div class="save-option">
-					<h3 id="modal-opt1-title" style="color: var(--color-knight)"></h3>
-					<div id="modal-opt1-heroes" class="top-heroes-list"></div>
-					<button id="modal-opt1-btn" class="btn-sort"></button>
+			<div class='comparison-container'>
+				<div class='save-option'>
+					<h3 id='modal-opt1-title' style='color: var(--color-knight)'></h3>
+					<div id='modal-opt1-heroes' class='top-heroes-list'></div>
+					<button id='modal-opt1-btn' class='btn-sort'></button>
 				</div>
-				<div class="save-option">
-					<h3 id="modal-opt2-title" style="color: var(--color-elite)"></h3>
-					<div id="modal-opt2-heroes" class="top-heroes-list"></div>
-					<button id="modal-opt2-btn" class="btn-sort" style="background-color: var(--color-elite)"></button>
+				<div class='save-option'>
+					<h3 id='modal-opt2-title' style='color: var(--color-elite)'></h3>
+					<div id='modal-opt2-heroes' class='top-heroes-list'></div>
+					<button
+						id='modal-opt2-btn'
+						class='btn-sort'
+						style='background-color: var(--color-elite)'></button>
 				</div>
 			</div>
 
-			<p id="modal-footer" style="font-size: 0.8em; color: #666; margin-top: 20px"></p>
+			<p id='modal-footer' style='font-size: .8em; color: #666; margin-top: 20px'></p>
 		</div>
 	</div>
 
-	<div id="share-modal" class="modal-overlay" style="display: none">
-		<div class="modal-content" style="max-width: 620px">
+	<div id='share-modal' class='modal-overlay' style='display: none'>
+		<div class='modal-content' style='max-width: 620px'>
 			<h2>Your Top 5</h2>
-			<p style="color: #aaa; margin-bottom: 20px; font-size: 0.9em">
+			<p style='color: #AAA; margin-bottom: 20px; font-size: .9em'>
 				A shareable image of your five highest-proficiency heroes.
 			</p>
 
-			<div id="share-canvas-wrapper" class="share-canvas-wrapper">
-				<canvas id="share-canvas"></canvas>
-				<div id="share-loading" class="share-loading">
+			<div id='share-canvas-wrapper' class='share-canvas-wrapper'>
+				<canvas id='share-canvas'></canvas>
+				<div id='share-loading' class='share-loading'>
 					Building image…
 				</div>
 			</div>
 
-			<div class="share-modal-actions">
-				<button id="share-download-btn" class="btn-sort" onclick="downloadShareImage()">
+			<div class='share-modal-actions'>
+				<button id='share-download-btn' class='btn-sort' onclick='downloadShareImage()'>
 					Download Image
 				</button>
-				<button class="btn-reset" onclick="closeShareModal()">
+				<button class='btn-reset' onclick='closeShareModal()'>
 					Close
 				</button>
 			</div>
 		</div>
 	</div>
 
-	<div id="settings-modal" class="modal-overlay" style="display: none">
-		<div class="modal-content" style="max-width: 480px">
+	<div id='settings-modal' class='modal-overlay' style='display: none'>
+		<div class='modal-content' style='max-width: 480px'>
 			<h2>Settings</h2>
-			<p style="color: #aaa; margin-bottom: 20px; font-size: 0.9em">
-				These preferences are saved to this browser and apply every
-				time you reload.
+			<p style='color: #AAA; margin-bottom: 20px; font-size: .9em'>
+				These preferences are saved to this browser and apply every time you reload.
 			</p>
 
-			<div class="settings-list">
-				<label class="settings-row">
-					<div class="settings-row-text">
-						<span class="settings-row-title">Always Sort by Highest Proficiency</span>
-						<span class="settings-row-desc">Automatically re-sorts the list by total
+			<div class='settings-list'>
+				<label class='settings-row'>
+					<div class='settings-row-text'>
+						<span class='settings-row-title'>Always Sort by Highest
+							Proficiency</span>
+						<span class='settings-row-desc'>Automatically re-sorts the list by total
 							proficiency on every load and update.</span>
 					</div>
-					<input type="checkbox" id="setting-autoSort" onchange="updateSetting('autoSort', this.checked)" />
+					<input
+						type='checkbox'
+						id='setting-autoSort'
+						onchange='updateSetting("autoSort", this.checked)'
+					/>
 				</label>
 
-				<label class="settings-row">
-					<div class="settings-row-text">
-						<span class="settings-row-title">Hulk instead of Banner</span>
-						<span class="settings-row-desc">Shows Hulk rather than Bruce Banner.</span>
+				<label class='settings-row'>
+					<div class='settings-row-text'>
+						<span class='settings-row-title'>Hulk instead of Banner</span>
+						<span class='settings-row-desc'>Shows Hulk rather than Bruce
+							Banner.</span>
 					</div>
-					<input type="checkbox" id="setting-hulkIcon" onchange="updateSetting('hulkIcon', this.checked)" />
+					<input
+						type='checkbox'
+						id='setting-hulkIcon'
+						onchange='updateSetting("hulkIcon", this.checked)'
+					/>
 				</label>
 
-				<label class="settings-row">
-					<div class="settings-row-text">
-						<span class="settings-row-title">Lady Loki instead of Loki</span>
-						<span class="settings-row-desc">Shows Lady Loki rather than Loki.</span>
+				<label class='settings-row'>
+					<div class='settings-row-text'>
+						<span class='settings-row-title'>Lady Loki instead of Loki</span>
+						<span class='settings-row-desc'>Shows Lady Loki rather than Loki.</span>
 					</div>
-					<input type="checkbox" id="setting-ladyLoki" onchange="updateSetting('ladyLoki', this.checked)" />
+					<input
+						type='checkbox'
+						id='setting-ladyLoki'
+						onchange='updateSetting("ladyLoki", this.checked)'
+					/>
 				</label>
 
-				
-				<button class="btn-reset" onclick="clearData()">
+				<button class='btn-reset' onclick='clearData()'>
 					Reset All Data
 				</button>
 			</div>
 
-			<button class="btn-sort" style="margin-top: 25px; width: 100%" onclick="closeSettingsModal()">
+			<button
+				class='btn-sort'
+				style='margin-top: 25px; width: 100%'
+				onclick='closeSettingsModal()'>
 				Done
 			</button>
 		</div>
 	</div>
 
-	<script src="https://cdn.jsdelivr.net/npm/marked/lib/marked.umd.js"></script>
+	<script src='https://cdn.jsdelivr.net/npm/marked/lib/marked.umd.js'></script>
 
-	<script src="changelog.js"></script>
-	<script src="script.js"></script>
-	<script src="roulette.js"></script>
-	<script src="share.js"></script>
+	<script src='changelog.js'></script>
+	<script src='script.js'></script>
+	<script src='roulette.js'></script>
+	<script src='share.js'></script>
 </body>
 
 </html>

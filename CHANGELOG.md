@@ -1,5 +1,16 @@
 # Changelog
 
+### Sep 12th 2026 v32
+#### 🩷 Features
+- Added Gorr The God Butcher and his Champion icon
+#### 🧼 Fixes
+- Fixed a bug that prevented the new update pop-up from showing for returning visitors
+- Fixed an issue where first-time visitors were seeing the wrong update notes
+- Fixed a bug that caused heroes to save at the incorrect rank in the background when hitting certain level milestones
+> <small>didn't affect the site visually, just a silent background data fix</small>
+- Optimized how hero data is handled when generating the custom roulette wheel
+> <small>also didn't affect the site, just a minor code optimization</small>
+
 ### Aug 8th 2026 v31
 #### 🩷 Features
 - Added The Hood's Champion icon
