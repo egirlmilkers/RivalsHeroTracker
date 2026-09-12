@@ -1,3 +1,4 @@
 .archive/
 *.ps1
 offset-tool.html
+dprint*
