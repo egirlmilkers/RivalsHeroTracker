@@ -1,4 +1,12 @@
-import { settings, getHeroFileName, querySelector, calculateTotalScore, getLevelInfoFromTotal, heroData, pointBaselines } from "./script"
+import {
+	calculateTotalScore,
+	getHeroFileName,
+	getLevelInfoFromTotal,
+	heroData,
+	pointBaselines,
+	settings
+} from './script'
+import { querySelector } from './util'
 
 // Matches the hex values in styles.css since canvas can't read CSS custom properties directly
 const rankColorMap: Record<string, string> = {
@@ -335,7 +343,7 @@ async function buildTop5ShareCanvas(): Promise<HTMLCanvasElement>
 
 export function openShareModal(): void
 {
-	querySelector<HTMLCanvasElement>('#share-canvas').style.display = 'flex'
+	querySelector<HTMLDivElement>('#share-modal').style.display = 'flex'
 	const loadingEl = querySelector<HTMLDivElement>('#share-loading')
 	const downloadBtn = querySelector<HTMLButtonElement>('#share-download-btn')
 	loadingEl.textContent = 'Building image…'

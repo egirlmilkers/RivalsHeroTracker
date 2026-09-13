@@ -1,7 +1,7 @@
 import { checkChangelog, closeChangelogModal, showFullChangelog } from './changelog'
 import { closeShareModal, downloadShareImage, openShareModal } from './share'
+import { h, querySelector, querySelectorAll } from './util'
 
-// prettier-ignore
 export const heroDefinitions: Hero[] = [
 	{
 		name: 'Adam Warlock',
@@ -926,7 +926,10 @@ function processLoadedData(savedData: string | null): void
 function getTopHeroesHTML(dataStr: string): string
 {
 	if (!dataStr)
-		return "<div style='text-align:center; color:#666; margin-top:20px;'>No progress</div>"
+	{
+		return String
+			.raw`<div style='text-align:center; color:#666; margin-top:20px;'>No progress</div>`
+	}
 	try
 	{
 		const parsed: HeroListItem[] = JSON.parse(dataStr)
@@ -939,14 +942,17 @@ function getTopHeroesHTML(dataStr: string): string
 			.slice(0, 4)
 
 		if (top4.length === 0)
-			return "<div style='text-align:center; color:#666; margin-top:20px;'>No progress</div>"
+		{
+			return String
+				.raw`<div style='text-align:center; color:#666; margin-top:20px;'>No progress</div>`
+		}
 
 		let html = ''
 		top4.forEach(h =>
 		{
 			const totalPts = calculateTotalScore(h)
 			const levelInfo = getLevelInfoFromTotal(totalPts)
-			html += `
+			html += String.raw`
 				<div class="top-hero-item">
 					<span style="color: #ccc">${h.name}</span>
 					<span class="rank-${levelInfo.title}" style="font-weight:bold">${levelInfo.title} (Lv${levelInfo.level})</span>
@@ -955,7 +961,8 @@ function getTopHeroesHTML(dataStr: string): string
 		return html
 	} catch (e)
 	{
-		return "<div style='text-align:center; color:red; margin-top:20px;'>Data Error</div>"
+		return String
+			.raw`<div style='text-align:center; color:red; margin-top:20px;'>Data Error</div>`
 	}
 }
 
@@ -1157,19 +1164,19 @@ function renderList(): boolean | void
 		return (matchesName || matchesTag) && matchesRole
 	})
 
-	container.innerHTML = `
-				<div class="hero-row header-row">
-					<div></div>
-					<div>Hero & Level</div>
-					<div>Rank</div>
-					<div>Points</div>
-				</div> 
-			`
+	container.innerHTML = String.raw`
+		<div class="hero-row header-row">
+			<div></div>
+			<div>Hero & Level</div>
+			<div>Rank</div>
+			<div>Points</div>
+		</div> 
+	`
 
 	if (visibleHeroes.length === 0)
 	{
-		container.innerHTML +=
-			`<div style="text-align:center; padding:20px; color:#666;">No heroes found matching your filters.</div>`
+		container.innerHTML += String
+			.raw`<div style="text-align:center; padding:20px; color:#666;">No heroes found matching your filters.</div>`
 		return
 	}
 
@@ -1227,86 +1234,191 @@ function renderList(): boolean | void
 		const offY = hero.offsetY !== undefined ? hero.offsetY : -9
 		const offScale = hero.scale !== undefined ? hero.scale : 1.4
 
-		// Calculate the CSS Transform
-		const transformStyle = levelInfo.level >= 50
-			? `transform: scale(${offScale}) translate(${offX}px, ${offY}px);`
-			: `transform: translate(${offX}px, ${offY}px);`
+		// Calculate the CSS Transform value (no "transform:" prefix, no semicolon)
+		const transformValue = levelInfo.level >= 50
+			? `scale(${offScale}) translate(${offX}px, ${offY}px)`
+			: `translate(${offX}px, ${offY}px)`
 
-		row.innerHTML = String.raw`
-			<div class="portrait-container">
-				<div class="char-img-wrapper"${
-			levelInfo.level >= 50 ? `style=\"box-shadow: 0 0 22px ${hero.color};\"` : ''
-		}>
-					<img src="${heroImgPath}" 
-						class="hero-portrait rank-${levelInfo.title}" 
-						style="background: linear-gradient(180deg,rgba(0, 0, 0, 0) 10%, ${
-			hero.color || '#000'
-		} 100%); ${isChamp ? transformStyle : ''}"
-						onerror="handleImageFallback(this, '${heroName}', '${heroFileName}')" alt="${heroName}">
-				</div>
-				<div class="role-icon-container">
-					<img src="img/Vanguard_Icon.webp" class="role-icon-mini" title="Vanguard" style="display:${
-			displayRole.includes('Vanguard') ? 'block' : 'none'
-		}">
-					<img src="img/Duelist_Icon.webp" class="role-icon-mini" title="Duelist" style="display:${
-			displayRole.includes('Duelist') ? 'block' : 'none'
-		}">
-					<img src="img/Strategist_Icon.webp" class="role-icon-mini" title="Strategist" style="display:${
-			displayRole.includes('Strategist') ? 'block' : 'none'
-		}">
-				</div>
-			</div>
+		row.replaceChildren(
+			h(
+				'div',
+				{ class: 'portrait-container' },
+				h(
+					'div',
+					{
+						class: 'char-img-wrapper',
+						style: levelInfo.level >= 50
+							? { boxShadow: `0 0 22px ${hero.color}` }
+							: undefined
+					},
+					h('img', {
+						src: heroImgPath,
+						class: `hero-portrait rank-${levelInfo.title}`,
+						style: {
+							background: `linear-gradient(180deg,rgba(0, 0, 0, 0) 10%, ${
+								hero.color || '#000'
+							} 100%)`,
+							...(isChamp ? { transform: transformValue } : {})
+						},
+						alt: heroName,
+						onerror: (e: Event) =>
+							handleImageFallback(
+								e.target as HTMLImageElement,
+								heroName,
+								heroFileName
+							)
+					})
+				),
+				h(
+					'div',
+					{ class: 'role-icon-container' },
+					h('img', {
+						src: 'img/Vanguard_Icon.webp',
+						class: 'role-icon-mini',
+						title: 'Vanguard',
+						style: { display: displayRole.includes('Vanguard') ? 'block' : 'none' }
+					}),
+					h('img', {
+						src: 'img/Duelist_Icon.webp',
+						class: 'role-icon-mini',
+						title: 'Duelist',
+						style: { display: displayRole.includes('Duelist') ? 'block' : 'none' }
+					}),
+					h('img', {
+						src: 'img/Strategist_Icon.webp',
+						class: 'role-icon-mini',
+						title: 'Strategist',
+						style: { display: displayRole.includes('Strategist') ? 'block' : 'none' }
+					})
+				)
+			),
+			h(
+				'div',
+				{ class: 'hero-details' },
+				h(
+					'span',
+					{ class: `hero-name rank-${levelInfo.title}` },
+					`${heroName} `,
+					h('span', {
+						style: {
+							fontSize: '0.7em',
+							marginLeft: '10px',
+							color: '#666',
+							fontWeight: 'normal'
+						}
+					}, `(${levelInfo.title})`),
+					h('span', {
+						class: `pin-btn ${hero.pinned ? 'pinned' : ''} hover-btn`,
+						title: `Pin ${heroName}`,
+						onclick: () => togglePin(hero.name)
+					}, hero.pinned ? '★' : '☆')
+				),
+				h(
+					'div',
+					{ class: 'progress-section' },
+					h(
+						'div',
+						{ class: 'progress-label' },
+						h('span', {}, `To ${ranks[ranks.indexOf(levelInfo.title) + 1] || 'MAX'}`),
+						h('span', {}, `${titlePct.toFixed(1)}%`)
+					),
+					h(
+						'div',
+						{ class: 'progress-bg' },
+						h('div', {
+							class: `progress-fill fill-next-${levelInfo.title}`,
+							style: { width: `${titlePct}%` }
+						})
+					),
+					h(
+						'div',
+						{ class: 'progress-label', style: { marginTop: '2px' } },
+						h('span', {}, 'Total Progress'),
+						h('span', {}, `${totalPct.toFixed(1)}%`)
+					),
+					h(
+						'div',
+						{ class: 'progress-bg' },
+						h('div', {
+							class: 'progress-fill fill-total',
+							style: { width: `${totalPct}%` }
+						})
+					)
+				)
+			),
+			// Rank Badge & Level Input
+			h(
+				'div',
+				{ class: 'rank-select-container' },
+				h('img', {
+					src: rankBadgePath,
+					class: 'rank-badge-img',
+					title: levelInfo.title,
+					onerror: (e: Event) =>
+					{
+						;(e.target as HTMLElement).style.display = 'none'
+					}
+				}),
+				h(
+					'div',
+					{
+						style: {
+							display: 'flex',
+							flexDirection: 'column',
+							width: '60px',
+							position: 'relative'
+						}
+					},
+					h('span', {
+						style: {
+							position: 'absolute',
+							top: '-17px',
+							color: '#999',
+							fontSize: '0.7em'
+						}
+					}, 'Level'),
+					h('input', {
+						type: 'number',
+						class: 'level-input',
+						min: '1',
+						max: '70',
+						value: String(levelInfo.level),
+						onchange: (e: Event) =>
+							updateHero(
+								hero.name,
+								'level',
+								parseInt((e.target as HTMLInputElement).value)
+							)
+					})
+				)
+			),
+			h(
+				'div',
+				{ class: 'point-container' },
+				h('input', {
+					type: 'number',
+					class: 'no-scroll-track',
+					value: String(levelInfo.xp),
+					min: '0',
+					...(levelInfo.level > currentConfig.endLvl
+						? {}
+						: { max: String(levelInfo.maxXp) }),
+					placeholder: '0',
+					onchange: (e: Event) =>
+						updateHero(
+							hero.name,
+							'points',
+							parseInt((e.target as HTMLInputElement).value)
+						)
+				}),
+				h(
+					'span',
+					{ class: 'point-suffix' },
+					levelInfo.level > currentConfig.endLvl ? '∞' : String(levelInfo.maxXp)
+				)
+			)
+		)
 
-			<div class="hero-details">
-				<span class="hero-name ${'rank-' + levelInfo.title}">
-					${heroName} 
-					<span style="font-size:0.7em; margin-left:10px; color:#666; font-weight:normal;">(${levelInfo.title})</span>
-					<span class="pin-btn ${
-			hero.pinned ? 'pinned' : ''
-		} hover-btn" onclick="togglePin('${hero.name}')" title="Pin ${heroName}">
-						${hero.pinned ? '★' : '☆'}
-					</span>
-				</span>
-				
-				<div class="progress-section">
-					<div class="progress-label">
-						<span>To ${ranks[ranks.indexOf(levelInfo.title) + 1] || 'MAX'}</span>
-						<span>${titlePct.toFixed(1)}%</span>
-					</div>
-					<div class="progress-bg">
-						<div class="progress-fill fill-next-${levelInfo.title}" style="width: ${titlePct}%"></div>
-					</div>
-
-					<div class="progress-label" style="margin-top:2px;">
-						<span>Total Progress</span>
-						<span>${totalPct.toFixed(1)}%</span>
-					</div>
-					<div class="progress-bg">
-						<div class="progress-fill fill-total" style="width: ${totalPct}%"></div>
-					</div>
-				</div>
-			</div>
-
-			<!-- Rank Badge & Level Input -->
-			<div class="rank-select-container">
-				<img src="${rankBadgePath}" class="rank-badge-img" onerror="this.style.display='none'" title="${levelInfo.title}">
-				<div style="display:flex; flex-direction:column; width: 60px; position: relative;">
-					<span style="position: absolute; top: -17px; color: #999; font-size:0.7em;">Level</span>
-					<input type="number" class="level-input" min="1" max="70" value="${levelInfo.level}" 
-						onchange="updateHero('${hero.name}', 'level', this.value)">
-				</div>
-			</div>
-
-			<div class="point-container">
-				<input type="number" class="no-scroll-track" value="${levelInfo.xp}" min="0" ${
-			levelInfo.level > currentConfig.endLvl ? '' : `max="${levelInfo.maxXp}"`
-		}
-						onchange="updateHero('${hero.name}', 'points', this.value)" placeholder="0">
-				<span class="point-suffix">/ ${
-			levelInfo.level > currentConfig.endLvl ? '&infin;' : levelInfo.maxXp
-		}</span>
-			</div>
-		`
 		container.appendChild(row)
 	})
 }
@@ -1521,48 +1633,11 @@ function initCallbacks(): void
 	const settingHulkIcon = querySelector<HTMLInputElement>('#setting-hulkIcon')
 	const settingLadyLoki = querySelector<HTMLInputElement>('#setting-ladyLoki')
 	settingAutoSort.onchange = () => updateSetting('autoSort', settingAutoSort.checked)
-	settingAutoSort.onchange = () => updateSetting('hulkIcon', settingHulkIcon.checked)
-	settingAutoSort.onchange = () => updateSetting('ladyLoki', settingLadyLoki.checked)
+	settingHulkIcon.onchange = () => updateSetting('hulkIcon', settingHulkIcon.checked)
+	settingLadyLoki.onchange = () => updateSetting('ladyLoki', settingLadyLoki.checked)
 
 	querySelector<HTMLButtonElement>('#reset-all-data-btn').onclick = clearData
 	querySelector<HTMLButtonElement>('#settings-done-btn').onclick = closeSettingsModal
-}
-
-// querySelector util
-export function querySelector<K extends keyof HTMLElementTagNameMap>(
-	selectors: K
-): HTMLElementTagNameMap[K]
-export function querySelector<K extends keyof SVGElementTagNameMap>(
-	selectors: K
-): SVGElementTagNameMap[K]
-export function querySelector<K extends keyof MathMLElementTagNameMap>(
-	selectors: K
-): MathMLElementTagNameMap[K]
-export function querySelector<E extends Element = Element>(selectors: string): E
-export function querySelector(selectors: string): Element
-{
-	const e = document.querySelector(selectors)
-	if (!e) throw new Error(`Couldn't find HTML element with provided selectors: "${selectors}"`)
-	return e
-}
-
-// querySelectorAll util
-export function querySelectorAll<K extends keyof HTMLElementTagNameMap>(
-	selectors: K
-): NodeListOf<HTMLElementTagNameMap[K]>
-export function querySelectorAll<K extends keyof SVGElementTagNameMap>(
-	selectors: K
-): NodeListOf<SVGElementTagNameMap[K]>
-export function querySelectorAll<K extends keyof MathMLElementTagNameMap>(
-	selectors: K
-): NodeListOf<MathMLElementTagNameMap[K]>
-export function querySelectorAll<E extends Element = Element>(selectors: string): NodeListOf<E>
-export function querySelectorAll(selectors: string): NodeListOf<Element>
-{
-	const e = document.querySelectorAll(selectors)
-	if (e.length === 0)
-		throw new Error(`Couldn't find HTML elements with provided selectors: "${selectors}"`)
-	return e
 }
 
 init()

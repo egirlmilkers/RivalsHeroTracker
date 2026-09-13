@@ -1,5 +1,3 @@
-import { Marked } from 'marked'
-
 export {}
 
 declare global

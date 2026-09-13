@@ -1,5 +1,11 @@
 # Changelog
 
+### Sep 13th 2026 v32.3
+#### 🧼 Fixes
+- Fixed some functions not working after underlying changes
+- Fixed share modal not working
+- Fixed settings not working
+
 ### Sep 12th 2026 v32.2
 #### 🧼 Fixes
 - Migrated my codebase to TypeScript to significantly reduce the risk of bugs

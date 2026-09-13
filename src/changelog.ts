@@ -1,5 +1,5 @@
 import { marked } from 'marked'
-import { querySelector } from './script'
+import { querySelector } from './util'
 
 let allChangelogEntries: ChangelogEntry[] = []
 
