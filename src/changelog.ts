@@ -1,6 +1,9 @@
-let allChangelogEntries = []
+import { marked } from 'marked'
+import { querySelector } from './script'
 
-async function checkChangelog()
+let allChangelogEntries: ChangelogEntry[] = []
+
+export async function checkChangelog()
 {
 	try
 	{
@@ -9,7 +12,7 @@ async function checkChangelog()
 		const text = await response.text()
 
 		const lines = text.split('\n')
-		let currentEntry = null
+		let currentEntry: ChangelogEntry = null!
 
 		for (let i = 0; i < lines.length; i++)
 		{
@@ -69,7 +72,7 @@ async function checkChangelog()
 
 			if (lastSeenNum < latestNum)
 			{
-				let newUpdates = []
+				let newUpdates: ChangelogEntry[] = []
 				for (let entry of allChangelogEntries)
 				{
 					const entryNum = parseFloat(entry.version.replace('v', ''))
@@ -82,7 +85,7 @@ async function checkChangelog()
 				// If it's a first time visitor, only show the single most recent major update
 				if (!lastSeenVersion)
 				{
-					newUpdates = [allChangelogEntries.find(e => !e.version.includes('.'))]
+					newUpdates = [allChangelogEntries.find(e => !e.version.includes('.'))!]
 					h = 'Latest Update'
 				}
 
@@ -99,9 +102,9 @@ async function checkChangelog()
 	}
 }
 
-function showChangelogModal(entries, title = 'Update History')
+function showChangelogModal(entries: ChangelogEntry[], title = 'Update History')
 {
-	document.getElementById('changelog-title').innerText = title
+	querySelector<HTMLHeadingElement>('#changelog-title').innerText = title
 
 	let html = ''
 	entries.forEach(entry =>
@@ -113,16 +116,16 @@ function showChangelogModal(entries, title = 'Update History')
 		html += marked.parse(entry.rawContent.join('\n'))
 	})
 
-	document.getElementById('changelog-body').innerHTML = html
-	document.getElementById('changelog-modal').style.display = 'flex'
+	querySelector<HTMLDivElement>('#changelog-body').innerHTML = html
+	querySelector<HTMLDivElement>('#changelog-modal').style.display = 'flex'
 }
 
-function showFullChangelog()
+export function showFullChangelog()
 {
 	if (allChangelogEntries.length > 0) showChangelogModal(allChangelogEntries)
 }
 
-function closeChangelogModal()
+export function closeChangelogModal()
 {
-	document.getElementById('changelog-modal').style.display = 'none'
+	querySelector<HTMLDivElement>('#changelog-modal').style.display = 'none'
 }

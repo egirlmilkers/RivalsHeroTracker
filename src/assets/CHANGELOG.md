@@ -1,5 +1,9 @@
 # Changelog
 
+### Sep 12th 2026 v32.2
+#### 🧼 Fixes
+- Migrated my codebase to TypeScript to significantly reduce the risk of bugs
+
 ### Sep 12th 2026 v32.1
 #### 🧼 Fixes
 - Fixed a bug where the site complained since Gorr's icons weren't 'webp' like everyone else's

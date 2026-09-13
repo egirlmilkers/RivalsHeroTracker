@@ -1,5 +1,8 @@
+import { checkChangelog, closeChangelogModal, showFullChangelog } from './changelog'
+import { closeShareModal, downloadShareImage, openShareModal } from './share'
+
 // prettier-ignore
-const heroDefinitions = [
+export const heroDefinitions: Hero[] = [
 	{
 		name: 'Adam Warlock',
 		role: 'Strategist',
@@ -733,7 +736,7 @@ const heroDefinitions = [
 ]
 
 // Configuration for Levels and XP
-const levelConfig = [
+const rankConfig: Rank[] = [
 	{ title: 'Agent', startLvl: 1, endLvl: 4, totalRankXP: 500 },
 	{ title: 'Knight', startLvl: 5, endLvl: 9, totalRankXP: 1200 },
 	{ title: 'Captain', startLvl: 10, endLvl: 14, totalRankXP: 2000 },
@@ -748,7 +751,7 @@ const levelConfig = [
 ]
 
 // Pre-calculate per-level XP for each rank for easy lookup
-levelConfig.forEach(conf =>
+rankConfig.forEach(conf =>
 {
 	const levelCount = conf.endLvl - conf.startLvl + 1
 	conf.xpPerLevel = conf.totalRankXP / levelCount
@@ -756,7 +759,7 @@ levelConfig.forEach(conf =>
 })
 
 // Legacy mapping for data storage compatibility
-const pointBaselines = {
+export const pointBaselines: Record<string, number> = {
 	Agent: 0,
 	Knight: 500,
 	Captain: 1_700,
@@ -771,20 +774,20 @@ const pointBaselines = {
 	MAX: 116_100
 }
 
-const ranks = levelConfig.map(c => c.title)
+const ranks: string[] = rankConfig.map(c => c.title)
 
-let heroData = []
+export let heroData: HeroListItem[] = []
 
 // >> Settings <<
-const defaultSettings = {
+const defaultSettings: Record<string, boolean> = {
 	autoSort: false, // Always sort by highest proficiency on load/change
 	hulkIcon: false, // Show Hulk icon instead of Bruce Banner
 	ladyLoki: false // Show Lady Loki over Loki
 }
-let settings = { ...defaultSettings }
-let sorted = settings.autoSort
+export let settings: Record<string, boolean> = { ...defaultSettings }
+let sorted: boolean = settings.autoSort
 
-function loadSettings()
+function loadSettings(): void
 {
 	const saved = localStorage.getItem('marvelRivalsSettings')
 	if (saved)
@@ -800,25 +803,25 @@ function loadSettings()
 	sorted = settings.autoSort
 }
 
-function saveSettings()
+function saveSettings(): void
 {
 	localStorage.setItem('marvelRivalsSettings', JSON.stringify(settings))
 }
 
-function openSettingsModal()
+function openSettingsModal(): void
 {
-	document.getElementById('setting-autoSort').checked = settings.autoSort
-	document.getElementById('setting-hulkIcon').checked = settings.hulkIcon
-	document.getElementById('setting-ladyLoki').checked = settings.ladyLoki
-	document.getElementById('settings-modal').style.display = 'flex'
+	querySelector<HTMLInputElement>('#setting-autoSort').checked = settings.autoSort
+	querySelector<HTMLInputElement>('#setting-hulkIcon').checked = settings.hulkIcon
+	querySelector<HTMLInputElement>('#setting-ladyLoki').checked = settings.ladyLoki
+	querySelector<HTMLDivElement>('#settings-modal').style.display = 'flex'
 }
 
-function closeSettingsModal()
+function closeSettingsModal(): void
 {
-	document.getElementById('settings-modal').style.display = 'none'
+	querySelector<HTMLDivElement>('#settings-modal').style.display = 'none'
 }
 
-function updateSetting(key, value)
+function updateSetting(key: string, value: boolean): void
 {
 	settings[key] = value
 	saveSettings()
@@ -833,12 +836,12 @@ function updateSetting(key, value)
 	renderList()
 }
 
-function getHeroFileName(name)
+export function getHeroFileName(name: string): string
 {
 	return name.replace(/(\s+|_|-)/g, '') + '.webp'
 }
 
-function init()
+function init(): void
 {
 	loadSettings()
 	let v3Data = localStorage.getItem('marvelRivalsDataV3')
@@ -879,13 +882,15 @@ function init()
 
 	processLoadedData(savedData)
 	checkChangelog()
+
+	initCallbacks()
 }
 
-function processLoadedData(savedData)
+function processLoadedData(savedData: string | null): void
 {
 	if (savedData)
 	{
-		const parsedData = JSON.parse(savedData)
+		const parsedData: HeroListItem[] = JSON.parse(savedData)
 		heroData = heroDefinitions.map((def, idx) =>
 		{
 			const saved = parsedData.find(p => p.name === def.name)
@@ -918,13 +923,13 @@ function processLoadedData(savedData)
 	sortHeroes()
 }
 
-function getTopHeroesHTML(dataStr)
+function getTopHeroesHTML(dataStr: string): string
 {
 	if (!dataStr)
 		return "<div style='text-align:center; color:#666; margin-top:20px;'>No progress</div>"
 	try
 	{
-		const parsed = JSON.parse(dataStr)
+		const parsed: HeroListItem[] = JSON.parse(dataStr)
 		// Sort by points to find the highest
 		parsed.sort((a, b) => calculateTotalScore(b) - calculateTotalScore(a))
 
@@ -954,34 +959,39 @@ function getTopHeroesHTML(dataStr)
 	}
 }
 
-function openComparisonModal(config)
+function openComparisonModal(config: ComparisonModalConfig)
 {
-	document.getElementById('modal-title').innerText = config.title
-	document.getElementById('modal-desc').innerText = config.desc
+	const opt1Btn = querySelector<HTMLButtonElement>('#modal-opt1-btn')
+	const opt2Btn = querySelector<HTMLButtonElement>('#modal-opt2-btn')
 
-	document.getElementById('modal-opt1-title').innerText = config.opt1Title
-	document.getElementById('modal-opt1-heroes').innerHTML = getTopHeroesHTML(
+	querySelector<HTMLHeadingElement>('#modal-title').innerText = config.title
+	querySelector<HTMLParagraphElement>('#modal-desc').innerText = config.desc
+
+	querySelector<HTMLHeadingElement>('#modal-opt1-title').innerText = config.opt1Title
+	querySelector<HTMLDivElement>('#modal-opt1-heroes').innerHTML = getTopHeroesHTML(
 		config.opt1Data
 	)
-	document.getElementById('modal-opt1-btn').innerText = config.opt1BtnText
-	document.getElementById('modal-opt1-btn').onclick = config.opt1Action
+	opt1Btn.innerText = config.opt1BtnText
+	opt1Btn.onclick = config.opt1Action
 
-	document.getElementById('modal-opt2-title').innerText = config.opt2Title
-	document.getElementById('modal-opt2-heroes').innerHTML = getTopHeroesHTML(
+	querySelector<HTMLHeadingElement>('#modal-opt2-title').innerText = config.opt2Title
+	querySelector<HTMLDivElement>('#modal-opt2-heroes').innerHTML = getTopHeroesHTML(
 		config.opt2Data
 	)
-	document.getElementById('modal-opt2-btn').innerText = config.opt2BtnText
-	document.getElementById('modal-opt2-btn').onclick = config.opt2Action
+	opt2Btn.innerText = config.opt2BtnText
+	opt2Btn.onclick = config.opt2Action
 
-	document.getElementById('modal-footer').innerText = config.footerText
+	querySelector<HTMLParagraphElement>('#modal-footer').innerText = config.footerText
 
-	document.getElementById('migration-modal').style.display = 'flex'
+	querySelector<HTMLDivElement>('#migration-modal').style.display = 'flex'
 }
 
-function resolveMigration(choice)
+function resolveMigration(choice: string): void
 {
 	let v3Data = localStorage.getItem('marvelRivalsDataV3')
 	let stdData = localStorage.getItem('marvelRivalsData')
+
+	if (!v3Data) throw new Error('Migrating from non-existent old data.')
 
 	if (choice === 'v3')
 	{
@@ -994,23 +1004,25 @@ function resolveMigration(choice)
 
 	// Clean up V3 so we don't ask again
 	localStorage.removeItem('marvelRivalsDataV3')
-	document.getElementById('migration-modal').style.display = 'none'
+	querySelector<HTMLDivElement>('#migration-modal').style.display = 'none'
 }
 
 // convert between Stored Rank/Points and UI Levels
-function calculateTotalScore(hero)
+export function calculateTotalScore(hero: HeroListItem): number
 {
 	const baseline = pointBaselines[hero.rank] || 0
-	const points = parseInt(hero.points) || 0
+	const points = hero.points || 0
 	return baseline + points
 }
 
-function getLevelInfoFromTotal(totalPoints)
+export function getLevelInfoFromTotal(totalPoints: number): HeroLevelInfo
 {
 	let cumulativeXP = 0
 
-	for (let conf of levelConfig)
+	for (let conf of rankConfig)
 	{
+		if (!conf.xpPerLevel) throw new Error("Hero data hasn't been initialized before processing")
+
 		// Calculate max points for this entire Tier
 		const tierTotal = conf.totalRankXP
 		const tierEndXP = cumulativeXP + tierTotal
@@ -1049,13 +1061,16 @@ function getLevelInfoFromTotal(totalPoints)
 	return { level: 70, xp: 3100, maxXp: 3100, title: 'Champion' }
 }
 
-function getDataFromLevel(targetLevel, targetXP)
+function getDataFromLevel(targetLevel: number, targetXP: number): { rank: string; points: number }
 {
 	console.log('Calculating data from Level:', targetLevel, 'XP:', targetXP)
 	let cumulativeXP = 0
 
-	for (let conf of levelConfig)
+	for (let conf of rankConfig)
 	{
+		if (!conf.xpPerLevel)
+			throw new Error("Some or all hero data hasn't been initialized before processing")
+
 		if (targetLevel >= conf.startLvl && targetLevel <= conf.endLvl)
 		{
 			// Found the tier
@@ -1093,17 +1108,17 @@ function getDataFromLevel(targetLevel, targetXP)
 	return { rank: 'Champion', points: 62000 }
 }
 
-function toggleFilters()
+function toggleFilters(): void
 {
-	const content = document.getElementById('filter-content')
-	const arrow = document.getElementById('filter-arrow')
+	const content = querySelector<HTMLDivElement>('#filter-content')
+	const arrow = querySelector<HTMLSpanElement>('#filter-arrow')
 	content.classList.toggle('expanded')
 	arrow.style.transform = content.classList.contains('expanded')
 		? 'rotate(90deg)'
 		: 'rotate(0deg)'
 }
 
-function handleImageFallback(img, heroName, fileName)
+function handleImageFallback(img: HTMLImageElement, heroName: string, fileName: string)
 {
 	fileName = fileName || getHeroFileName(heroName)
 	const baseSrc = `img/char/${fileName}`
@@ -1118,16 +1133,14 @@ function handleImageFallback(img, heroName, fileName)
 	}
 }
 
-function renderList()
+function renderList(): boolean | void
 {
-	const container = document.getElementById('hero-list')
+	const container = querySelector<HTMLDivElement>('#hero-list')
 
 	// Get Filter Values
-	const searchText = document
-		.getElementById('searchInput')
-		.value.toLowerCase()
+	const searchText = querySelector<HTMLInputElement>('#searchInput').value.toLowerCase()
 	const checkedRoles = Array.from(
-		document.querySelectorAll('.role-filters input:checked')
+		querySelectorAll<HTMLInputElement>('.role-filters input:checked')
 	).map(cb => cb.value)
 
 	// Filter Data
@@ -1187,9 +1200,13 @@ function renderList()
 
 		// Progress Bars
 		// Bar 1: Progress to Next Title
-		const currentConfig = levelConfig.find(
+		const currentConfig = rankConfig.find(
 			c => c.title === levelInfo.title
 		)
+
+		if (!currentConfig || !currentConfig.xpPerLevel)
+			throw new Error('Config is unexpectedly null or contains null value')
+
 		const pointsInTier = (levelInfo.level - currentConfig.startLvl)
 				* currentConfig.xpPerLevel
 			+ levelInfo.xp
@@ -1215,7 +1232,7 @@ function renderList()
 			? `transform: scale(${offScale}) translate(${offX}px, ${offY}px);`
 			: `transform: translate(${offX}px, ${offY}px);`
 
-		row.innerHTML = `
+		row.innerHTML = String.raw`
 			<div class="portrait-container">
 				<div class="char-img-wrapper"${
 			levelInfo.level >= 50 ? `style=\"box-shadow: 0 0 22px ${hero.color};\"` : ''
@@ -1294,7 +1311,7 @@ function renderList()
 	})
 }
 
-function updateHero(name, field, value)
+function updateHero(name: string, field: string, value: number): void
 {
 	console.log(`Updating ${name} - Field: ${field}, Value: ${value}`)
 	const index = heroData.findIndex(h => h.name === name)
@@ -1309,11 +1326,11 @@ function updateHero(name, field, value)
 
 	if (field === 'level')
 	{
-		newLevel = parseInt(value)
+		newLevel = value
 		newXP = 0 // Reset XP when level changes to avoid a rare bug where it will level you back up if your points are max
 	} else if (field === 'points')
 	{
-		newXP = parseInt(value)
+		newXP = value
 	}
 
 	// Convert back to Rank/Points storage format
@@ -1327,7 +1344,7 @@ function updateHero(name, field, value)
 	saveData()
 }
 
-function sortHeroes(toggle = false)
+function sortHeroes(toggle = false): void
 {
 	if (toggle) sorted = !sorted
 
@@ -1342,12 +1359,13 @@ function sortHeroes(toggle = false)
 		else return a.name.localeCompare(b.name)
 	})
 
-	if (sorted) document.getElementById('btn-sort').textContent = 'Sort Alphabetically'
-	else document.getElementById('btn-sort').textContent = 'Sort by Proficiency'
+	const btnSort = querySelector<HTMLButtonElement>('#btn-sort')
+	if (sorted) btnSort.textContent = 'Sort Alphabetically'
+	else btnSort.textContent = 'Sort by Proficiency'
 	renderList()
 }
 
-function togglePin(name)
+function togglePin(name: string): void
 {
 	const index = heroData.findIndex(h => h.name === name)
 	if (index === -1) return
@@ -1357,13 +1375,7 @@ function togglePin(name)
 	sortHeroes()
 }
 
-// Close modals when clicking on the overlay background
-window.addEventListener('click', function(event)
-{
-	if (event.target.classList.contains('modal-overlay')) event.target.style.display = 'none'
-})
-
-function saveData()
+function saveData(): void
 {
 	// We map only the dynamic data for saving to keep localStorage clean
 	const dataToSave = heroData.map(h => ({
@@ -1375,7 +1387,7 @@ function saveData()
 	localStorage.setItem('marvelRivalsData', JSON.stringify(dataToSave))
 }
 
-function clearData()
+function clearData(): void
 {
 	if (confirm('Are you sure you want to clear all your inputs?'))
 	{
@@ -1385,7 +1397,7 @@ function clearData()
 	}
 }
 
-function downloadBackup()
+function downloadBackup(): void
 {
 	// Backup needs to save basic stats, definitions (colors/roles) are hardcoded
 	const dataToSave = heroData.map(h => ({
@@ -1406,16 +1418,17 @@ function downloadBackup()
 	URL.revokeObjectURL(url)
 }
 
-function handleFileUpload(input)
+function handleFileUpload(input: HTMLInputElement): void
 {
+	if (!input.files || !input.files[0]) return
+
 	const file = input.files[0]
-	if (!file) return
 	const reader = new FileReader()
 	reader.onload = function(e)
 	{
 		try
 		{
-			const contents = e.target.result
+			const contents = e.target!.result!.toString()
 			const parsedData = JSON.parse(contents)
 			if (
 				Array.isArray(parsedData)
@@ -1442,8 +1455,8 @@ function handleFileUpload(input)
 					opt1BtnText: 'Keep Current (Cancel)',
 					opt1Action: () =>
 					{
-						document.getElementById(
-							'migration-modal'
+						querySelector<HTMLDivElement>(
+							'#migration-modal'
 						).style.display = 'none'
 						input.value = '' // Reset input so they can upload the same file again if needed
 					},
@@ -1472,6 +1485,84 @@ function handleFileUpload(input)
 		}
 	}
 	reader.readAsText(file)
+}
+
+// Close modals when clicking on the overlay background
+window.addEventListener('click', function(event: PointerEvent): void
+{
+	const { target } = event
+	if (target instanceof HTMLElement && target.classList.contains('modal-overlay'))
+		target.style.display = 'none'
+})
+
+function initCallbacks(): void
+{
+	querySelector<HTMLButtonElement>('#version-display').onclick = showFullChangelog
+	querySelector<HTMLButtonElement>('#close-changelog-btn').onclick = closeChangelogModal
+	querySelector<HTMLButtonElement>('#btn-sort').onclick = () => sortHeroes(true)
+	querySelector<HTMLButtonElement>('#btn-share').onclick = openShareModal
+	querySelector<HTMLButtonElement>('#btn-settings').onclick = openSettingsModal
+	querySelector<HTMLButtonElement>('#btn-filter-toggle').onclick = toggleFilters
+
+	querySelector<HTMLInputElement>('#searchInput').oninput = renderList
+	querySelector<HTMLInputElement>('input[value="Vanguard"]').onchange = renderList
+	querySelector<HTMLInputElement>('input[value="Duelist"]').onchange = renderList
+	querySelector<HTMLInputElement>('input[value="Strategist"]').onchange = renderList
+
+	const fileInput = querySelector<HTMLInputElement>('#fileInput')
+	querySelector<HTMLButtonElement>('#download-backup').onclick = downloadBackup
+	querySelector<HTMLButtonElement>('#upload-backup').onclick = () => fileInput.click()
+	fileInput.onchange = () => handleFileUpload(fileInput)
+
+	querySelector<HTMLButtonElement>('#share-download-btn').onclick = downloadShareImage
+	querySelector<HTMLButtonElement>('#close-share-btn').onclick = closeShareModal
+
+	const settingAutoSort = querySelector<HTMLInputElement>('#setting-autoSort')
+	const settingHulkIcon = querySelector<HTMLInputElement>('#setting-hulkIcon')
+	const settingLadyLoki = querySelector<HTMLInputElement>('#setting-ladyLoki')
+	settingAutoSort.onchange = () => updateSetting('autoSort', settingAutoSort.checked)
+	settingAutoSort.onchange = () => updateSetting('hulkIcon', settingHulkIcon.checked)
+	settingAutoSort.onchange = () => updateSetting('ladyLoki', settingLadyLoki.checked)
+
+	querySelector<HTMLButtonElement>('#reset-all-data-btn').onclick = clearData
+	querySelector<HTMLButtonElement>('#settings-done-btn').onclick = closeSettingsModal
+}
+
+// querySelector util
+export function querySelector<K extends keyof HTMLElementTagNameMap>(
+	selectors: K
+): HTMLElementTagNameMap[K]
+export function querySelector<K extends keyof SVGElementTagNameMap>(
+	selectors: K
+): SVGElementTagNameMap[K]
+export function querySelector<K extends keyof MathMLElementTagNameMap>(
+	selectors: K
+): MathMLElementTagNameMap[K]
+export function querySelector<E extends Element = Element>(selectors: string): E
+export function querySelector(selectors: string): Element
+{
+	const e = document.querySelector(selectors)
+	if (!e) throw new Error(`Couldn't find HTML element with provided selectors: "${selectors}"`)
+	return e
+}
+
+// querySelectorAll util
+export function querySelectorAll<K extends keyof HTMLElementTagNameMap>(
+	selectors: K
+): NodeListOf<HTMLElementTagNameMap[K]>
+export function querySelectorAll<K extends keyof SVGElementTagNameMap>(
+	selectors: K
+): NodeListOf<SVGElementTagNameMap[K]>
+export function querySelectorAll<K extends keyof MathMLElementTagNameMap>(
+	selectors: K
+): NodeListOf<MathMLElementTagNameMap[K]>
+export function querySelectorAll<E extends Element = Element>(selectors: string): NodeListOf<E>
+export function querySelectorAll(selectors: string): NodeListOf<Element>
+{
+	const e = document.querySelectorAll(selectors)
+	if (e.length === 0)
+		throw new Error(`Couldn't find HTML elements with provided selectors: "${selectors}"`)
+	return e
 }
 
 init()

@@ -1,4 +1,6 @@
+node_modules/
 .archive/
 *.ps1
 offset-tool.html
 dprint*
+dist/

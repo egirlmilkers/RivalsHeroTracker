@@ -1,5 +1,7 @@
+import { settings, getHeroFileName, querySelector, calculateTotalScore, getLevelInfoFromTotal, heroData, pointBaselines } from "./script"
+
 // Matches the hex values in styles.css since canvas can't read CSS custom properties directly
-const rankColorMap = {
+const rankColorMap: Record<string, string> = {
 	Agent: '#8f7c5d',
 	Knight: '#737890',
 	Captain: '#5e8795',
@@ -13,12 +15,12 @@ const rankColorMap = {
 	Champion: '#f62a42'
 }
 
-function getRankColor(title)
+function getRankColor(title: string): string
 {
 	return rankColorMap[title] || '#999'
 }
 
-function getShareDisplayName(hero)
+function getShareDisplayName(hero: Hero): string
 {
 	let heroName = hero.name
 	if (settings.hulkIcon && hero.name === 'Bruce Banner') heroName = 'Hulk'
@@ -27,7 +29,7 @@ function getShareDisplayName(hero)
 }
 
 // Builds the ordered list of image paths to try, same priority as the on-page fallback logic
-function getShareHeroImageCandidates(hero, levelInfo)
+function getShareHeroImageCandidates(hero: Hero, levelInfo: HeroLevelInfo): HeroShareItemMeta
 {
 	const heroName = getShareDisplayName(hero)
 	const fileName = getHeroFileName(heroName)
@@ -40,7 +42,7 @@ function getShareHeroImageCandidates(hero, levelInfo)
 	return { heroName, fileName, candidates }
 }
 
-function loadImageWithFallback(candidates)
+function loadImageWithFallback(candidates: string[]): Promise<HTMLImageElement | null>
 {
 	return new Promise(resolve =>
 	{
@@ -65,7 +67,14 @@ function loadImageWithFallback(candidates)
 	})
 }
 
-function drawRoundedRect(ctx, x, y, w, h, r)
+function drawRoundedRect(
+	ctx: CanvasRenderingContext2D,
+	x: number,
+	y: number,
+	w: number,
+	h: number,
+	r: number
+): void
 {
 	ctx.beginPath()
 	ctx.moveTo(x + r, y)
@@ -76,9 +85,9 @@ function drawRoundedRect(ctx, x, y, w, h, r)
 	ctx.closePath()
 }
 
-async function buildTop5ShareCanvas()
+async function buildTop5ShareCanvas(): Promise<HTMLCanvasElement>
 {
-	const canvas = document.getElementById('share-canvas')
+	const canvas = querySelector<HTMLCanvasElement>('#share-canvas')
 
 	const scale = 2 // draw at 2x and let CSS scale down, so the download stays crisp
 	const width = 860
@@ -95,6 +104,9 @@ async function buildTop5ShareCanvas()
 	canvas.style.aspectRatio = `${width} / ${height}`
 
 	const ctx = canvas.getContext('2d')
+
+	if (!ctx) throw new Error('Canvas context is unexpectedly null')
+
 	ctx.setTransform(scale, 0, 0, scale, 0, 0)
 
 	// Background
@@ -128,7 +140,7 @@ async function buildTop5ShareCanvas()
 
 	// Preload every portrait + rank badge before drawing
 	const rowData = await Promise.all(
-		top5.map(async hero =>
+		top5.map(async (hero: HeroListItem): Promise<HeroShareItem> =>
 		{
 			const score = calculateTotalScore(hero)
 			const levelInfo = getLevelInfoFromTotal(score)
@@ -321,11 +333,11 @@ async function buildTop5ShareCanvas()
 	return canvas
 }
 
-function openShareModal()
+export function openShareModal(): void
 {
-	document.getElementById('share-modal').style.display = 'flex'
-	const loadingEl = document.getElementById('share-loading')
-	const downloadBtn = document.getElementById('share-download-btn')
+	querySelector<HTMLCanvasElement>('#share-canvas').style.display = 'flex'
+	const loadingEl = querySelector<HTMLDivElement>('#share-loading')
+	const downloadBtn = querySelector<HTMLButtonElement>('#share-download-btn')
 	loadingEl.textContent = 'Building image…'
 	loadingEl.classList.remove('hidden')
 	downloadBtn.disabled = true
@@ -343,14 +355,14 @@ function openShareModal()
 		})
 }
 
-function closeShareModal()
+export function closeShareModal(): void
 {
-	document.getElementById('share-modal').style.display = 'none'
+	querySelector<HTMLDivElement>('#share-modal').style.display = 'none'
 }
 
-function downloadShareImage()
+export function downloadShareImage()
 {
-	const canvas = document.getElementById('share-canvas')
+	const canvas = querySelector<HTMLCanvasElement>('#share-canvas')
 	canvas.toBlob(blob =>
 	{
 		if (!blob) return

@@ -1,4 +1,6 @@
-async function fileUrlToDataUrl(url)
+import { getHeroFileName, heroDefinitions } from './script'
+
+async function fileUrlToDataUrl(url: string): Promise<string>
 {
 	try
 	{
@@ -33,6 +35,9 @@ async function fileUrlToDataUrl(url)
 
 				canvas.width = width
 				canvas.height = height
+
+				if (!ctx) throw new Error('Canvas context is unexpectedly null')
+
 				ctx.drawImage(img, 0, 0, width, height)
 
 				// Crush it into a compressed img
@@ -54,12 +59,12 @@ async function fileUrlToDataUrl(url)
 }
 
 // Make this function async so we can await the image conversions
-async function generateRouletteJSON()
+async function generateRouletteJSON(): Promise<void>
 {
 	// Separate heroes by role
-	const vanguards = []
-	const duelists = []
-	const strategists = []
+	const vanguards: Hero[] = []
+	const duelists: Hero[] = []
+	const strategists: Hero[] = []
 
 	// Base weight per role group (Total weight will be 300)
 	const ROLE_TOTAL_WEIGHT = 100
@@ -118,7 +123,7 @@ async function generateRouletteJSON()
 		: 0
 
 	// Helper function to process an array of heroes into entries asynchronously
-	const processEntries = async (heroList, weight) =>
+	const processEntries = async (heroList: Hero[], weight: number) =>
 	{
 		return Promise.all(
 			heroList.map(async hero =>
@@ -152,11 +157,11 @@ async function generateRouletteJSON()
 
 	// Wait for all three groups to finish converting their images
 	const vEntries = await processEntries(vanguards, vWeight)
-	vEntries.sort((a, b) => b.imageName.localeCompare(a.imageName))
+	vEntries.sort((a, b) => b.imageName!.localeCompare(a.imageName!))
 	const dEntries = await processEntries(duelists, dWeight)
-	dEntries.sort((a, b) => b.imageName.localeCompare(a.imageName))
+	dEntries.sort((a, b) => b.imageName!.localeCompare(a.imageName!))
 	const sEntries = await processEntries(strategists, sWeight)
-	sEntries.sort((a, b) => b.imageName.localeCompare(a.imageName))
+	sEntries.sort((a, b) => b.imageName!.localeCompare(a.imageName!))
 
 	// Combine them all into the final entries array and sort by name again
 	const entries = [...sEntries, ...dEntries, ...vEntries]
