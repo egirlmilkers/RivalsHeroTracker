@@ -1,4 +1,4 @@
-import { calculateTotalScore, getLevelInfoFromTotal, heroData, heroDefinitions } from './script'
+import { calculateTotalScore, heroData, heroDefinitions, pointBaselines } from './script'
 import { querySelector } from './util'
 
 // ============================================================================
@@ -167,14 +167,6 @@ function buildSeries(hero: Hero): ChartPoint[]
 	return [anchor, ...real]
 }
 
-function fractionalLevel(total: number): number
-{
-	if (total <= 0) return 0
-	const info = getLevelInfoFromTotal(total)
-	const pct = info.maxXp > 0 ? info.xp / info.maxXp : 0
-	return info.level + pct
-}
-
 // ============================================================================
 // Chart rendering (plain canvas, no external deps to match the rest of the site)
 // ============================================================================
@@ -212,37 +204,71 @@ function drawChart(
 	}
 
 	const allPoints = visibleSeries.flatMap(s => s.points)
-	const minTs = Math.min(...allPoints.map(p => p.ts))
+	// const minTs = Math.min(...allPoints.map(p => p.ts))
+	const minTs = GAME_LAUNCH_TS
 	const maxTs = Math.max(Date.now(), ...allPoints.map(p => p.ts))
-	const maxLevel = Math.max(70, ...allPoints.map(p => fractionalLevel(p.total)))
+	// Find the true max XP (defaults to Level 70 MAX)
+	const maxTotal = Math.max(pointBaselines.MAX, ...allPoints.map(p => p.total))
 
 	const x = (ts: number) =>
 		CHART_PADDING.left + (maxTs === minTs ? 0 : ((ts - minTs) / (maxTs - minTs)) * plotW)
-	const y = (level: number) => CHART_PADDING.top + plotH - (level / maxLevel) * plotH
+	const y = (total: number) => CHART_PADDING.top + plotH - (total / maxTotal) * plotH
 
-	// Gridlines + Y axis labels (every ~10 levels)
+	// Gridlines + Y axis labels (Mapped specifically to the XP required for every 10 levels)
 	ctx.strokeStyle = 'rgba(255,255,255,0.08)'
 	ctx.fillStyle = '#666'
 	ctx.font = '11px inherit'
 	ctx.textAlign = 'right'
 	ctx.textBaseline = 'middle'
-	const step = maxLevel > 40 ? 10 : 5
-	for (let lvl = 0; lvl <= maxLevel; lvl += step)
+
+	const step = 10
+	for (let lvl = 0; lvl <= 70; lvl += step)
 	{
-		const yy = y(lvl)
+		let totalForLevel = 0
+		if (lvl === 10) totalForLevel = pointBaselines.Captain
+		else if (lvl === 20) totalForLevel = pointBaselines.Lord
+		else if (lvl === 30) totalForLevel = pointBaselines.Colonel
+		else if (lvl === 40) totalForLevel = pointBaselines.Elite
+		else if (lvl === 50) totalForLevel = pointBaselines.Champion
+		else if (lvl === 60) totalForLevel = pointBaselines.Champion + 31000 // 10 levels * 3100 XP
+		else if (lvl === 70) totalForLevel = pointBaselines.MAX
+
+		const yy = y(totalForLevel)
 		ctx.beginPath()
 		ctx.moveTo(CHART_PADDING.left, yy)
 		ctx.lineTo(w - CHART_PADDING.right, yy)
 		ctx.stroke()
-		ctx.fillText(String(Math.round(lvl)), CHART_PADDING.left - 8, yy)
+		ctx.fillText(String(lvl), CHART_PADDING.left - 8, yy)
 	}
 
-	// X axis labels (start / end dates)
-	ctx.textAlign = 'left'
+	// X axis labels (Seasons)
 	ctx.textBaseline = 'top'
-	ctx.fillText(formatDate(minTs), CHART_PADDING.left, h - CHART_PADDING.bottom + 8)
+	ctx.fillStyle = '#888'
+
+	for (const [season, ts] of Object.entries(SEASON_DATES))
+	{
+		if (ts > maxTs) continue
+
+		const xx = x(ts)
+
+		// Tick mark for all seasons/mid-seasons
+		ctx.beginPath()
+		ctx.moveTo(xx, h - CHART_PADDING.bottom)
+		ctx.lineTo(xx, h - CHART_PADDING.bottom + 4)
+		ctx.stroke()
+
+		// Label for major seasons only to avoid crowding
+		if (!season.includes('.'))
+		{
+			// Align S0 to the left edge, center the rest
+			ctx.textAlign = season === '0' ? 'left' : 'center'
+			ctx.fillText(`S${season}`, xx, h - CHART_PADDING.bottom + 8)
+		}
+	}
+
+	// Keep the current date on the far right edge (shifted down slightly to avoid overlap)
 	ctx.textAlign = 'right'
-	ctx.fillText(formatDate(maxTs), w - CHART_PADDING.right, h - CHART_PADDING.bottom + 8)
+	ctx.fillText(formatDate(maxTs), w - CHART_PADDING.right, h - CHART_PADDING.bottom + 20)
 
 	// Draw each series
 	for (const series of visibleSeries)
@@ -258,8 +284,10 @@ function drawChart(
 			const cur = pts[i]
 			ctx.beginPath()
 			ctx.setLineDash(prev.synthetic ? [6, 5] : [])
-			ctx.moveTo(x(prev.ts), y(fractionalLevel(prev.total)))
-			ctx.lineTo(x(cur.ts), y(fractionalLevel(cur.total)))
+
+			// Draw raw total XP on the Y axis
+			ctx.moveTo(x(prev.ts), y(prev.total))
+			ctx.lineTo(x(cur.ts), y(cur.total))
 			ctx.stroke()
 		}
 		ctx.setLineDash([])
@@ -269,7 +297,7 @@ function drawChart(
 		{
 			if (p.synthetic) continue
 			ctx.beginPath()
-			ctx.arc(x(p.ts), y(fractionalLevel(p.total)), 3, 0, Math.PI * 2)
+			ctx.arc(x(p.ts), y(p.total), 3, 0, Math.PI * 2)
 			ctx.fill()
 		}
 	}

@@ -1,5 +1,12 @@
 # Changelog
 
+### Sep 17th 2026 v33.1
+#### ✏️ Tweaks
+- Made the chart taller
+- Changed how the chart is scaled
+#### 🧼 Fixes
+- Fixed ruined button styles from last update
+
 ### Sep 17th 2026 v33
 #### 🩷 Features
 - Site now keeps track of every stat change to allow for viewing how much you progressed a character over time
