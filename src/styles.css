@@ -99,7 +99,7 @@ button:disabled {
 	opacity: .5;
 }
 
-.btn-sort {
+/* .btn-sort {
 	background-color: var(--color-knight);
 	box-shadow: 0 0 10px var(--glow-knight);
 	color: #000;
@@ -107,7 +107,7 @@ button:disabled {
 
 .btn-sort:hover {
 	background-color: #66e0ff;
-}
+} */
 
 .btn-reset {
 	align-self: center;
@@ -121,16 +121,16 @@ button:disabled {
 	background-color: #a10003;
 }
 
-.btn-share {
+/* .btn-share {
 	background-color: #6c5671;
 	color: #000;
 }
 
 .btn-share:hover {
 	background-color: #b0a9e4;
-}
+} */
 
-.btn-settings {
+.btn-settings, .btn-share, .btn-sort, .btn-charts {
 	padding: 0;
 	background-color: transparent;
 	color: #ccc;
@@ -897,6 +897,32 @@ div:has(> .close-btn) {
 	}
 }
 
+.hover-btn-large {
+	justify-content: center;
+	justify-self: center;
+	transition: color .2s ease, transform .2s ease;
+
+	& > p {
+		position: absolute;
+		justify-self: center;
+		width: 50px;
+		margin: -5px;
+		transform: translateX(12px);
+		font-size: .5rem;
+		opacity: 0;
+		transition: opacity .2s ease;
+	}
+
+	&:hover {
+		transform: scale(1.75);
+		color: #fff;
+
+		& > p {
+			opacity: 1;
+		}
+	}
+}
+
 /* >> Scrollbar Styles << */
 html, .no-scroll-track {
 	overflow-y: auto;
@@ -987,4 +1013,84 @@ html, .no-scroll-track {
 	.point-container input {
 		flex: 1;
 	}
+}
+
+/* >> Progress Chart Styles << */
+/* .btn-charts {
+	background-color: #3d6b52;
+	color: #fff;
+}
+
+.btn-charts:hover {
+	background-color: #4f9270;
+} */
+
+.chart-btn {
+	/* display: inline-block; */
+	margin-left: 4px;
+	color: #fff1;
+	cursor: pointer;
+	transition: color .2s, transform .2s;
+	user-select: none;
+
+	& > span {
+		transform: translateY(4px);
+		font-size: 20px;
+	}
+}
+
+.chart-btn:hover {
+	transform: scale(1.1);
+	color: #fff !important;
+}
+
+.chart-canvas-wrapper {
+	position: relative;
+	width: 100%;
+	height: 320px;
+	margin-top: 10px;
+}
+
+#chart-canvas {
+	width: 100%;
+	height: 100%;
+}
+
+.chart-legend {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	margin-top: 14px;
+	gap: 10px 16px;
+}
+
+.chart-legend-item {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	color: #ccc;
+	font-size: .8em;
+	cursor: pointer;
+	user-select: none;
+}
+
+.chart-legend-item.chart-legend-off {
+	color: #555;
+	text-decoration: line-through;
+}
+
+.chart-legend-swatch {
+	display: inline-block;
+	width: 10px;
+	height: 10px;
+	border-radius: 2px;
+}
+
+/* Small non-obstructive "this looks like a regression" indicator */
+.regression-warning {
+	margin-left: 2px;
+	color: #e0b64a;
+	font-size: .9em;
+	cursor: help;
+	user-select: none;
 }

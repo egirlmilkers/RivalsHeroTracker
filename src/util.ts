@@ -1,3 +1,5 @@
+import { MaterialSymbol } from 'material-symbols'
+
 type Child = Node | string | number | null | undefined | false | Child[]
 type Props = Record<string, any>
 
@@ -89,4 +91,15 @@ export function h(tag: string, props: Props = {}, ...children: Child[]): Element
 	appendChildren(children)
 
 	return el
+}
+
+export function outlined(icon: MaterialSymbol): HTMLElement
+{
+	return h(
+		'span',
+		{
+			class: 'material-symbols-outlined'
+		},
+		icon
+	)
 }

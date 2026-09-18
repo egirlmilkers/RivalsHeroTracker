@@ -21,6 +21,7 @@
 		}
 	},
 	"dependencies": {
-		"marked": "^18.0.12"
+		"marked": "^18.0.12",
+		"material-symbols": "^0.47.3"
 	}
 }

@@ -14,6 +14,9 @@ declare global
 		offsetY?: number
 		scale?: number
 		imageName?: string
+		// Season a hero was added to the game (e.g. 9 or 9.5). Omit for heroes
+		// available since launch — they anchor to Season 0 instead.
+		releaseSeason?: number
 	}
 
 	interface HeroListItem extends Hero
@@ -56,13 +59,15 @@ declare global
 		footerText: string
 	}
 
-	interface HeroShareItemMeta {
+	interface HeroShareItemMeta
+	{
 		heroName: string
 		fileName: string
 		candidates: string[]
 	}
 
-	interface HeroShareItem {
+	interface HeroShareItem
+	{
 		hero: HeroListItem
 		score: number
 		levelInfo: HeroLevelInfo
@@ -71,9 +76,27 @@ declare global
 		badgeImg: HTMLImageElement | null
 	}
 
-	interface ChangelogEntry {
+	interface ChangelogEntry
+	{
 		date: string
 		version: string
 		rawContent: string[]
+	}
+
+	// >> Proficiency History / Charting <<
+	interface HistoryPoint
+	{
+		readonly ts: number // unix ms
+		readonly total: number // total proficiency score (see calculateTotalScore)
+	}
+
+	type HeroHistoryMap = Record<string, HistoryPoint[]>
+
+	// A point used for drawing (real logged point or a synthetic anchor)
+	interface ChartPoint
+	{
+		readonly ts: number
+		readonly total: number
+		readonly synthetic: boolean // true for the Season 0 / release-season anchor
 	}
 }

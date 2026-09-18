@@ -169,6 +169,9 @@ importers:
       marked:
         specifier: ^18.0.12
         version: 18.0.12
+      material-symbols:
+        specifier: ^0.47.3
+        version: 0.47.3
     devDependencies:
       typescript:
         specifier: ^7.0.2
@@ -498,6 +501,9 @@ packages:
     engines: {node: '>= 20'}
     hasBin: true
 
+  material-symbols@0.47.3:
+    resolution: {integrity: sha512-I5XSwmoNz6mrL4kawe/JqL2o8TQpo7uYEoBl6eBU3C+FNwv6T+/MwWBs//LH9T6T5dH9WkCrLV7b09QbpEYNrA==}
+
   nanoid@3.3.19:
     resolution: {integrity: sha512-Y2tUNy4ouw6tq5oDSKeQYGOyhkUBhNOcGV/02KC+6kd9eDGqdZd++mjMiIDilrBYvjEnCYvVtsuHCuP+okSfug==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
@@ -745,6 +751,8 @@ snapshots:
       lightningcss-win32-x64-msvc: 1.33.0
 
   marked@18.0.12: {}
+
+  material-symbols@0.47.3: {}
 
   nanoid@3.3.19: {}
 

@@ -1,6 +1,15 @@
+import 'material-symbols'
+
 import { checkChangelog, closeChangelogModal, showFullChangelog } from './changelog'
+import {
+	closeChartModal,
+	isRegression,
+	openAllHeroesChartModal,
+	openHeroChartModal,
+	recordPoint
+} from './history'
 import { closeShareModal, downloadShareImage, openShareModal } from './share'
-import { h, querySelector, querySelectorAll } from './util'
+import { h, outlined, querySelector, querySelectorAll } from './util'
 
 export const heroDefinitions: Hero[] = [
 	{
@@ -25,7 +34,8 @@ export const heroDefinitions: Hero[] = [
 		],
 		offsetX: 4,
 		offsetY: -11,
-		scale: 1.5
+		scale: 1.5,
+		releaseSeason: 4
 	},
 	{
 		name: 'Black Cat',
@@ -38,7 +48,8 @@ export const heroDefinitions: Hero[] = [
 		],
 		offsetX: 0,
 		offsetY: -8,
-		scale: 1.55
+		scale: 1.55,
+		releaseSeason: 7.5
 	},
 	{
 		name: 'Black Panther',
@@ -77,7 +88,8 @@ export const heroDefinitions: Hero[] = [
 		],
 		offsetX: -1,
 		offsetY: -9,
-		scale: 1.4
+		scale: 1.4,
+		releaseSeason: 3.5
 	},
 	{
 		name: 'Bruce Banner',
@@ -134,7 +146,8 @@ export const heroDefinitions: Hero[] = [
 		],
 		offsetX: 12,
 		offsetY: 3,
-		scale: 1.6
+		scale: 1.6,
+		releaseSeason: 8.5
 	},
 	{
 		name: 'Daredevil',
@@ -147,7 +160,8 @@ export const heroDefinitions: Hero[] = [
 		],
 		offsetX: 2,
 		offsetY: -11,
-		scale: 1.6
+		scale: 1.6,
+		releaseSeason: 4.5
 	},
 	{
 		name: 'Deadpool',
@@ -165,7 +179,8 @@ export const heroDefinitions: Hero[] = [
 		],
 		offsetX: -1,
 		offsetY: -5,
-		scale: 1.5
+		scale: 1.5,
+		releaseSeason: 6
 	},
 	{
 		name: 'Devil Dinosaur',
@@ -179,7 +194,8 @@ export const heroDefinitions: Hero[] = [
 		],
 		offsetX: -9,
 		offsetY: -11,
-		scale: 1.55
+		scale: 1.55,
+		releaseSeason: 8
 	},
 	{
 		name: 'Doctor Strange',
@@ -203,7 +219,8 @@ export const heroDefinitions: Hero[] = [
 		],
 		offsetX: 3,
 		offsetY: -10,
-		scale: 1.4
+		scale: 1.4,
+		releaseSeason: 6.5
 	},
 	{
 		name: 'Emma Frost',
@@ -215,7 +232,8 @@ export const heroDefinitions: Hero[] = [
 		],
 		offsetX: 5,
 		offsetY: -4,
-		scale: 1.4
+		scale: 1.4,
+		releaseSeason: 2
 	},
 	{
 		name: 'Gambit',
@@ -229,7 +247,8 @@ export const heroDefinitions: Hero[] = [
 		],
 		offsetX: 0,
 		offsetY: 4,
-		scale: 1.5
+		scale: 1.5,
+		releaseSeason: 5
 	},
 	{
 		name: 'Gorr The God Butcher',
@@ -240,7 +259,8 @@ export const heroDefinitions: Hero[] = [
 		],
 		offsetX: 0,
 		offsetY: -10,
-		scale: 1.6
+		scale: 1.6,
+		releaseSeason: 10
 	},
 	{
 		name: 'Groot',
@@ -292,7 +312,8 @@ export const heroDefinitions: Hero[] = [
 		],
 		offsetX: 1,
 		offsetY: -7,
-		scale: 1.4
+		scale: 1.4,
+		releaseSeason: 1.5
 	},
 	{
 		name: 'Invisible Woman',
@@ -308,7 +329,8 @@ export const heroDefinitions: Hero[] = [
 		],
 		offsetX: 0,
 		offsetY: -2,
-		scale: 1.05
+		scale: 1.05,
+		releaseSeason: 1
 	},
 	{
 		name: 'Iron Fist',
@@ -361,7 +383,8 @@ export const heroDefinitions: Hero[] = [
 		],
 		offsetX: 0,
 		offsetY: -10,
-		scale: 1.4
+		scale: 1.4,
+		releaseSeason: 9
 	},
 	{
 		name: 'Loki',
@@ -444,7 +467,8 @@ export const heroDefinitions: Hero[] = [
 		],
 		offsetX: 3,
 		offsetY: -10,
-		scale: 1.5
+		scale: 1.5,
+		releaseSeason: 1
 	},
 	{
 		name: 'Moon Knight',
@@ -500,7 +524,8 @@ export const heroDefinitions: Hero[] = [
 		],
 		offsetX: -2,
 		offsetY: -2,
-		scale: 1.6
+		scale: 1.6,
+		releaseSeason: 3
 	},
 	{
 		name: 'Psylocke',
@@ -540,7 +565,8 @@ export const heroDefinitions: Hero[] = [
 		],
 		offsetX: 7,
 		offsetY: -5,
-		scale: 1.4
+		scale: 1.4,
+		releaseSeason: 5.5
 	},
 	{
 		name: 'Scarlet Witch',
@@ -622,7 +648,8 @@ export const heroDefinitions: Hero[] = [
 		],
 		offsetX: 11,
 		offsetY: 0,
-		scale: 1.5
+		scale: 1.5,
+		releaseSeason: 9.5
 	},
 	{
 		name: 'The Punisher',
@@ -651,7 +678,8 @@ export const heroDefinitions: Hero[] = [
 		],
 		offsetX: 3,
 		offsetY: 1,
-		scale: 1.6
+		scale: 1.6,
+		releaseSeason: 1.5
 	},
 	{
 		name: 'Thor',
@@ -675,7 +703,8 @@ export const heroDefinitions: Hero[] = [
 		],
 		offsetX: 3,
 		offsetY: -6,
-		scale: 1.4
+		scale: 1.4,
+		releaseSeason: 2.5
 	},
 	{
 		name: 'Venom',
@@ -703,7 +732,8 @@ export const heroDefinitions: Hero[] = [
 		],
 		offsetX: -2,
 		offsetY: 0,
-		scale: 1.4
+		scale: 1.4,
+		releaseSeason: 7
 	},
 	{
 		name: 'Winter Soldier',
@@ -1311,7 +1341,12 @@ function renderList(): boolean | void
 						class: `pin-btn ${hero.pinned ? 'pinned' : ''} hover-btn`,
 						title: `Pin ${heroName}`,
 						onclick: () => togglePin(hero.name)
-					}, hero.pinned ? '★' : '☆')
+					}, hero.pinned ? '★' : '☆'),
+					h('span', {
+						class: 'chart-btn hover-btn',
+						title: `View ${heroName}'s progress chart`,
+						onclick: () => openHeroChartModal(hero.name)
+					}, outlined('chart_data'))
 				),
 				h(
 					'div',
@@ -1415,7 +1450,14 @@ function renderList(): boolean | void
 					'span',
 					{ class: 'point-suffix' },
 					levelInfo.level > currentConfig.endLvl ? '∞' : String(levelInfo.maxXp)
-				)
+				),
+				isRegression(hero.name, totalScore)
+					? h('span', {
+						class: 'regression-warning',
+						title: 'This is lower than your highest logged proficiency for '
+							+ heroName + ', so the progress chart might look a bit odd here.'
+					}, '⚠')
+					: null
 			)
 		)
 
@@ -1452,6 +1494,8 @@ function updateHero(name: string, field: string, value: number): void
 	heroData[index].rank = newData.rank
 	heroData[index].points = newData.points
 
+	recordPoint(name, calculateTotalScore(heroData[index]))
+
 	sortHeroes()
 	saveData()
 }
@@ -1472,8 +1516,8 @@ function sortHeroes(toggle = false): void
 	})
 
 	const btnSort = querySelector<HTMLButtonElement>('#btn-sort')
-	if (sorted) btnSort.textContent = 'Sort Alphabetically'
-	else btnSort.textContent = 'Sort by Proficiency'
+	if (sorted) btnSort.replaceChildren(outlined('sort_by_alpha'), h('p', {}, 'Sort by Name'))
+	else btnSort.replaceChildren(outlined('list_arrow'), h('p', {}, 'Sort by Proficiency'))
 	renderList()
 }
 
@@ -1613,8 +1657,11 @@ function initCallbacks(): void
 	querySelector<HTMLButtonElement>('#close-changelog-btn').onclick = closeChangelogModal
 	querySelector<HTMLButtonElement>('#btn-sort').onclick = () => sortHeroes(true)
 	querySelector<HTMLButtonElement>('#btn-share').onclick = openShareModal
+	querySelector<HTMLButtonElement>('#btn-charts').onclick = openAllHeroesChartModal
 	querySelector<HTMLButtonElement>('#btn-settings').onclick = openSettingsModal
 	querySelector<HTMLButtonElement>('#btn-filter-toggle').onclick = toggleFilters
+
+	querySelector<HTMLButtonElement>('#close-chart-btn').onclick = closeChartModal
 
 	querySelector<HTMLInputElement>('#searchInput').oninput = renderList
 	querySelector<HTMLInputElement>('input[value="Vanguard"]').onchange = renderList

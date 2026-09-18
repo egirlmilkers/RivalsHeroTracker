@@ -1,0 +1,317 @@
+import { calculateTotalScore, getLevelInfoFromTotal, heroData, heroDefinitions } from './script'
+import { querySelector } from './util'
+
+// ============================================================================
+// Proficiency History Tracking
+//
+// Every time a hero's level/points changes, we log { timestamp, total } to
+// localStorage. To avoid cluttering the chart with "oops, fat-fingered it"
+// corrections, edits made within 60s of the previous log for that hero
+// overwrite it instead of creating a new point.
+//
+// Charts plot "fractional level" (e.g. 23.4) over time so the Y axis reads
+// the same way the rest of the site does. Every hero's line starts from a
+// synthetic anchor point at Level 0 - either Season 0 (game launch) or, for
+// heroes added later, the season they released in - connected to their first
+// *real* logged point with a dashed line, since we don't actually know what
+// happened in between.
+// ============================================================================
+
+const HISTORY_KEY = 'rivalsProficiencyHistory'
+const EDIT_BUFFER_MS = 60_000 // 60s "oops" window
+
+// Season start dates (UTC)
+export const SEASON_DATES: Record<string, number> = {
+	'0': Date.UTC(2024, 11, 6), // Dec 6, 2024
+	'1': Date.UTC(2025, 0, 10), // Jan 10, 2025
+	'1.5': Date.UTC(2025, 1, 21), // Feb 21, 2025
+	'2': Date.UTC(2025, 3, 11), // Apr 11, 2025
+	'2.5': Date.UTC(2025, 4, 30), // May 30, 2025
+	'3': Date.UTC(2025, 6, 11), // July 11, 2025
+	'3.5': Date.UTC(2025, 7, 8), // Aug 8, 2025
+	'4': Date.UTC(2025, 8, 12), // Sep 12, 2025
+	'4.5': Date.UTC(2025, 9, 10), // Oct 10, 2025
+	'5': Date.UTC(2025, 10, 14), // Nov 14, 2025
+	'5.5': Date.UTC(2025, 11, 12), // Dec 12, 2025
+	'6': Date.UTC(2025, 0, 16), // Jan 16, 2026
+	'6.5': Date.UTC(2026, 1, 13), // Feb 13, 2026
+	'7': Date.UTC(2026, 2, 20), // Mar 20, 2026
+	'7.5': Date.UTC(2026, 3, 17), // Apr 17, 2026
+	'8': Date.UTC(2026, 4, 15), // May 15, 2026
+	'8.5': Date.UTC(2026, 5, 12), // June 12, 2026
+	'9': Date.UTC(2026, 6, 10), // Jul 10, 2026
+	'9.5': Date.UTC(2026, 7, 7), // Aug 7, 2026
+	'10': Date.UTC(2026, 8, 11) // Sep 11, 2026
+}
+
+const GAME_LAUNCH_TS = SEASON_DATES['0']
+
+function getSeasonTimestamp(season: number | undefined): number
+{
+	if (season === undefined) return GAME_LAUNCH_TS
+	const key = String(season)
+	return SEASON_DATES[key] ?? GAME_LAUNCH_TS
+}
+
+function loadHistory(): HeroHistoryMap
+{
+	try
+	{
+		const raw = localStorage.getItem(HISTORY_KEY)
+		return raw ? JSON.parse(raw) : {}
+	} catch (e)
+	{
+		return {}
+	}
+}
+
+function saveHistory(history: HeroHistoryMap): void
+{
+	localStorage.setItem(HISTORY_KEY, JSON.stringify(history))
+}
+
+/**
+ * Logs a new proficiency total for a hero, subject to the 60s edit buffer:
+ * if the previous log for this hero happened less than 60s ago, it's
+ * overwritten rather than appending a new point (accounts for mis-clicks).
+ * No-ops if the total hasn't actually changed.
+ */
+export function recordPoint(heroName: string, total: number, now: number = Date.now()): void
+{
+	const history = loadHistory()
+	const list = history[heroName] || []
+	const last = list[list.length - 1]
+
+	if (last && last.total === total) return // nothing changed, don't spam the log
+
+	if (last && now - last.ts <= EDIT_BUFFER_MS) list[list.length - 1] = { ts: now, total }
+	else list.push({ ts: now, total })
+
+	history[heroName] = list
+	saveHistory(history)
+}
+
+/** Real logged points for a hero, sorted oldest -> newest. */
+export function getHistory(heroName: string): HistoryPoint[]
+{
+	const list = loadHistory()[heroName] || []
+	return [...list].sort((a, b) => a.ts - b.ts)
+}
+
+/** Highest total ever logged for a hero (0 if none logged yet). */
+export function getMaxRecordedTotal(heroName: string): number
+{
+	const list = getHistory(heroName)
+	return list.reduce((max, p) => Math.max(max, p.total), 0)
+}
+
+/**
+ * True if `total` is below the highest point already on this hero's chart -
+ * i.e. this input would look like a regression. Used to drive the small
+ * warning icon next to the points input.
+ */
+export function isRegression(heroName: string, total: number): boolean
+{
+	return total < getMaxRecordedTotal(heroName)
+}
+
+/** Builds the full plotted series for a hero: synthetic anchor + real points. */
+function buildSeries(hero: Hero): ChartPoint[]
+{
+	const anchor: ChartPoint = {
+		ts: getSeasonTimestamp(hero.releaseSeason),
+		total: 0,
+		synthetic: true
+	}
+	const real = getHistory(hero.name).map(p => ({ ...p, synthetic: false }))
+	return [anchor, ...real]
+}
+
+function fractionalLevel(total: number): number
+{
+	if (total <= 0) return 0
+	const info = getLevelInfoFromTotal(total)
+	const pct = info.maxXp > 0 ? info.xp / info.maxXp : 0
+	return info.level + pct
+}
+
+// ============================================================================
+// Chart rendering (plain canvas, no external deps to match the rest of the site)
+// ============================================================================
+
+const CHART_PADDING = { top: 20, right: 20, bottom: 30, left: 40 }
+
+function drawChart(
+	canvas: HTMLCanvasElement,
+	seriesList: { name: string; color: string; points: ChartPoint[] }[]
+): void
+{
+	const dpr = window.devicePixelRatio || 1
+	const rect = canvas.getBoundingClientRect()
+	canvas.width = rect.width * dpr
+	canvas.height = rect.height * dpr
+	const ctx = canvas.getContext('2d')
+	if (!ctx) return
+	ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+
+	const w = rect.width
+	const h = rect.height
+	ctx.clearRect(0, 0, w, h)
+
+	const plotW = w - CHART_PADDING.left - CHART_PADDING.right
+	const plotH = h - CHART_PADDING.top - CHART_PADDING.bottom
+
+	const visibleSeries = seriesList.filter(s => s.points.length > 0)
+	if (visibleSeries.length === 0)
+	{
+		ctx.fillStyle = '#666'
+		ctx.font = '14px inherit'
+		ctx.textAlign = 'center'
+		ctx.fillText('No data logged yet for this selection.', w / 2, h / 2)
+		return
+	}
+
+	const allPoints = visibleSeries.flatMap(s => s.points)
+	const minTs = Math.min(...allPoints.map(p => p.ts))
+	const maxTs = Math.max(Date.now(), ...allPoints.map(p => p.ts))
+	const maxLevel = Math.max(70, ...allPoints.map(p => fractionalLevel(p.total)))
+
+	const x = (ts: number) =>
+		CHART_PADDING.left + (maxTs === minTs ? 0 : ((ts - minTs) / (maxTs - minTs)) * plotW)
+	const y = (level: number) => CHART_PADDING.top + plotH - (level / maxLevel) * plotH
+
+	// Gridlines + Y axis labels (every ~10 levels)
+	ctx.strokeStyle = 'rgba(255,255,255,0.08)'
+	ctx.fillStyle = '#666'
+	ctx.font = '11px inherit'
+	ctx.textAlign = 'right'
+	ctx.textBaseline = 'middle'
+	const step = maxLevel > 40 ? 10 : 5
+	for (let lvl = 0; lvl <= maxLevel; lvl += step)
+	{
+		const yy = y(lvl)
+		ctx.beginPath()
+		ctx.moveTo(CHART_PADDING.left, yy)
+		ctx.lineTo(w - CHART_PADDING.right, yy)
+		ctx.stroke()
+		ctx.fillText(String(Math.round(lvl)), CHART_PADDING.left - 8, yy)
+	}
+
+	// X axis labels (start / end dates)
+	ctx.textAlign = 'left'
+	ctx.textBaseline = 'top'
+	ctx.fillText(formatDate(minTs), CHART_PADDING.left, h - CHART_PADDING.bottom + 8)
+	ctx.textAlign = 'right'
+	ctx.fillText(formatDate(maxTs), w - CHART_PADDING.right, h - CHART_PADDING.bottom + 8)
+
+	// Draw each series
+	for (const series of visibleSeries)
+	{
+		const pts = series.points
+		ctx.strokeStyle = series.color
+		ctx.fillStyle = series.color
+		ctx.lineWidth = 2
+
+		for (let i = 1; i < pts.length; i++)
+		{
+			const prev = pts[i - 1]
+			const cur = pts[i]
+			ctx.beginPath()
+			ctx.setLineDash(prev.synthetic ? [6, 5] : [])
+			ctx.moveTo(x(prev.ts), y(fractionalLevel(prev.total)))
+			ctx.lineTo(x(cur.ts), y(fractionalLevel(cur.total)))
+			ctx.stroke()
+		}
+		ctx.setLineDash([])
+
+		// dots on real points only
+		for (const p of pts)
+		{
+			if (p.synthetic) continue
+			ctx.beginPath()
+			ctx.arc(x(p.ts), y(fractionalLevel(p.total)), 3, 0, Math.PI * 2)
+			ctx.fill()
+		}
+	}
+}
+
+function formatDate(ts: number): string
+{
+	return new Date(ts).toLocaleDateString(undefined, {
+		month: 'short',
+		day: 'numeric',
+		year: '2-digit'
+	})
+}
+
+// ============================================================================
+// Modal wiring
+// ============================================================================
+
+let hiddenLegendHeroes = new Set<string>()
+
+function renderLegend(heroes: Hero[]): void
+{
+	const legend = querySelector<HTMLDivElement>('#chart-legend')
+	legend.innerHTML = ''
+	legend.style.display = heroes.length > 1 ? 'flex' : 'none'
+
+	heroes.forEach(hero =>
+	{
+		const item = document.createElement('span')
+		item.className = 'chart-legend-item'
+			+ (hiddenLegendHeroes.has(hero.name) ? ' chart-legend-off' : '')
+		item.innerHTML =
+			`<span class="chart-legend-swatch" style="background:${hero.color}"></span>${hero.name}`
+		item.onclick = () =>
+		{
+			if (hiddenLegendHeroes.has(hero.name)) hiddenLegendHeroes.delete(hero.name)
+			else hiddenLegendHeroes.add(hero.name)
+			renderChartModal(heroes)
+		}
+		legend.appendChild(item)
+	})
+}
+
+function renderChartModal(heroes: Hero[]): void
+{
+	const canvas = querySelector<HTMLCanvasElement>('#chart-canvas')
+	const series = heroes
+		.filter(hero => !hiddenLegendHeroes.has(hero.name))
+		.map(hero => ({ name: hero.name, color: hero.color, points: buildSeries(hero) }))
+	drawChart(canvas, series)
+	renderLegend(heroes)
+}
+
+/** Opens the chart modal scoped to a single hero. */
+export function openHeroChartModal(heroName: string): void
+{
+	const hero = heroDefinitions.find(h => h.name === heroName)
+	if (!hero) return
+
+	hiddenLegendHeroes = new Set()
+	querySelector<HTMLHeadingElement>('#chart-modal-title').innerText = `${heroName} Progress`
+	querySelector<HTMLDivElement>('#chart-modal').style.display = 'flex'
+	renderChartModal([hero])
+}
+
+/** Opens the chart modal with every hero that has any logged progress. */
+export function openAllHeroesChartModal(): void
+{
+	hiddenLegendHeroes = new Set()
+	const touched = heroDefinitions.filter(hero =>
+		hero.name === heroData.find(h => h.name === hero.name)?.name
+		&& (getHistory(hero.name).length > 0 || calculateTotalScore(
+					heroData.find(h => h.name === hero.name)!
+				) > 0)
+	)
+
+	querySelector<HTMLHeadingElement>('#chart-modal-title').innerText = 'All Heroes Progress'
+	querySelector<HTMLDivElement>('#chart-modal').style.display = 'flex'
+	renderChartModal(touched.length > 0 ? touched : heroDefinitions)
+}
+
+export function closeChartModal(): void
+{
+	querySelector<HTMLDivElement>('#chart-modal').style.display = 'none'
+}
