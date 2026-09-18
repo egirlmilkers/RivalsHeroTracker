@@ -53,6 +53,20 @@ function getSeasonTimestamp(season: number | undefined): number
 	return SEASON_DATES[key] ?? GAME_LAUNCH_TS
 }
 
+/**
+ * The timestamp marking the END of `season` - i.e. the start of the next season,
+ * or "now" if `season` is the most recent one we know about. Used for the X-axis
+ * MAX bound so picking "through Season N" doesn't clip data logged partway through
+ * a season that's still ongoing (the season's own *start* date would be in the past).
+ */
+function getSeasonEndTimestamp(season: number): number
+{
+	const seasonKeys = Object.keys(SEASON_DATES).map(Number).sort((a, b) => a - b)
+	const idx = seasonKeys.indexOf(season)
+	if (idx === -1 || idx === seasonKeys.length - 1) return Date.now()
+	return SEASON_DATES[String(seasonKeys[idx + 1])]
+}
+
 function loadHistory(): HeroHistoryMap
 {
 	try
@@ -167,15 +181,41 @@ function buildSeries(hero: Hero): ChartPoint[]
 	return [anchor, ...real]
 }
 
+/** Highest season number we have a start date for (drives the X-axis slider's max). */
+export const MAX_SEASON = Math.max(...Object.keys(SEASON_DATES).map(Number))
+
+/** Maps a level (0-70) to the total XP required to reach it - same checkpoints as the gridlines. */
+function levelToTotal(lvl: number): number
+{
+	if (lvl <= 0) return 0
+	if (lvl <= 10) return pointBaselines.Captain
+	if (lvl <= 20) return pointBaselines.Lord
+	if (lvl <= 30) return pointBaselines.Colonel
+	if (lvl <= 40) return pointBaselines.Elite
+	if (lvl <= 50) return pointBaselines.Champion
+	if (lvl <= 60) return pointBaselines.Champion + 31000 // 10 levels * 3100 XP
+	return pointBaselines.MAX
+}
+
 // ============================================================================
 // Chart rendering (plain canvas, no external deps to match the rest of the site)
 // ============================================================================
 
 const CHART_PADDING = { top: 20, right: 20, bottom: 30, left: 40 }
 
+/** Manual axis bounds set via the chart settings panel. Undefined fields auto-fit as before. */
+export interface ChartAxisRange
+{
+	xMinSeason?: number
+	xMaxSeason?: number
+	yMinLevel?: number
+	yMaxLevel?: number
+}
+
 function drawChart(
 	canvas: HTMLCanvasElement,
-	seriesList: { name: string; color: string; points: ChartPoint[] }[]
+	seriesList: { name: string; color: string; points: ChartPoint[] }[],
+	axisRange: ChartAxisRange = {}
 ): void
 {
 	const dpr = window.devicePixelRatio || 1
@@ -205,14 +245,23 @@ function drawChart(
 
 	const allPoints = visibleSeries.flatMap(s => s.points)
 	// const minTs = Math.min(...allPoints.map(p => p.ts))
-	const minTs = GAME_LAUNCH_TS
-	const maxTs = Math.max(Date.now(), ...allPoints.map(p => p.ts))
+	const minTs = axisRange.xMinSeason !== undefined
+		? getSeasonTimestamp(axisRange.xMinSeason)
+		: GAME_LAUNCH_TS
+	const maxTs = axisRange.xMaxSeason !== undefined
+		? getSeasonEndTimestamp(axisRange.xMaxSeason)
+		: Math.max(Date.now(), ...allPoints.map(p => p.ts))
 	// Find the true max XP (defaults to Level 70 MAX)
-	const maxTotal = Math.max(pointBaselines.MAX, ...allPoints.map(p => p.total))
+	const minTotal = axisRange.yMinLevel !== undefined ? levelToTotal(axisRange.yMinLevel) : 0
+	const maxTotal = axisRange.yMaxLevel !== undefined
+		? levelToTotal(axisRange.yMaxLevel)
+		: Math.max(pointBaselines.MAX, ...allPoints.map(p => p.total))
 
 	const x = (ts: number) =>
 		CHART_PADDING.left + (maxTs === minTs ? 0 : ((ts - minTs) / (maxTs - minTs)) * plotW)
-	const y = (total: number) => CHART_PADDING.top + plotH - (total / maxTotal) * plotH
+	const y = (total: number) =>
+		CHART_PADDING.top + plotH
+		- (maxTotal === minTotal ? 0 : ((total - minTotal) / (maxTotal - minTotal)) * plotH)
 
 	// Gridlines + Y axis labels (Mapped specifically to the XP required for every 10 levels)
 	ctx.strokeStyle = 'rgba(255,255,255,0.08)'
@@ -224,14 +273,8 @@ function drawChart(
 	const step = 10
 	for (let lvl = 0; lvl <= 70; lvl += step)
 	{
-		let totalForLevel = 0
-		if (lvl === 10) totalForLevel = pointBaselines.Captain
-		else if (lvl === 20) totalForLevel = pointBaselines.Lord
-		else if (lvl === 30) totalForLevel = pointBaselines.Colonel
-		else if (lvl === 40) totalForLevel = pointBaselines.Elite
-		else if (lvl === 50) totalForLevel = pointBaselines.Champion
-		else if (lvl === 60) totalForLevel = pointBaselines.Champion + 31000 // 10 levels * 3100 XP
-		else if (lvl === 70) totalForLevel = pointBaselines.MAX
+		const totalForLevel = levelToTotal(lvl)
+		if (totalForLevel < minTotal || totalForLevel > maxTotal) continue
 
 		const yy = y(totalForLevel)
 		ctx.beginPath()
@@ -247,7 +290,7 @@ function drawChart(
 
 	for (const [season, ts] of Object.entries(SEASON_DATES))
 	{
-		if (ts > maxTs) continue
+		if (ts > maxTs || ts < minTs) continue
 
 		const xx = x(ts)
 
@@ -270,7 +313,12 @@ function drawChart(
 	ctx.textAlign = 'right'
 	ctx.fillText(formatDate(maxTs), w - CHART_PADDING.right, h - CHART_PADDING.bottom + 20)
 
-	// Draw each series
+	// Draw each series, clipped to the plot area (matters once axis bounds are narrowed manually)
+	ctx.save()
+	ctx.beginPath()
+	ctx.rect(CHART_PADDING.left, CHART_PADDING.top, plotW, plotH)
+	ctx.clip()
+
 	for (const series of visibleSeries)
 	{
 		const pts = series.points
@@ -301,6 +349,8 @@ function drawChart(
 			ctx.fill()
 		}
 	}
+
+	ctx.restore()
 }
 
 function formatDate(ts: number): string
@@ -316,7 +366,32 @@ function formatDate(ts: number): string
 // Modal wiring
 // ============================================================================
 
+// Hidden legend heroes for the "All Heroes" (global) chart persist across sessions.
+// Per-hero charts only ever show one series (the legend's hidden anyway), so their
+// hidden set is always fresh and never touches storage.
+const GLOBAL_HIDDEN_HEROES_KEY = 'rivalsChartGlobalHiddenHeroes'
+
+function loadGlobalHiddenHeroes(): Set<string>
+{
+	try
+	{
+		const raw = localStorage.getItem(GLOBAL_HIDDEN_HEROES_KEY)
+		return new Set(raw ? JSON.parse(raw) : [])
+	} catch (e)
+	{
+		return new Set()
+	}
+}
+
+function saveGlobalHiddenHeroes(hidden: Set<string>): void
+{
+	localStorage.setItem(GLOBAL_HIDDEN_HEROES_KEY, JSON.stringify([...hidden]))
+}
+
 let hiddenLegendHeroes = new Set<string>()
+let isGlobalChart = false
+let currentChartHeroes: Hero[] = []
+let currentAxisRange: ChartAxisRange = {}
 
 function renderLegend(heroes: Hero[]): void
 {
@@ -335,6 +410,7 @@ function renderLegend(heroes: Hero[]): void
 		{
 			if (hiddenLegendHeroes.has(hero.name)) hiddenLegendHeroes.delete(hero.name)
 			else hiddenLegendHeroes.add(hero.name)
+			if (isGlobalChart) saveGlobalHiddenHeroes(hiddenLegendHeroes)
 			renderChartModal(heroes)
 		}
 		legend.appendChild(item)
@@ -343,12 +419,176 @@ function renderLegend(heroes: Hero[]): void
 
 function renderChartModal(heroes: Hero[]): void
 {
+	currentChartHeroes = heroes
 	const canvas = querySelector<HTMLCanvasElement>('#chart-canvas')
 	const series = heroes
 		.filter(hero => !hiddenLegendHeroes.has(hero.name))
 		.map(hero => ({ name: hero.name, color: hero.color, points: buildSeries(hero) }))
-	drawChart(canvas, series)
+	drawChart(canvas, series, currentAxisRange)
 	renderLegend(heroes)
+}
+
+/** Resets the axis-settings panel's sliders/labels back to "auto-fit" and hides the panel. */
+function resetAxisSettingsUI(): void
+{
+	currentAxisRange = {}
+	querySelector<HTMLDivElement>('#chart-axis-settings').style.display = 'none'
+
+	const xMin = querySelector<HTMLInputElement>('#chart-x-min')
+	const xMax = querySelector<HTMLInputElement>('#chart-x-max')
+	const yMin = querySelector<HTMLInputElement>('#chart-y-min')
+	const yMax = querySelector<HTMLInputElement>('#chart-y-max')
+
+	xMin.value = '0'
+	xMax.value = String(MAX_SEASON)
+	yMin.value = '0'
+	yMax.value = '70'
+	updateAxisLabels()
+}
+
+function updateDualRangeFill(
+	minInput: HTMLInputElement,
+	maxInput: HTMLInputElement,
+	fill: HTMLDivElement
+): void
+{
+	const lo = +minInput.min
+	const hi = +minInput.max
+	const span = hi - lo || 1
+	const loPct = ((+minInput.value - lo) / span) * 100
+	const hiPct = ((+maxInput.value - lo) / span) * 100
+	fill.style.left = `${loPct}%`
+	fill.style.right = `${100 - hiPct}%`
+}
+
+function updateAxisLabels(): void
+{
+	const xMin = querySelector<HTMLInputElement>('#chart-x-min')
+	const xMax = querySelector<HTMLInputElement>('#chart-x-max')
+	const yMin = querySelector<HTMLInputElement>('#chart-y-min')
+	const yMax = querySelector<HTMLInputElement>('#chart-y-max')
+
+	querySelector<HTMLSpanElement>('#chart-x-min-val').innerText = `S${xMin.value}`
+	querySelector<HTMLSpanElement>('#chart-x-max-val').innerText = `S${xMax.value}`
+	querySelector<HTMLSpanElement>('#chart-y-min-val').innerText = yMin.value
+	querySelector<HTMLSpanElement>('#chart-y-max-val').innerText = yMax.value
+
+	updateDualRangeFill(xMin, xMax, querySelector<HTMLDivElement>('#chart-x-fill'))
+	updateDualRangeFill(yMin, yMax, querySelector<HTMLDivElement>('#chart-y-fill'))
+}
+
+/** Largest season number whose start date is at or before `ts` (0 if `ts` predates launch). */
+function seasonFloor(ts: number): number
+{
+	let best = 0
+	for (const [season, seasonTs] of Object.entries(SEASON_DATES))
+		if (seasonTs <= ts)
+			best = Math.max(best, Number(season))
+	return best
+}
+
+/** Smallest 10-level checkpoint whose XP requirement is at or above `total`. */
+function levelCeilForTotal(total: number): number
+{
+	for (let lvl = 0; lvl <= 70; lvl += 10) if (levelToTotal(lvl) >= total) return lvl
+	return 70
+}
+
+/**
+ * Zooms the axis sliders to the real (non-synthetic, non-dashed) data actually on
+ * screen: X starts a little before the earliest logged point, Y tops out a little
+ * above the highest logged total. Leaves the other two edges on auto-fit. No-ops
+ * if nothing's logged yet for the current selection.
+ */
+function fitAxisToData(): void
+{
+	const visibleHeroes = currentChartHeroes.filter(h => !hiddenLegendHeroes.has(h.name))
+	const realPoints = visibleHeroes.flatMap(h => getHistory(h.name))
+	if (realPoints.length === 0) return
+
+	const firstTs = Math.min(...realPoints.map(p => p.ts))
+	const maxTotal = Math.max(...realPoints.map(p => p.total))
+
+	const xMinSeason = Math.max(0, seasonFloor(firstTs))
+	const yMaxLevel = Math.min(70, levelCeilForTotal(maxTotal) + 10)
+
+	const xMinInput = querySelector<HTMLInputElement>('#chart-x-min')
+	const xMaxInput = querySelector<HTMLInputElement>('#chart-x-max')
+	const yMinInput = querySelector<HTMLInputElement>('#chart-y-min')
+	const yMaxInput = querySelector<HTMLInputElement>('#chart-y-max')
+
+	xMinInput.value = String(xMinSeason)
+	yMaxInput.value = String(yMaxLevel)
+	updateAxisLabels()
+
+	// querySelector<HTMLDivElement>('#chart-axis-settings').style.display = 'block'
+
+	currentAxisRange = {
+		xMinSeason: +xMinInput.value,
+		xMaxSeason: +xMaxInput.value,
+		yMinLevel: +yMinInput.value,
+		yMaxLevel: +yMaxInput.value
+	}
+	renderChartModal(currentChartHeroes)
+}
+
+/** Wires up the gear icon, the two dual sliders, and the Apply/Reset buttons. Call once on page load. */
+export function wireChartAxisSettings(): void
+{
+	const xMin = querySelector<HTMLInputElement>('#chart-x-min')
+	const xMax = querySelector<HTMLInputElement>('#chart-x-max')
+	const yMin = querySelector<HTMLInputElement>('#chart-y-min')
+	const yMax = querySelector<HTMLInputElement>('#chart-y-max')
+
+	xMin.max = xMax.max = String(MAX_SEASON)
+
+	xMin.oninput = () =>
+	{
+		if (+xMin.value > +xMax.value) xMax.value = xMin.value
+		updateAxisLabels()
+	}
+	xMax.oninput = () =>
+	{
+		if (+xMax.value < +xMin.value) xMin.value = xMax.value
+		updateAxisLabels()
+	}
+	yMin.oninput = () =>
+	{
+		if (+yMin.value > +yMax.value) yMax.value = yMin.value
+		updateAxisLabels()
+	}
+	yMax.oninput = () =>
+	{
+		if (+yMax.value < +yMin.value) yMin.value = yMax.value
+		updateAxisLabels()
+	}
+
+	querySelector<HTMLButtonElement>('#chart-settings-btn').onclick = () =>
+	{
+		const panel = querySelector<HTMLDivElement>('#chart-axis-settings')
+		panel.style.display = panel.style.display === 'none' ? 'block' : 'none'
+	}
+
+	querySelector<HTMLButtonElement>('#chart-fit-data-btn').onclick = fitAxisToData
+
+	querySelector<HTMLButtonElement>('#chart-axis-apply-btn').onclick = () =>
+	{
+		currentAxisRange = {
+			xMinSeason: +xMin.value,
+			xMaxSeason: +xMax.value,
+			yMinLevel: +yMin.value,
+			yMaxLevel: +yMax.value
+		}
+		renderChartModal(currentChartHeroes)
+	}
+
+	querySelector<HTMLButtonElement>('#chart-axis-reset-btn').onclick = () =>
+	{
+		resetAxisSettingsUI()
+		renderChartModal(currentChartHeroes)
+	}
+
+	updateAxisLabels()
 }
 
 /** Opens the chart modal scoped to a single hero. */
@@ -357,8 +597,10 @@ export function openHeroChartModal(heroName: string): void
 	const hero = heroDefinitions.find(h => h.name === heroName)
 	if (!hero) return
 
+	isGlobalChart = false
 	hiddenLegendHeroes = new Set()
-	querySelector<HTMLHeadingElement>('#chart-modal-title').innerText = `${heroName} Progress`
+	resetAxisSettingsUI()
+	querySelector<HTMLSpanElement>('#chart-modal-title').innerText = `${heroName} Progress`
 	querySelector<HTMLDivElement>('#chart-modal').style.display = 'flex'
 	renderChartModal([hero])
 }
@@ -366,7 +608,9 @@ export function openHeroChartModal(heroName: string): void
 /** Opens the chart modal with every hero that has any logged progress. */
 export function openAllHeroesChartModal(): void
 {
-	hiddenLegendHeroes = new Set()
+	isGlobalChart = true
+	hiddenLegendHeroes = loadGlobalHiddenHeroes()
+	resetAxisSettingsUI()
 	const touched = heroDefinitions.filter(hero =>
 	{
 		const item = heroData.find(h => h.name === hero.name)
@@ -374,7 +618,7 @@ export function openAllHeroesChartModal(): void
 		return getHistory(hero.name).length > 0 || calculateTotalScore(item) > 0
 	})
 
-	querySelector<HTMLHeadingElement>('#chart-modal-title').innerText = 'All Heroes Progress'
+	querySelector<HTMLSpanElement>('#chart-modal-title').innerText = 'All Heroes Progress'
 	querySelector<HTMLDivElement>('#chart-modal').style.display = 'flex'
 	renderChartModal(touched.length > 0 ? touched : heroDefinitions)
 }

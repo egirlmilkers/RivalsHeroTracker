@@ -15,7 +15,8 @@ import {
 	openHeroChartModal,
 	recordPoint,
 	restoreHistorySnapshot,
-	seedCurrentDataAsHistory
+	seedCurrentDataAsHistory,
+	wireChartAxisSettings
 } from './history'
 import { closeShareModal, downloadShareImage, openShareModal } from './share'
 import { h, outlined, querySelector, querySelectorAll } from './util'
@@ -1735,6 +1736,7 @@ function initCallbacks(): void
 	querySelector<HTMLButtonElement>('#btn-filter-toggle').onclick = toggleFilters
 
 	querySelector<HTMLButtonElement>('#close-chart-btn').onclick = closeChartModal
+	wireChartAxisSettings()
 
 	querySelector<HTMLInputElement>('#searchInput').oninput = renderList
 	querySelector<HTMLInputElement>('input[value="Vanguard"]').onchange = renderList

@@ -102,12 +102,12 @@
 				<div class='save-option'>
 					<h3 id='modal-opt1-title' style='color: var(--color-knight)'></h3>
 					<div id='modal-opt1-heroes' class='top-heroes-list'></div>
-					<button id='modal-opt1-btn' class='btn-sort'></button>
+					<button id='modal-opt1-btn' class='btn-backup'></button>
 				</div>
 				<div class='save-option'>
 					<h3 id='modal-opt2-title' style='color: var(--color-elite)'></h3>
 					<div id='modal-opt2-heroes' class='top-heroes-list'></div>
-					<button id='modal-opt2-btn' class='btn-sort' style='background-color: var(--color-elite)'></button>
+					<button id='modal-opt2-btn' class='btn-backup' style='background-color: var(--color-elite)'></button>
 				</div>
 			</div>
 
@@ -130,7 +130,7 @@
 			</div>
 
 			<div class='share-modal-actions'>
-				<button id='share-download-btn' class='btn-sort'>
+				<button id='share-download-btn' class='btn-backup'>
 					Download Image
 				</button>
 				<button id='close-share-btn' class='btn-reset'>
@@ -143,10 +143,51 @@
 	<div id='chart-modal' class='modal-overlay' style='display: none'>
 		<div class='modal-content' style='max-width: 800px'>
 			<div><button id='close-chart-btn' class='close-btn hover-btn'>&times;</button></div>
-			<h2 id='chart-modal-title'>Progress</h2>
+			<h2 class='chart-modal-title-row'>
+				<span id='chart-modal-title'>Progress</span>
+				<button id='chart-fit-data-btn' class='chart-settings-btn hover-btn' title='Fit axes to data'>
+					<span class='material-symbols-outlined'>fit_screen</span>
+				</button>
+				<button id='chart-settings-btn' class='chart-settings-btn hover-btn' title='Axis settings'>
+					<span class='material-symbols-outlined'>settings</span>
+				</button>
+			</h2>
 			<p style='color: #aaa; margin-bottom: 10px; font-size: .85em'>
-				Dashed segments are estimated. They connect a character's release to the first point actually logged on this site.
+				Dashed segments are estimated. They connect a character's release to the first point actually logged on
+				this site.
 			</p>
+
+			<div id='chart-axis-settings' class='chart-axis-settings' style='display: none'>
+				<div class='chart-axis-row'>
+					<div class='chart-axis-row-header'>
+						<span>X Axis (Season Range)</span>
+						<span><span id='chart-x-min-val'>S0</span> – <span id='chart-x-max-val'>S10</span></span>
+					</div>
+					<div class='chart-dual-range'>
+						<div class='chart-dual-range-track'></div>
+						<div id='chart-x-fill' class='chart-dual-range-fill'></div>
+						<input type='range' id='chart-x-min' min='0' max='10' step='0.5' value='0' />
+						<input type='range' id='chart-x-max' min='0' max='10' step='0.5' value='10' />
+					</div>
+				</div>
+				<div class='chart-axis-row'>
+					<div class='chart-axis-row-header'>
+						<span>Y Axis (Level Range)</span>
+						<span><span id='chart-y-min-val'>0</span> – <span id='chart-y-max-val'>70</span></span>
+					</div>
+					<div class='chart-dual-range'>
+						<div class='chart-dual-range-track'></div>
+						<div id='chart-y-fill' class='chart-dual-range-fill'></div>
+						<input type='range' id='chart-y-min' min='0' max='70' step='10' value='0' />
+						<input type='range' id='chart-y-max' min='0' max='70' step='10' value='70' />
+					</div>
+				</div>
+				<div class='chart-axis-actions'>
+					<button id='chart-axis-reset-btn' class='btn-reset'>Reset</button>
+					<button id='chart-axis-apply-btn' class='btn-backup'>Apply</button>
+				</div>
+			</div>
+
 			<div class='chart-canvas-wrapper'>
 				<canvas id='chart-canvas'></canvas>
 			</div>

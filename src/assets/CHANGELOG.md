@@ -1,5 +1,14 @@
 # Changelog
 
+### Sep 17th 2026 v34
+#### 🩷 Features
+- Added settings for the chart to limits the area it renders
+- Added a button to automatically set those settings to fit the data
+#### ✏️ Tweaks
+- Characters you disable from the "global" chart now persist
+#### 🧼 Fixes
+- Fixed some OTHER buttons ruined with update 33
+
 ### Sep 17th 2026 v33.1
 #### ✏️ Tweaks
 - Made the chart taller
