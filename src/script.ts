@@ -1,12 +1,21 @@
 import 'material-symbols'
 
-import { checkChangelog, closeChangelogModal, showFullChangelog } from './changelog'
 import {
+	checkChangelog,
+	closeChangelogModal,
+	currentSiteVersion,
+	showFullChangelog
+} from './changelog'
+import {
+	backfillHistoryIfNeeded,
 	closeChartModal,
+	getHistorySnapshot,
 	isRegression,
 	openAllHeroesChartModal,
 	openHeroChartModal,
-	recordPoint
+	recordPoint,
+	restoreHistorySnapshot,
+	seedCurrentDataAsHistory
 } from './history'
 import { closeShareModal, downloadShareImage, openShareModal } from './share'
 import { h, outlined, querySelector, querySelectorAll } from './util'
@@ -812,7 +821,8 @@ export let heroData: HeroListItem[] = []
 const defaultSettings: Record<string, boolean> = {
 	autoSort: false, // Always sort by highest proficiency on load/change
 	hulkIcon: false, // Show Hulk icon instead of Bruce Banner
-	ladyLoki: false // Show Lady Loki over Loki
+	ladyLoki: false, // Show Lady Loki over Loki
+	trackData: false // Log proficiency history for the progress charts
 }
 export let settings: Record<string, boolean> = { ...defaultSettings }
 let sorted: boolean = settings.autoSort
@@ -820,16 +830,29 @@ let sorted: boolean = settings.autoSort
 function loadSettings(): void
 {
 	const saved = localStorage.getItem('marvelRivalsSettings')
+	let parsedSaved: Record<string, boolean> | null = null
 	if (saved)
 	{
 		try
 		{
-			settings = { ...defaultSettings, ...JSON.parse(saved) }
+			parsedSaved = JSON.parse(saved)
 		} catch (e)
 		{
-			settings = { ...defaultSettings }
+			parsedSaved = null
 		}
 	}
+
+	// Someone who already had save data sitting in this browser before this
+	// feature existed gets tracking on by default. A genuinely new visitor
+	// gets it off by default, so they can fill in their current stats first
+	// and opt in once they're ready. Once trackData has been explicitly
+	// saved either way, that choice always wins on future loads.
+	const hasExistingHeroData = !!(
+		localStorage.getItem('marvelRivalsData') || localStorage.getItem('marvelRivalsDataV3')
+	)
+	const resolvedDefaults = { ...defaultSettings, trackData: hasExistingHeroData }
+
+	settings = parsedSaved ? { ...resolvedDefaults, ...parsedSaved } : { ...resolvedDefaults }
 	sorted = settings.autoSort
 }
 
@@ -843,6 +866,7 @@ function openSettingsModal(): void
 	querySelector<HTMLInputElement>('#setting-autoSort').checked = settings.autoSort
 	querySelector<HTMLInputElement>('#setting-hulkIcon').checked = settings.hulkIcon
 	querySelector<HTMLInputElement>('#setting-ladyLoki').checked = settings.ladyLoki
+	querySelector<HTMLInputElement>('#setting-trackData').checked = settings.trackData
 	querySelector<HTMLDivElement>('#settings-modal').style.display = 'flex'
 }
 
@@ -855,6 +879,11 @@ function updateSetting(key: string, value: boolean): void
 {
 	settings[key] = value
 	saveSettings()
+
+	// Flipping tracking on gives the chart a real starting line right away,
+	// logging every hero (even untouched ones) instead of leaving a long
+	// dashed guess up to whenever they next happen to edit something.
+	if (key === 'trackData' && value === true) seedCurrentDataAsHistory()
 
 	if (key === 'autoSort')
 	{
@@ -951,6 +980,7 @@ function processLoadedData(savedData: string | null): void
 		}))
 	}
 	sortHeroes()
+	if (settings.trackData) backfillHistoryIfNeeded()
 }
 
 function getTopHeroesHTML(dataStr: string): string
@@ -991,8 +1021,7 @@ function getTopHeroesHTML(dataStr: string): string
 		return html
 	} catch (e)
 	{
-		return String
-			.raw`<div style='text-align:center; color:red; margin-top:20px;'>Data Error</div>`
+		return `<div style='text-align:center; color:red; margin-top:20px;'>Data Error</div>`
 	}
 }
 
@@ -1342,11 +1371,13 @@ function renderList(): boolean | void
 						title: `Pin ${heroName}`,
 						onclick: () => togglePin(hero.name)
 					}, hero.pinned ? '★' : '☆'),
-					h('span', {
-						class: 'chart-btn hover-btn',
-						title: `View ${heroName}'s progress chart`,
-						onclick: () => openHeroChartModal(hero.name)
-					}, outlined('chart_data'))
+					settings.trackData
+						? h('span', {
+							class: 'chart-btn hover-btn',
+							title: `View ${heroName}'s progress chart`,
+							onclick: () => openHeroChartModal(hero.name)
+						}, outlined('chart_data'))
+						: null
 				),
 				h(
 					'div',
@@ -1451,7 +1482,7 @@ function renderList(): boolean | void
 					{ class: 'point-suffix' },
 					levelInfo.level > currentConfig.endLvl ? '∞' : String(levelInfo.maxXp)
 				),
-				isRegression(hero.name, totalScore)
+				settings.trackData && isRegression(hero.name, totalScore)
 					? h('span', {
 						class: 'regression-warning',
 						title: 'This is lower than your highest logged proficiency for '
@@ -1468,6 +1499,9 @@ function renderList(): boolean | void
 function updateHero(name: string, field: string, value: number): void
 {
 	console.log(`Updating ${name} - Field: ${field}, Value: ${value}`)
+
+	if (isNaN(value)) return // Prevent empty/invalid inputs from falling through
+
 	const index = heroData.findIndex(h => h.name === name)
 	if (index === -1) return
 
@@ -1494,7 +1528,7 @@ function updateHero(name: string, field: string, value: number): void
 	heroData[index].rank = newData.rank
 	heroData[index].points = newData.points
 
-	recordPoint(name, calculateTotalScore(heroData[index]))
+	if (settings.trackData) recordPoint(name, calculateTotalScore(heroData[index]))
 
 	sortHeroes()
 	saveData()
@@ -1555,13 +1589,23 @@ function clearData(): void
 
 function downloadBackup(): void
 {
-	// Backup needs to save basic stats, definitions (colors/roles) are hardcoded
-	const dataToSave = heroData.map(h => ({
-		name: h.name,
-		rank: h.rank,
-		points: h.points,
-		pinned: h.pinned // pinning
-	}))
+	if (currentSiteVersion <= 0)
+		throw new EvalError('Version is currently being seen as non-existent.')
+
+	// Backup needs to save basic stats, definitions (colors/roles) are hardcoded.
+	// siteVersion describes the site version when the backup was created
+	// so a future import can tell old backups apart from new ones
+	// and migrate them instead of guessing from their shape.
+	const dataToSave = {
+		siteVersion: currentSiteVersion,
+		heroes: heroData.map(h => ({
+			name: h.name,
+			rank: h.rank,
+			points: h.points,
+			pinned: h.pinned // pinning
+		})),
+		history: getHistorySnapshot()
+	}
 	const dataStr = JSON.stringify(dataToSave, null, 2)
 	const blob = new Blob([dataStr], { type: 'application/json' })
 	const url = URL.createObjectURL(blob)
@@ -1586,10 +1630,38 @@ function handleFileUpload(input: HTMLInputElement): void
 		{
 			const contents = e.target!.result!.toString()
 			const parsedData = JSON.parse(contents)
+
+			// Backups with no version field predate this field (v1: a
+			// bare array of hero stats, no history). Anything else declares
+			// its own shape so future formats can migrate explicitly instead
+			// of being guessed at structurally like this had to be before.
+			const backupVersion: number = parsedData.siteVersion ?? 32
+
+			if (backupVersion > currentSiteVersion)
+			{
+				alert(
+					"This backup was saved by a newer version of the site than this one supports, so it can't be safely imported here. Try again after refreshing/updating the site."
+				)
+				input.value = ''
+				return
+			}
+
+			// All versions so far share the same heroes/history shape once
+			// unwrapped - only the wrapper itself has changed - so no
+			// per-version migration logic is needed yet. Add a branch here
+			// per backupVersion if a future format actually changes the data
+			// itself, not just this file's wrapper.
+			const heroesArray: HeroListItem[] = backupVersion <= 32
+				? parsedData
+				: parsedData.heroes
+			const historySnapshot: HeroHistoryMap | undefined = backupVersion <= 32
+				? undefined
+				: parsedData.history
+
 			if (
-				Array.isArray(parsedData)
-				&& parsedData.length > 0
-				&& parsedData[0].hasOwnProperty('name')
+				Array.isArray(heroesArray)
+				&& heroesArray.length > 0
+				&& heroesArray[0].hasOwnProperty('name')
 			)
 			{
 				// Grab current data directly from our active array to compare
@@ -1617,14 +1689,15 @@ function handleFileUpload(input: HTMLInputElement): void
 						input.value = '' // Reset input so they can upload the same file again if needed
 					},
 					opt2Title: 'Backup File',
-					opt2Data: contents,
+					opt2Data: JSON.stringify(heroesArray),
 					opt2BtnText: 'Import Backup',
 					opt2Action: () =>
 					{
 						localStorage.setItem(
 							'marvelRivalsData',
-							JSON.stringify(parsedData)
+							JSON.stringify(heroesArray)
 						)
+						if (historySnapshot) restoreHistorySnapshot(historySnapshot)
 						location.reload()
 					},
 					footerText: 'Importing the backup cannot be undone.'
@@ -1679,9 +1752,11 @@ function initCallbacks(): void
 	const settingAutoSort = querySelector<HTMLInputElement>('#setting-autoSort')
 	const settingHulkIcon = querySelector<HTMLInputElement>('#setting-hulkIcon')
 	const settingLadyLoki = querySelector<HTMLInputElement>('#setting-ladyLoki')
+	const settingTrackData = querySelector<HTMLInputElement>('#setting-trackData')
 	settingAutoSort.onchange = () => updateSetting('autoSort', settingAutoSort.checked)
 	settingHulkIcon.onchange = () => updateSetting('hulkIcon', settingHulkIcon.checked)
 	settingLadyLoki.onchange = () => updateSetting('ladyLoki', settingLadyLoki.checked)
+	settingTrackData.onchange = () => updateSetting('trackData', settingTrackData.checked)
 
 	querySelector<HTMLButtonElement>('#reset-all-data-btn').onclick = clearData
 	querySelector<HTMLButtonElement>('#settings-done-btn').onclick = closeSettingsModal

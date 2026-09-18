@@ -4,4 +4,4 @@ node_modules/
 offset-tool.html
 dprint*
 dist/
-repomix*
+*repomix*

@@ -33,7 +33,7 @@ export const SEASON_DATES: Record<string, number> = {
 	'4.5': Date.UTC(2025, 9, 10), // Oct 10, 2025
 	'5': Date.UTC(2025, 10, 14), // Nov 14, 2025
 	'5.5': Date.UTC(2025, 11, 12), // Dec 12, 2025
-	'6': Date.UTC(2025, 0, 16), // Jan 16, 2026
+	'6': Date.UTC(2026, 0, 16), // Jan 16, 2026
 	'6.5': Date.UTC(2026, 1, 13), // Feb 13, 2026
 	'7': Date.UTC(2026, 2, 20), // Mar 20, 2026
 	'7.5': Date.UTC(2026, 3, 17), // Apr 17, 2026
@@ -89,6 +89,46 @@ export function recordPoint(heroName: string, total: number, now: number = Date.
 
 	history[heroName] = list
 	saveHistory(history)
+}
+
+/** Returns the full raw history map, for inclusion in data backups. */
+export function getHistorySnapshot(): HeroHistoryMap
+{
+	return loadHistory()
+}
+
+/** Restores a history map from a data backup. Overwrites what's here now. */
+export function restoreHistorySnapshot(data: HeroHistoryMap | undefined | null): void
+{
+	saveHistory(data || {})
+}
+
+const BACKFILL_FLAG_KEY = 'rivalsProficiencyHistoryBackfilled'
+
+/**
+ * Logs every hero's *current* level/points as a real history point, right
+ * now - including heroes still sitting at Agent / 0 points, so nothing on
+ * the "all heroes" chart looks like it's silently missing. Used both to
+ * seed an existing user's first chart data, and to give a freshly-enabled
+ * "Track Data" toggle a real starting line instead of a long dashed guess.
+ */
+export function seedCurrentDataAsHistory(): void
+{
+	const now = Date.now()
+	for (const hero of heroData) recordPoint(hero.name, calculateTotalScore(hero), now)
+	localStorage.setItem(BACKFILL_FLAG_KEY, '1')
+}
+
+/**
+ * One-time on-load seed for people who already had save data (and so
+ * tracking defaults to on) before ever loading this feature. Gated behind
+ * a flag so it never re-runs and never stomps on history someone's already
+ * building.
+ */
+export function backfillHistoryIfNeeded(): void
+{
+	if (localStorage.getItem(BACKFILL_FLAG_KEY)) return
+	seedCurrentDataAsHistory()
 }
 
 /** Real logged points for a hero, sorted oldest -> newest. */
@@ -300,11 +340,11 @@ export function openAllHeroesChartModal(): void
 {
 	hiddenLegendHeroes = new Set()
 	const touched = heroDefinitions.filter(hero =>
-		hero.name === heroData.find(h => h.name === hero.name)?.name
-		&& (getHistory(hero.name).length > 0 || calculateTotalScore(
-					heroData.find(h => h.name === hero.name)!
-				) > 0)
-	)
+	{
+		const item = heroData.find(h => h.name === hero.name)
+		if (!item) return false
+		return getHistory(hero.name).length > 0 || calculateTotalScore(item) > 0
+	})
 
 	querySelector<HTMLHeadingElement>('#chart-modal-title').innerText = 'All Heroes Progress'
 	querySelector<HTMLDivElement>('#chart-modal').style.display = 'flex'

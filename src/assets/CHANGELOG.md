@@ -2,11 +2,12 @@
 
 ### Sep 17th 2026 v33
 #### 🩷 Features
-- Site now keeps track of every stat change to allow for viewing how much you progressed a character over time.
+- Site now keeps track of every stat change to allow for viewing how much you progressed a character over time
   - This data gets backed up with the rest of your data
   - It will be off for all new visitors by default, if you already have data it will be on by default (it can be toggled at any time)
   - There is a "correction" window of 60 seconds incase you mistype a stat change
   - A warning will be shown next to a character if you set their XP/Level to something lower than their max logged XP/Level
+  - All features related to tracking will be hidden if tracking is turned off
 
 ### Sep 13th 2026 v32.3
 #### 🧼 Fixes

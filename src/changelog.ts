@@ -3,6 +3,8 @@ import { querySelector } from './util'
 
 let allChangelogEntries: ChangelogEntry[] = []
 
+export let currentSiteVersion: number = -1
+
 export async function checkChangelog()
 {
 	try
@@ -69,6 +71,8 @@ export async function checkChangelog()
 			// Convert versions like "v32" or "v27.1" to actual numbers for safe comparison
 			const latestNum = parseFloat(latestVersion.replace('v', ''))
 			const lastSeenNum = lastSeenVersion ? parseFloat(lastSeenVersion.replace('v', '')) : 0
+
+			currentSiteVersion = latestNum
 
 			if (lastSeenNum < latestNum)
 			{
