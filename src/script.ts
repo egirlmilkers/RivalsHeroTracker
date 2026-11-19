@@ -512,6 +512,21 @@ export const heroDefinitions: Hero[] = [
 		scale: 1.4
 	},
 	{
+		name: 'Nightcrawler',
+		role: 'Strategist',
+		color: '#61B9D1',
+		tags: [
+			'mutant',
+			'blue',
+			'kurt',
+			'wagner'
+		],
+		offsetX: 5,
+		offsetY: -4,
+		scale: 1.55,
+		releaseSeason: 11
+	},
+	{
 		name: 'Peni Parker',
 		role: 'Vanguard',
 		color: '#db5151',

@@ -41,7 +41,9 @@ export const SEASON_DATES: Record<string, number> = {
 	'8.5': Date.UTC(2026, 5, 12), // June 12, 2026
 	'9': Date.UTC(2026, 6, 10), // Jul 10, 2026
 	'9.5': Date.UTC(2026, 7, 7), // Aug 7, 2026
-	'10': Date.UTC(2026, 8, 11) // Sep 11, 2026
+	'10': Date.UTC(2026, 8, 11), // Sep 11, 2026
+	'10.5': Date.UTC(2026, 9, 9), // Oct 9, 2026
+	'11': Date.UTC(2026, 10, 13) // Nov 13, 2026
 }
 
 const GAME_LAUNCH_TS = SEASON_DATES['0']

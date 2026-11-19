@@ -1,5 +1,9 @@
 # Changelog
 
+### Nov 11th 2026 v35
+#### 🩷 Features
+- Added Nightcrawler
+
 ### Sep 17th 2026 v34
 #### 🩷 Features
 - Added settings for the chart to limits the area it renders
